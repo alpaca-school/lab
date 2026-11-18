@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#153f43"><meta name="description" content="岩石の粒や化石を観察する中学1年理科の体験学習ゲーム。">
+<title>石のひみつ探検隊｜岩石観察ラボ</title>
+<style>
+:root{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;color:#173b3d;background:#e6f0e9}*{box-sizing:border-box}
+body{margin:0}button,input{font:inherit}button{cursor:pointer;touch-action:manipulation}
+.wrap{max-width:660px;margin:auto;min-height:100dvh;background:#f7f5e9;padding:14px 14px 34px}
+header{background:#11433e;color:white;margin:-14px -14px 13px;padding:14px 16px;border-bottom:5px solid #e9bd64}
+h1{font-size:clamp(22px,6vw,31px);margin:4px 0}header p{font-size:13px;margin:3px 0 6px;color:#e1efe4}
+.row{display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.pill{background:#d9efc8;padding:5px 10px;border-radius:18px;font-weight:900;font-size:13px;color:#254d31}
+.panel{background:#fff;border:2px solid #cad7c4;border-radius:16px;margin:12px 0;padding:12px;box-shadow:0 3px 0 #cad7c4}
+h2{margin:0 0 8px;font-size:17px}.choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.choices button{border:2px solid #8aa99c;background:#eaf3eb;border-radius:12px;padding:11px 4px;color:#254c46;font-weight:900;min-height:54px}
+.choices button.sel{background:#0e6758;color:#fff;border-color:#e4a844}
+.scope{position:relative;border:8px solid #264b4b;background:#2d5552;aspect-ratio:1.35;border-radius:20px;overflow:hidden}
+#rockCanvas{width:100%;height:100%;display:block;touch-action:none}
+.scope:after{content:"";position:absolute;inset:6%;border:2px solid #ffffff65;border-radius:50%;pointer-events:none;box-shadow:0 0 0 150px #001f1721}
+#lensLabel{position:absolute;right:10px;bottom:8px;background:#103b35e8;color:white;border-radius:9px;padding:5px 9px;font-weight:900;font-size:12px}
+.slider{display:grid;grid-template-columns:70px 1fr 66px;gap:8px;align-items:center;margin:12px 0;font-weight:900;font-size:13px}
+input[type=range]{width:100%;accent-color:#117960;height:28px}
+.note{background:#e9f1e5;border-left:5px solid #6eaa80;padding:9px;margin-top:9px;font-size:13px;min-height:50px}
+.hints{font-size:12px;color:#456862}.observations{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.observations button{min-height:47px;text-align:left;border-radius:11px;border:2px solid #b4c6b8;background:#f3f6ee;color:#254a3f;font-weight:800;padding:9px}
+.observations button[aria-pressed=true]{background:#d8ebf5;border-color:#2a7797}
+.main{background:#dc8641;color:#fff;border:0;border-radius:12px;padding:13px;font-weight:1000;min-height:50px;width:100%;margin-top:10px;font-size:16px}
+#report{font-size:14px;line-height:1.65;min-height:44px}.small{font-size:11px;color:#5f7268;line-height:1.6}
+#stars{letter-spacing:3px;font-size:22px}a{color:#075e61}
+@media(max-width:375px){.wrap{padding:9px}.observations{grid-template-columns:1fr 1fr}.scope{aspect-ratio:1.18}header{margin:-9px -9px 10px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style></head><body><div class="wrap">
+<header><div class="row"><span>🔬 中学1年・理科／地球分野</span><span>アルパカすく〜る ラボ</span></div>
+<h1>🪨 石のひみつ探検隊</h1><p>岩石観察ラボ｜倍率と光を変えて、石の特徴を発見しよう！</p></header>
+<div class="row"><div class="pill" id="score">発見ポイント 0</div><div class="pill" id="progress">調査済み 0 / 3</div></div>
+<section class="panel"><h2>① どの石を調べる？</h2>
+<div class="choices" id="rocks"><button data-rock="0" class="sel">⚫ 玄武岩</button><button data-rock="1">🟤 花こう岩</button><button data-rock="2">🪸 石灰岩</button></div>
+<p class="hints">これは特徴を学ぶための<strong>模式図</strong>。実際の岩石は個体差があるよ。</p></section>
+<section class="panel"><h2>② 観察道具を動かそう</h2><div class="scope"><canvas id="rockCanvas" width="540" height="400" aria-label="選んだ岩石の拡大模式図"></canvas><span id="lensLabel">×1</span></div>
+<label class="slider"><span>🔎 倍率</span><input id="zoom" aria-label="観察倍率" type="range" min="1" max="5" step="1" value="1"><output id="zoomVal">×1</output></label>
+<label class="slider"><span>🔦 光の強さ</span><input id="light" aria-label="照明の強さ" type="range" min="25" max="100" step="5" value="70"><output id="lightVal">70%</output></label>
+<div class="note" id="hint" role="status">倍率を上げて粒の見え方を調べてみよう。</div></section>
+<section class="panel"><h2>③ 見えた特徴を記録しよう</h2>
+<div class="observations" id="observations">
+<button data-obs="fine" aria-pressed="false">◾ 細かい粒が目立つ</button>
+<button data-obs="coarse" aria-pressed="false">🟫 大きな結晶が目立つ</button>
+<button data-obs="fossil" aria-pressed="false">🐚 生物の痕跡のような形</button>
+<button data-obs="layer" aria-pressed="false">〰️ 粒や模様が層状</button></div>
+<button class="main" id="submit">🔬 観察結果を記録する</button>
+<div id="report" role="status"></div>
+<div class="row"><span id="stars">☆☆☆</span><button id="reset" style="border:0;background:#dbead9;color:#265c4f;border-radius:10px;padding:9px;font-weight:800">もう一度調査</button></div></section>
+<section class="panel"><h2>📖 発見ノート</h2><div id="journal">まだ記録がありません。</div></section>
+<p class="small">学習：岩石の色・粒の大きさ・組織を観察し、根拠をもって特徴を記録する。玄武岩・花こう岩・石灰岩をすべて同じ方法で比較できる。石灰岩に化石が含まれる場合はあるが、必ず見つかるとは限らない。石敢當の実物がこの3種類のどれかと断定するものではありません。<br>📚 <a href="https://www.mext.go.jp/content/20230522-mxt_kyoikujinzai02-000033060_04.pdf" target="_blank" rel="noopener noreferrer">文部科学省 中学校学習指導要領解説・理科編</a>／<a href="https://geosociety.jp/activities/fukyu/stone/kyusyu/" target="_blank" rel="noopener noreferrer">日本地質学会・沖縄県の岩石</a><br><a href="../ishiganto/">元の「石敢當職人！」に戻る</a></p>
+</div><script>
+(()=>{"use strict";
+const $=id=>document.getElementById(id), canvas=$("rockCanvas"),ctx=canvas.getContext("2d");
+const rocks=[
+{name:"玄武岩",key:"fine",hint:"火山岩。急に冷えてできた細かい石基が目立つ模式図だよ。",base:"#343b43"},
+{name:"花こう岩",key:"coarse",hint:"深成岩。地下でゆっくり冷え、大きめの鉱物結晶が見える模式図だよ。",base:"#c7b6a6"},
+{name:"石灰岩",key:"fossil",hint:"堆積岩。生物由来の成分を含むことがあり、貝などの化石が見つかる場合もあるよ。",base:"#d9d2b4"}
+];let index=0,zoom=1,light=70,points=0;const found=new Set(),selected=new Set(),everZoomed=new Set();
+function rnd(n){const x=Math.sin(n*127.12+index*73.83)*43758.545;return x-Math.floor(x)}
+function draw(){
+const w=canvas.width,h=canvas.height;ctx.clearRect(0,0,w,h);ctx.fillStyle=rocks[index].base;ctx.fillRect(0,0,w,h);
+const n=index===0?850:index===1?180:270;
+for(let i=0;i<n;i++){
+ const x=rnd(i*3+1)*w,y=rnd(i*3+2)*h,size=(index===0?1.5:index===1?5:2.8)*(0.5+rnd(i*3+3)*2.8)*zoom;
+ ctx.fillStyle=index===0?["#59656a","#111d25","#798484","#313e43"][i%4]:index===1?["#e5ddd0","#e1d7c3","#7d7776","#292b36","#b79d88"][i%5]:["#f5e9c4","#c5b998","#e4d8bc"][i%3];
+ ctx.beginPath();if(index===1)ctx.rect((x-w/2)*zoom+w/2,(y-h/2)*zoom+h/2,size*1.7,size);else ctx.arc((x-w/2)*zoom+w/2,(y-h/2)*zoom+h/2,size,0,Math.PI*2);ctx.fill();
+}
+if(index===2){for(let i=0;i<4;i++){const x=(100+i*105)*zoom-w*(zoom-1)/2,y=(120+i%2*145)*zoom-h*(zoom-1)/2;ctx.save();ctx.translate(x,y);ctx.rotate(i*.85);ctx.strokeStyle="#8a947e";ctx.lineWidth=4*zoom;ctx.beginPath();ctx.arc(0,0,14*zoom,.1,Math.PI*1.7);ctx.stroke();ctx.beginPath();ctx.arc(0,0,8*zoom,.1,Math.PI*1.8);ctx.stroke();ctx.restore()}}
+ctx.fillStyle="rgba(5,15,17,"+((100-light)/115)+")";ctx.fillRect(0,0,w,h);ctx.strokeStyle="#fff9";ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(12,366);ctx.lineTo(90,366);ctx.stroke();ctx.font="18px sans-serif";ctx.fillStyle="#fff";ctx.fillText("観察用の模式図",13,27);
+}
+function update(){zoom=+$("zoom").value;light=+$("light").value;$("zoomVal").textContent="×"+zoom;$("lensLabel").textContent="×"+zoom;$("lightVal").textContent=light+"%";if(zoom>=3)everZoomed.add(index);draw();$("hint").textContent=zoom>=3?rocks[index].hint:"🔎 倍率を×3以上に上げると特徴が見つけやすくなるよ。"}
+function selectRock(i){index=i;selected.clear();$("rocks").querySelectorAll("button").forEach(b=>b.classList.toggle("sel",+b.dataset.rock===index));$("observations").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed","false"));$("report").textContent="";$("zoom").value="1";update()}
+$("rocks").addEventListener("click",e=>{const b=e.target.closest("button[data-rock]");if(b)selectRock(+b.dataset.rock)});
+$("zoom").addEventListener("input",update);$("light").addEventListener("input",update);
+$("observations").addEventListener("click",e=>{const b=e.target.closest("button[data-obs]");if(!b)return;const k=b.dataset.obs;if(selected.has(k))selected.delete(k);else selected.add(k);b.setAttribute("aria-pressed",String(selected.has(k)))});
+$("submit").addEventListener("click",()=>{
+ const r=rocks[index];if(!everZoomed.has(index)){$("report").textContent="🔎 まず倍率を×3以上にして詳しく観察しよう！";return}
+ if(!selected.has(r.key)){$("report").textContent="🔍 もう一度、粒や模様をよく見てみよう。観察できた特徴を選び直してね。";return}
+ const first=!found.has(index);found.add(index);if(first)points+=100;$("score").textContent="発見ポイント "+points;$("progress").textContent="調査済み "+found.size+" / 3";
+ $("report").textContent="🎉 記録成功！ "+r.name+"： "+r.hint+(found.size===3?" 🏆 3種類を比較できた！":"");
+ $("journal").textContent=Array.from(found).map(i=>"✅ "+rocks[i].name+"： "+rocks[i].hint).join("　");
+ $("stars").textContent="★".repeat(found.size)+"☆".repeat(3-found.size);
+});
+$("reset").addEventListener("click",()=>{found.clear();everZoomed.clear();points=0;$("score").textContent="発見ポイント 0";$("progress").textContent="調査済み 0 / 3";$("journal").textContent="まだ記録がありません。";$("stars").textContent="☆☆☆";selectRock(0)});
+update();
+})();
+</script></body></html>
