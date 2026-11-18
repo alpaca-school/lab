@@ -115,6 +115,32 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:4px solid var(-
   padding:8px 10px calc(10px + var(--safe));background:linear-gradient(180deg,#0c6f92ee,#07516fee);
   border-top:3px solid #ffffff77;display:grid;grid-template-columns:1.25fr .75fr;gap:8px
 }
+.complete-mode{padding-bottom:92px}
+.complete-mode .mission{padding:6px 9px;min-height:0}
+.complete-mode .mission .shisa-face{font-size:34px}
+.complete-mode .mission h2{font-size:14px;margin-bottom:0}
+.complete-mode .mission p{display:none}
+.complete-mode .status-panel{margin-top:4px}
+.complete-mode .reaction{min-height:34px;padding:5px 8px;font-size:10px}
+.complete-mode .discovery{gap:4px;margin-top:4px}
+.complete-mode .discovery-card{min-height:38px;padding:4px 6px;grid-template-columns:22px 1fr;gap:5px}
+.complete-mode .discovery-card .mark{width:22px;height:22px;font-size:11px}
+.complete-mode .discovery-card .eyebrow{font-size:6px}
+.complete-mode .discovery-card strong{font-size:9px}
+.complete-mode .discovery-complete{padding:6px 8px;font-size:12px;border-width:2px}
+.complete-mode .discovery-complete .spark{font-size:16px}
+.complete-mode .lab{height:clamp(132px,22dvh,170px);min-height:132px;max-height:170px;margin:5px 0 0}
+.complete-mode .beaker{width:126px;height:122px;bottom:8px}
+.complete-mode .co2-tank{width:48px;height:80px;left:12px;bottom:10px}
+.complete-mode .co2-tank:before{top:27px;font-size:12px;left:6px;right:6px}
+.complete-mode .hose{left:54px;bottom:52px;width:70px;height:45px;border-left-width:5px;border-bottom-width:5px}
+.complete-mode .cloud-meter{left:65px;right:8px;top:7px;padding:4px 6px}
+.complete-mode .cloud-meter .row{font-size:8px}
+.complete-mode .track{height:8px;margin-top:2px}
+.complete-mode .white-label{font-size:8px;padding:4px 6px}
+.complete-mode .coral-bg{font-size:30px;bottom:34px}
+.complete-mode .cloud{display:none}
+
 .complete-actions{
   position:fixed;z-index:60;left:50%;transform:translateX(-50%);bottom:0;width:min(100vw,480px);
   padding:10px 12px calc(12px + var(--safe));
@@ -205,6 +231,14 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:4px solid var(-
   .top{min-height:116px}.score{font-size:30px}.nextbubble{min-width:66px;height:44px}
   .play-screen{padding-left:7px;padding-right:7px}.lab{min-height:165px}.beaker{width:150px;height:158px}
   .co2-tank{width:62px;height:108px}.cloud-meter{left:82px}.shisa-face{font-size:40px}
+}
+@media(max-height:760px){
+  .complete-mode .mission{display:none}
+  .complete-mode .reaction{min-height:30px}
+  .complete-mode .discovery-complete{padding:5px 7px}
+  .complete-mode .lab{height:clamp(118px,19dvh,145px);min-height:118px;max-height:145px}
+  .complete-mode .beaker{width:112px;height:106px}
+  .complete-mode .co2-tank{width:44px;height:70px}
 }
 @media(max-height:650px){
   .top{min-height:110px;padding-top:calc(6px + env(safe-area-inset-top,0px))}.score{font-size:29px}
@@ -419,7 +453,7 @@ function App(){
       <p className="safety-note">これは画面上の学習シミュレーションです。実際の石灰水は水酸化カルシウム水溶液なので、学校などで実験するときは先生の指示に従ってください。</p>
     </section>
 
-    <section className={"screen play-screen "+(screen==="play"?"active":"")}>
+    <section className={"screen play-screen "+(screen==="play"?"active ":"")+(foundCloud&&foundClear?"complete-mode":"")}>
       <div className="mission">
         <div className={"shisa-face "+((foundCloud||foundClear)?"happy":"")}>🦁</div>
         <div>
