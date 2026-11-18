@@ -551,7 +551,7 @@ function App(){
             onPointerLeave={stopPump}
           ><span className="valve"></span></button>
         </div>
-        {!pumping&&dose<15&&<div className="valve-hint">👆 赤いバルブを<br/>長押し！</div>}
+        {!pumping&&<div className="valve-hint">👆 赤いバルブを<br/>長押し！</div>}
         {pumping&&<div className="flow-label">💨 CO₂注入中！</div>}
         <div className="hose"></div>
         <div className="beaker">
