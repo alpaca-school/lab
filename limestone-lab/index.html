@@ -604,11 +604,11 @@ function App(){
           <div><strong>{bridgeDone?"発見！ 沖縄には琉球石灰岩が広く分布":"スライダーを右へ動かしてみよう"}</strong><p>{bridgeDone?"石灰水で見えた白い粒も、琉球石灰岩も、共通する大事な物質は炭酸カルシウム。":"上の時間スライダーを100%まで動かすと、次の発見がアンロックされるよ。"} </p></div>
         </div>
       </div>
-      <div className="card">
+      {bridgeDone&&<div className="card">
         <h2>🦁 シーサー研究員のまとめ</h2>
         <p>沖縄の地面の下には、琉球石灰岩が広く見られる場所がある。石灰岩は石垣や石材にも使われてきた。今日の実験で見えた「炭酸カルシウム」を手がかりに、海と陸がつながって見えてくるね。</p>
-        <button className="big-btn" disabled={!bridgeDone} style={{opacity:bridgeDone?1:.45}} onClick={finish}>👑 研究レポートを見る</button>
-      </div>
+        <button className="big-btn" onClick={finish}>👑 研究レポートを見る</button>
+      </div>}
     </section>
 
     <section className={"screen finish-screen "+(screen==="finish"?"active":"")}>
