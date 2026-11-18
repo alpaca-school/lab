@@ -144,6 +144,9 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:4px solid var(-
   padding:8px 10px calc(10px + var(--safe));background:linear-gradient(180deg,#0c6f92ee,#07516fee);
   border-top:3px solid #ffffff77;display:grid;grid-template-columns:1.25fr .75fr;gap:8px
 }
+.play-screen.complete-mode{
+  display:flex;flex-direction:column;padding-bottom:92px
+}
 .complete-mode{padding-bottom:92px}
 .complete-mode .mission{padding:6px 9px;min-height:0}
 .complete-mode .mission .shisa-face{font-size:34px}
@@ -158,9 +161,15 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:4px solid var(-
 .complete-mode .discovery-card strong{font-size:9px}
 .complete-mode .discovery-complete{padding:6px 8px;font-size:12px;border-width:2px}
 .complete-mode .discovery-complete .spark{font-size:16px}
-.complete-mode .lab{height:clamp(132px,22dvh,170px);min-height:132px;max-height:170px;margin:5px 0 0}
-.complete-mode .beaker{width:126px;height:122px;bottom:8px}
-.complete-mode .co2-tank{width:48px;height:80px;left:12px;bottom:10px}
+.complete-mode .lab{
+  flex:1 1 auto;height:auto;min-height:180px;max-height:none;margin:5px 0 0
+}
+.complete-mode .beaker{
+  width:clamp(126px,34vw,160px);height:clamp(138px,22dvh,180px);bottom:10px
+}
+.complete-mode .co2-tank{
+  width:clamp(48px,14vw,62px);height:clamp(82px,14dvh,110px);left:12px;bottom:12px
+}
 .complete-mode .co2-valve-btn{display:none}
 .complete-mode .valve-hint,.complete-mode .flow-label{display:none}
 .complete-mode .co2-tank:before{top:27px;font-size:12px;left:6px;right:6px}
@@ -272,9 +281,9 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:4px solid var(-
   .complete-mode .mission{display:none}
   .complete-mode .reaction{min-height:30px}
   .complete-mode .discovery-complete{padding:5px 7px}
-  .complete-mode .lab{height:clamp(118px,19dvh,145px);min-height:118px;max-height:145px}
-  .complete-mode .beaker{width:112px;height:106px}
-  .complete-mode .co2-tank{width:44px;height:70px}
+  .complete-mode .lab{flex:1 1 auto;height:auto;min-height:170px;max-height:none}
+  .complete-mode .beaker{width:clamp(118px,32vw,150px);height:clamp(128px,21dvh,165px)}
+  .complete-mode .co2-tank{width:clamp(46px,13vw,58px);height:clamp(78px,13dvh,102px)}
 }
 @media(max-height:650px){
   .top{min-height:110px;padding-top:calc(6px + env(safe-area-inset-top,0px))}.score{font-size:29px}
