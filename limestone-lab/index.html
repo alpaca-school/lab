@@ -171,6 +171,15 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:4px solid var(-
 .reef{position:absolute;left:0;right:0;bottom:50px;text-align:center;font-size:52px;transform:translateY(calc(var(--time,0) * -0.18px));transition:.15s}
 .sediment{position:absolute;left:12%;right:12%;bottom:26px;height:calc(8px + var(--time,0) * .72px);max-height:88px;background:repeating-linear-gradient(180deg,#ece8dc 0 7px,#c9c2ad 7px 14px);border-radius:12px 12px 0 0;transition:.15s;opacity:calc(.3 + var(--time,0) / 140)}
 .rock-label{position:absolute;right:8px;bottom:7px;background:#fffdf0;color:#6e634d;border-radius:12px;padding:5px 7px;font-size:9px;font-weight:900}
+.time-badge{
+  position:absolute;z-index:6;right:8px;top:8px;width:min(58%,210px);
+  background:#ffffffed;border:2px solid #fff;border-radius:16px;padding:7px 9px;
+  box-shadow:0 3px 10px rgba(20,77,96,.18);color:#164f63
+}
+.time-badge .era{display:block;font-size:9px;font-weight:1000;color:#8a5b18;letter-spacing:.05em}
+.time-badge strong{display:block;font-size:15px;line-height:1.15;margin:2px 0;color:#0a5d7d}
+.time-badge small{display:block;font-size:9px;line-height:1.25;font-weight:800;color:#466875}
+.time-note{font-size:9px;line-height:1.35;color:#63777e;margin:4px 0 0}
 .time-range{width:100%;accent-color:#0b6e8f;height:38px}
 .unlock{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;background:#fff7cf;border-radius:17px;padding:11px;margin-top:10px}
 .unlock .ico{font-size:48px}
@@ -300,6 +309,14 @@ function App(){
   const stage = screen==="title" ? 0 : screen==="play" ? (foundCloud?2:1) : screen==="bridge" ? 3 : 3;
   const nextLabel = !foundCloud ? "白いにごり" : !foundClear ? "透明にもどる?" : screen==="play" ? "沖縄へ!" : screen==="bridge" ? "石灰岩" : "👑";
   const nextSub = !foundCloud ? "見つけよう" : !foundClear ? "入れつづける" : screen==="play" ? "発見2/2" : screen==="bridge" ? Math.max(0,100-time)+"%" : "MAX";
+
+  const timeInfo = time < 22
+    ? {era:"第四紀・更新世前期", when:"約130万年前ごろ", hook:"沖縄島南部で、古いサンゴ礁の記録が残るころ"}
+    : time < 68
+      ? {era:"第四紀・更新世", when:"数十万年前", hook:"サンゴ礁の生き物の骨格や殻が、海の底に積もっていく"}
+      : time < 96
+        ? {era:"第四紀・更新世", when:"長い時間がたつ", hook:"石灰質の堆積物が重なり、岩として残っていく"}
+        : {era:"現在", when:"いまの沖縄", hook:"昔の海の記憶が、琉球石灰岩として地上に見えている"};
 
   const startGame=async()=>{
     await audio.ensure();audio.tone(660,.09);audio.startBgm();
@@ -454,12 +471,18 @@ function App(){
         <h2>🪸 海の世界から、沖縄の岩へ</h2>
         <p>琉球石灰岩は、昔のサンゴ礁をつくった生き物の骨格や殻などを含む【サンゴ礁複合体の堆積物】が、長い時間をかけて積み重なり固まったものだよ。サンゴだけでできているわけではないよ。</p>
         <div className="timeline" style={{"--time":time}}>
+          <div className="time-badge" aria-live="polite">
+            <span className="era">{timeInfo.era}</span>
+            <strong>{timeInfo.when}</strong>
+            <small>{timeInfo.hook}</small>
+          </div>
           <div className="reef">🪸 🐚 🪸 🐚 🪸</div>
           <div className="sediment"></div>
           <div className="rock-label">琉球石灰岩へ</div>
         </div>
         <label style={{fontSize:"12px",fontWeight:900,color:"#0a5d7d"}}>時間をすすめる →</label>
         <input className="time-range" aria-label="時間をすすめる" type="range" min="0" max="100" value={time} onChange={e=>updateTime(e.target.value)} />
+        <p className="time-note">※このスライダーは地質の変化をイメージする時間旅行。目盛りは実際の年数に比例していません。</p>
         <div className="unlock">
           <div className="ico">{bridgeDone?"🪨":"⏳"}</div>
           <div><strong>{bridgeDone?"発見！ 沖縄には琉球石灰岩が広く分布":"100%まで時間をすすめよう"}</strong><p>{bridgeDone?"石灰水で見えた白い粒も、琉球石灰岩も、共通する大事な物質は炭酸カルシウム。":"海でできた炭酸カルシウムを含む堆積物が、長い時間の地質作用を受けて岩になる。"}</p></div>
