@@ -259,8 +259,21 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:4px solid var(-
 .time-badge small{display:block;font-size:9px;line-height:1.25;font-weight:800;color:#466875}
 .time-note{font-size:9px;line-height:1.35;color:#63777e;margin:4px 0 0}
 .time-control{
-  margin-top:6px;background:#f2fbfd;border:2px solid #bfe6ef;border-radius:16px;padding:9px 10px 8px
+  position:relative;margin-top:6px;background:#f2fbfd;border:2px solid #bfe6ef;border-radius:16px;padding:9px 10px 8px
 }
+.time-control.first-touch{
+  background:#fff8cf;border-color:#ffd95a;box-shadow:0 0 0 4px #ffd95a33
+}
+.slider-hint{
+  position:absolute;z-index:5;left:14px;top:54px;
+  background:#ffd95a;color:#6a4b10;border:2px solid #fff;border-radius:14px;
+  padding:6px 9px;font-size:10px;font-weight:1000;box-shadow:0 3px rgba(90,63,10,.18);
+  animation:sliderHint 1s ease-in-out infinite;pointer-events:none
+}
+.slider-hint:after{
+  content:"";position:absolute;left:18px;top:-8px;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:8px solid #ffd95a
+}
+@keyframes sliderHint{50%{transform:translateX(5px)}}
 .time-control-head{
   display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:2px;
   font-size:11px;font-weight:1000;color:#0a5d7d
@@ -597,11 +610,12 @@ function App(){
           <div className="sediment"></div>
           <div className="rock-label">琉球石灰岩へ</div>
         </div>
-        <div className="time-control">
+        <div className={"time-control "+(time===0?"first-touch":"")}>
           <div className="time-control-head">
             <span>⏩ このつまみで時間をすすめる</span>
             <strong>{time}%</strong>
           </div>
+          {time===0&&<div className="slider-hint">👆 ここを右へ動かそう！</div>}
           <input className="time-range" aria-label="時間をすすめる" type="range" min="0" max="100" value={time} onChange={e=>updateTime(e.target.value)} />
           <div className="time-marks"><span>0%</span><span>50%</span><span>100%</span></div>
           <div className={"time-progress "+(bridgeDone?"done":"")}>
