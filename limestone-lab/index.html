@@ -291,6 +291,9 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:4px solid var(-
 .unlock{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;background:#fff7cf;border-radius:17px;padding:11px;margin-top:10px}
 .unlock .ico{font-size:48px}
 .unlock strong{font-size:13px;color:#7b5a16}.unlock p{font-size:11px;margin:3px 0 0;line-height:1.45;color:#6b634f}
+.summary-unlock{align-items:start;background:#fffdf2;animation:completePop .45s ease-out}
+.summary-unlock .ico{font-size:42px}
+.summary-report-btn{margin-top:8px;max-width:none;padding:11px 14px;font-size:16px}
 .finish-screen{padding:16px 12px 28px;text-align:center;overflow:auto}
 .finish-screen h2{font-size:28px;margin:6px 0;color:#0a5d7d}
 .medal{font-size:78px;animation:bob 1.5s ease-in-out infinite}
@@ -623,15 +626,19 @@ function App(){
           </div>
         </div>
         <p className="time-note">※このスライダーは地質の変化をイメージする時間旅行。目盛りは実際の年数に比例していません。</p>
-        <div className="unlock">
-          <div className="ico">{bridgeDone?"🪨":"⏳"}</div>
-          <div><strong>{bridgeDone?"発見！ 沖縄には琉球石灰岩が広く分布":"スライダーを右へ動かしてみよう"}</strong><p>{bridgeDone?"石灰水で見えた白い粒も、琉球石灰岩も、共通する大事な物質は炭酸カルシウム。":"上の時間スライダーを100%まで動かすと、次の発見がアンロックされるよ。"} </p></div>
-        </div>
-      </div>
-      {bridgeDone&&<div className="card">
-        <h2>🦁 シーサー研究員のまとめ</h2>
-        <p>沖縄の地面の下には、琉球石灰岩が広く見られる場所がある。石灰岩は石垣や石材にも使われてきた。今日の実験で見えた「炭酸カルシウム」を手がかりに、海と陸がつながって見えてくるね。</p>
-        <button className="big-btn" onClick={finish}>👑 研究レポートを見る</button>
+        {!bridgeDone
+          ? <div className="unlock">
+              <div className="ico">⏳</div>
+              <div><strong>スライダーを右へ動かしてみよう</strong><p>上の時間スライダーを100%まで動かすと、次の発見がアンロックされるよ。</p></div>
+            </div>
+          : <div className="unlock summary-unlock">
+              <div className="ico">🦁</div>
+              <div>
+                <strong>シーサー研究員のまとめ</strong>
+                <p>沖縄の地面の下には、琉球石灰岩が広く見られる場所がある。石灰岩は石垣や石材にも使われてきた。今日の実験で見えた「炭酸カルシウム」を手がかりに、海と陸がつながって見えてくるね。</p>
+                <button className="big-btn summary-report-btn" onClick={finish}>👑 研究レポートを見る</button>
+              </div>
+            </div>}
       </div>}
     </section>
 
