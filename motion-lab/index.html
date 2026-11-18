@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#17385c"><meta name="description" content="速さと加速度を操作して位置と時間の関係を調べる中学3年理科ゲーム">
-<title>マジムン運動研究所｜運動の規則性ラボ</title>
+<title>石敢當ヒット！｜マジムン運動実験ラボ</title>
 <style>
 :root{font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;color:#153959;background:#e3edf3}*{box-sizing:border-box}
 body{margin:0}button,input{font:inherit}button{cursor:pointer;touch-action:manipulation}
@@ -32,61 +32,64 @@ input[type=range]{width:100%;accent-color:#126c9a;height:30px}
 a{color:#145b86}
 @media(max-width:375px){.slider{grid-template-columns:86px 1fr 58px;font-size:11px}#road{height:160px}.actions{grid-template-columns:1fr 1fr}}
 @media(prefers-reduced-motion:reduce){#ghost.hit{animation:none}}
-</style></head><body><main>
+#shot{position:absolute;left:90%;top:41%;font-size:32px;display:none;z-index:5;transform:translateX(-50%);filter:drop-shadow(0 0 9px #ffd363)}#hitZone{position:absolute;left:55%;top:42%;width:25%;height:32px;border:3px dashed #fbe06c;background:#ffec7b30;border-radius:16px;text-align:center;font-size:22px;z-index:1}#impact{position:absolute;pointer-events:none;z-index:8;font-size:39px;opacity:0;transform:translate(-50%,-50%)}#impact.on{animation:boom .75s ease-out forwards}@keyframes boom{20%{opacity:1;transform:translate(-50%,-50%) scale(1.7)}100%{opacity:0;transform:translate(-50%,-50%) scale(2.4)}}#ghost,#shot{transition:none}#road .meter{z-index:6}#road .lab{z-index:6}@media(prefers-reduced-motion:reduce){#impact.on{animation:none;opacity:1}}</style></head><body><main>
 <header><div class="row"><span>📐 中学3年・理科／物理分野</span><span>アルパカすく〜る ラボ</span></div>
-<h1>👻 マジムン運動研究所</h1><p>運動の規則性ラボ｜距離・速さ・加速度を変えて到着時間を予測しよう！</p></header>
+<h1>🎯 石敢當ヒット！</h1><p>運動の規則性ラボ｜速さ・加速度・発射タイミングを変え、動くマジムンに命中させよう！</p></header>
 <div class="row"><span class="pill" id="score">研究ポイント 0</span><span class="pill" id="stage">実験 1 / 3</span></div>
 <div class="bars"><div id="mission1">1 🏁</div><div id="mission2">2 🏁</div><div id="mission3">3 🏁</div></div>
 <section class="panel"><h2>① 運動実験の設定</h2><div id="missionText" class="mission"></div>
-<label class="slider"><span>初めの速さ</span><input type="range" id="speed" min="1" max="6" step=".5" value="2"><output id="speedValue">2.0 m/s</output></label>
-<label class="slider"><span>加速度</span><input type="range" id="accel" min="0" max="2" step=".25" value="0"><output id="accelValue">0.00 m/s²</output></label>
-<label class="slider"><span>予想到着時刻</span><input type="range" id="prediction" min="1" max="16" step=".5" value="8"><output id="predValue">8.0 秒</output></label>
+<label class="slider"><span>石の初速</span><input type="range" id="speed" min="1" max="6" step=".5" value="2"><output id="speedValue">2.0 m/s</output></label>
+<label class="slider"><span>石の加速度</span><input type="range" id="accel" min="0" max="2" step=".25" value="0"><output id="accelValue">0.00 m/s²</output></label>
+<label class="slider"><span>発射の遅れ</span><input type="range" id="prediction" min="0" max="9" step=".5" value="4"><output id="predValue">4.0 秒</output></label>
 </section>
 <section class="panel"><h2>② マジムンの動きを観察</h2>
-<div id="road"><span class="lab">目的地まで <b id="distanceLabel">24</b> m</span><div id="stone">石敢當</div><div id="trail"></div><div id="ghost">👻</div><div class="meter" id="timeLabel">経過 0.0 秒 ／ 移動 0.0 m</div></div>
-<h2 style="margin-top:15px">📈 距離–時間グラフ</h2><canvas id="graph" width="600" height="250" aria-label="時間と移動距離を示すグラフ"></canvas>
-<div class="actions"><button id="go" class="strong">▶ 実験スタート！</button><button id="reset">↺ 条件を変える</button></div><div id="result" role="status">設定を変えて「何秒で石敢當まで着くか」を予想してみよう。</div></section>
-<section class="panel"><h2>③ 科学者ノート</h2><p id="learning">最初の速さと加速度を変えると、移動距離の増え方はどう変わるかな？</p><p class="small">等速直線運動：加速度0なら距離は時間に比例。加速度が一定なら時間とともに速さが変化し、距離–時間グラフは曲線になる。ここでのマジムンは等加速度直線運動する<strong>架空の実験モデル</strong>です。実際のマジムンの存在や魔除けの科学的効力を主張するものではありません。<br>📚 <a href="https://www.mext.go.jp/content/20230522-mxt_kyoikujinzai02-000033060_04.pdf" target="_blank" rel="noopener noreferrer">文部科学省 中学校学習指導要領解説・理科編</a> ／ <a href="../ishiganto/">石敢當職人！に戻る</a></p></section>
+<div id="road"><span class="lab">目的地まで <b id="distanceLabel">24</b> m</span><div id="stone">石敢當</div><div id="trail"></div><div id="ghost">👻</div><div id="shot" aria-label="架空の石敢當の魔法の石">🪨</div><div id="impact">💥</div><div id="hitZone" aria-label="命中目標エリア">🎯</div><div class="meter" id="timeLabel">経過 0.0 秒 ／ 移動 0.0 m</div></div>
+<h2 style="margin-top:15px">📈 位置–時間グラフ（👻と🪨）</h2><canvas id="graph" width="600" height="250" aria-label="時間と移動距離を示すグラフ"></canvas>
+<div class="actions"><button id="go" class="strong">🪨 石を発射して実験！</button><button id="reset">↺ 条件を変える</button></div><div id="result" role="status">石の初速と発射タイミングを調節して、🎯 の範囲でマジムンに当てよう。</div></section>
+<section class="panel"><h2>③ 科学者ノート</h2><p id="learning">動くマジムンと石の「位置–時間グラフ」の交点が、命中時刻になるよ。</p><p class="small">等速直線運動：加速度0なら距離は時間に比例。加速度が一定なら時間とともに速さが変化し、距離–時間グラフは曲線になる。この作品では伝承をモチーフに、<strong>石敢當の力が飛ぶという架空の演出</strong>を使います。実際の石敢當を投げたり動かしたりしないでください。石は一次元の等加速度運動、マジムンは等速直線運動する理想化モデルです。民俗伝承と実験計算を区別しています。<br>📚 <a href="https://www.mext.go.jp/content/20230522-mxt_kyoikujinzai02-000033060_04.pdf" target="_blank" rel="noopener noreferrer">文部科学省 中学校学習指導要領解説・理科編</a> ／ <a href="../ishiganto/">石敢當職人！に戻る</a></p></section>
 </main><script>
 (()=>{"use strict";
-const $=id=>document.getElementById(id),graph=$("graph"),ctx=graph.getContext("2d");
-const stages=[{distance:24,description:"第1実験：まっすぐ進むマジムン。加速度を0にして、等速直線運動を確かめよう。",accel:0,goal:"等速直線運動"},{distance:30,description:"第2実験：走り出して速くなるマジムン。加速度を0.5 m/s²以上にして、速さの変化を観察しよう。",accel:.5,goal:"加速する運動"},{distance:36,description:"第3実験：時間を予測する最終チャレンジ！ 条件を自由に変えて予想しよう。",accel:0,goal:"運動の予測"}];
-let step=0,score=0,done=[false,false,false],anim=0,locked=false,lastTime=0,simTime=0,arrival=0,v=2,a=0,d=24,guess=8;
-function format(n){return n.toFixed(1)}
-function displacement(t){return v*t+.5*a*t*t}
-function solveArrival(){return a===0?d/v:(-v+Math.sqrt(v*v+2*a*d))/a}
-function settings(){v=+$("speed").value;a=+$("accel").value;guess=+$("prediction").value;d=stages[step].distance;arrival=solveArrival();$("speedValue").textContent=v.toFixed(1)+" m/s";$("accelValue").textContent=a.toFixed(2)+" m/s²";$("predValue").textContent=guess.toFixed(1)+" 秒";$("distanceLabel").textContent=d;drawGraph(0);drawRoad(0)}
-function drawRoad(t){const pos=Math.min(d,displacement(t));$("ghost").style.left=(3+pos/d*85)+"%";$("timeLabel").textContent="経過 "+format(t)+" 秒 ／ 移動 "+format(pos)+" m";$("trail").textContent="··· "+format(pos)+" m"}
-function drawGraph(t){
-const w=graph.width,h=graph.height;ctx.clearRect(0,0,w,h);ctx.fillStyle="#f8fbff";ctx.fillRect(0,0,w,h);
-const left=54,right=w-21,top=18,bottom=h-39,maxT=Math.max(12,Math.ceil(arrival+2));ctx.strokeStyle="#dce6eb";ctx.lineWidth=1;
-ctx.font="14px sans-serif";ctx.fillStyle="#35566c";
-for(let i=0;i<=6;i++){const x=left+(right-left)*i/6;ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,bottom);ctx.stroke();ctx.fillText(String(Math.round(maxT*i/6)),x-5,bottom+19)}
-for(let i=0;i<=4;i++){const y=bottom-(bottom-top)*i/4;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(right,y);ctx.stroke();ctx.fillText(String(Math.round(d*i/4)),13,y+4)}
-ctx.fillText("時間 (秒)",w-90,h-6);ctx.fillText("距離(m)",5,12);
-ctx.strokeStyle="#1e5c78";ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(left,bottom);ctx.lineTo(left,top);ctx.moveTo(left,bottom);ctx.lineTo(right,bottom);ctx.stroke();
-const end=Math.min(t,arrival);if(end<=0)return;
-ctx.strokeStyle="#e07a38";ctx.lineWidth=5;ctx.beginPath();
-for(let i=0;i<=120;i++){const tt=end*i/120,x=left+(right-left)*tt/maxT,y=bottom-(bottom-top)*Math.min(d,displacement(tt))/d;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}
-ctx.stroke();ctx.fillStyle="#db542c";const px=left+(right-left)*end/maxT,py=bottom-(bottom-top)*Math.min(d,displacement(end))/d;ctx.beginPath();ctx.arc(px,py,7,0,Math.PI*2);ctx.fill()
+const $=id=>document.getElementById(id),ctx=$("graph").getContext("2d"),graph=$("graph");
+const stages=[
+{distance:24,enemy:2,zone:[12,19],defaultSpeed:4,defaultAccel:0,defaultDelay:4,task:"第1実験：等速直線運動。石の加速度を0にして、命中位置を調べよう。"},
+{distance:30,enemy:2.7,zone:[15,23],defaultSpeed:4,defaultAccel:.5,defaultDelay:3,task:"第2実験：加速する石。加速度を0.5m/s²以上にして、動く相手に命中させよう。"},
+{distance:36,enemy:3.2,zone:[19,28],defaultSpeed:4.5,defaultAccel:.5,defaultDelay:4,task:"第3実験：自由研究！ 速さ・加速度・発射時刻を調整し、🎯で命中させよう。"}
+];
+let stage=0,score=0,done=[false,false,false],combo=0,playing=false,raf=0,previous=0,t=0,v=4,a=0,delay=4,d=24,enemyV=2,collision=null;
+function stoneTravel(t){if(t<delay)return 0;const u=t-delay;return v*u+.5*a*u*u}
+function ghostX(t){return enemyV*t}
+function stoneX(t){return d-stoneTravel(t)}
+function detectCollision(){let lo=delay,hi=d/enemyV;if(lo>=hi||stoneX(hi)>ghostX(hi))return null;for(let j=0;j<40;j++){const mid=(lo+hi)/2;if(stoneX(mid)>ghostX(mid))lo=mid;else hi=mid}const ct=(lo+hi)/2;return{time:ct,x:ghostX(ct)}}
+function read(){v=+$("speed").value;a=+$("accel").value;delay=+$("prediction").value;d=stages[stage].distance;enemyV=stages[stage].enemy;collision=detectCollision();$("speedValue").textContent=v.toFixed(1)+" m/s";$("accelValue").textContent=a.toFixed(2)+" m/s²";$("predValue").textContent=delay.toFixed(1)+" 秒";$("distanceLabel").textContent=d;$("hitZone").style.left=(3+85*stages[stage].zone[0]/d)+"%";$("hitZone").style.width=(85*(stages[stage].zone[1]-stages[stage].zone[0])/d)+"%";paint(0);chart(0)}
+function paint(t){const gx=Math.min(d,ghostX(t)),sx=Math.max(0,Math.min(d,stoneX(t)));$("ghost").style.left=(3+85*gx/d)+"%";$("shot").style.left=(3+85*sx/d)+"%";$("shot").style.display=t>=delay?"block":"none";$("timeLabel").textContent="経過 "+t.toFixed(1)+"秒 ／ 👻 "+gx.toFixed(1)+"m ／ 🪨 "+sx.toFixed(1)+"m";$("trail").textContent=t<delay?"石の発射まで "+Math.max(0,delay-t).toFixed(1)+" 秒":"🪨 発射！"}
+function chart(t){
+const w=graph.width,h=graph.height,left=54,right=w-16,top=19,bottom=h-39,maxT=Math.max(12,Math.ceil(d/enemyV+1));
+ctx.fillStyle="#f8fcff";ctx.fillRect(0,0,w,h);ctx.font="13px sans-serif";ctx.strokeStyle="#dae6ed";ctx.lineWidth=1;
+for(let i=0;i<=6;i++){const x=left+(right-left)*i/6;ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,bottom);ctx.stroke();ctx.fillStyle="#39566a";ctx.fillText(String((maxT*i/6).toFixed(0)),x-4,bottom+18)}
+for(let i=0;i<=4;i++){const y=bottom-(bottom-top)*i/4;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(right,y);ctx.stroke();ctx.fillStyle="#39566a";ctx.fillText(String(Math.round(d*i/4)),16,y+4)}
+ctx.fillStyle="#39566a";ctx.fillText("時間 (秒)",w-92,h-7);ctx.fillText("位置 (m)",5,12);
+const drawLine=(fun,color,from,to)=>{ctx.strokeStyle=color;ctx.lineWidth=4;ctx.beginPath();for(let i=0;i<=90;i++){const tm=from+(to-from)*i/90,x=left+(right-left)*tm/maxT,y=bottom-(bottom-top)*Math.min(d,Math.max(0,fun(tm)))/d;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}ctx.stroke()};
+const until=Math.min(t,d/enemyV);if(until>0)drawLine(ghostX,"#7a49bd",0,until);
+if(t>=delay)drawLine(stoneX,"#db7835",delay,Math.min(t,d/enemyV));
+ctx.font="bold 14px sans-serif";ctx.fillStyle="#7a49bd";ctx.fillText("👻 マジムン",left+6,top+17);ctx.fillStyle="#b75b22";ctx.fillText("🪨 石敢當の石",left+150,top+17);
+if(collision&&t>=collision.time){const px=left+(right-left)*collision.time/maxT,py=bottom-(bottom-top)*collision.x/d;ctx.beginPath();ctx.fillStyle="#edbd31";ctx.arc(px,py,8,0,Math.PI*2);ctx.fill()}
 }
-function loadStep(){locked=false;cancelAnimationFrame(anim);$("go").disabled=false;$("go").textContent="▶ 実験スタート！";$("ghost").classList.remove("hit");const s=stages[step];$("stage").textContent="実験 "+(step+1)+" / 3";$("missionText").textContent=s.description+" （目標距離 "+s.distance+"m）";$("speed").value=step===0?2:step===1?2.5:3;$("accel").value=s.accel;$("prediction").value=step===0?12:step===1?7:9;$("result").textContent="条件を変えて、石敢當に着く時間を予想しよう。";settings()}
-function finish(){
-locked=false;$("go").disabled=false;$("go").textContent="▶ 再び実験！";$("ghost").classList.add("hit");
-const err=Math.abs(arrival-guess),eligible=step!==0||a===0,valid=step!==1||a>=.5;
-const pass=err<=.75&&eligible&&valid;
-let msg="実際は "+format(arrival)+"秒、予想は "+format(guess)+"秒。差 "+format(err)+"秒。";
-if(!eligible)msg+=" 第1実験は加速度を0にして等速運動を確かめてね。";
-else if(!valid)msg+=" 第2実験は加速度を0.5以上にしてみよう。";
-else if(pass){if(!done[step]){done[step]=true;score+=100;$("score").textContent="研究ポイント "+score;const div=$("mission"+(step+1));div.classList.add("done");div.textContent=(step+1)+" ✅"}msg+=" 🎉 予測成功！";if(step<2){step++;loadStep();$("result").textContent="🎉 前の実験が成功！ 次の実験へ進もう。";return}else msg+=" 🏆 3つの実験をクリア！";}
-else msg+=" もう一度、グラフを見て予想を近づけよう！";
+function load(){playing=false;cancelAnimationFrame(raf);$("go").disabled=false;$("go").textContent="🪨 石を発射して実験！";$("impact").classList.remove("on");$("stage").textContent="実験 "+(stage+1)+" / 3";const q=stages[stage];$("missionText").textContent=q.task+"（道路 "+q.distance+"m、マジムンの速さ "+q.enemy+"m/s、命中目標 "+q.zone[0]+"〜"+q.zone[1]+"m）";$("speed").value=q.defaultSpeed;$("accel").value=q.defaultAccel;$("prediction").value=q.defaultDelay;read();$("result").textContent="🎯 黄色い範囲で命中させよう。発射タイミングや速さを調整して実験！"}
+function finish(){playing=false;$("go").disabled=false;$("go").textContent="▶ もう一度試す";
+const q=stages[stage],eligible=stage!==0||a===0,valid=stage!==1||a>=.5;
+let msg="";
+if(!collision){combo=0;msg="💦 マジムンが村に入る前に石が届かなかった！ 発射を早めるか石の速さを上げよう。"}
+else{const pos=collision.x,good=pos>=q.zone[0]&&pos<=q.zone[1];$("impact").style.left=(3+85*pos/d)+"%";$("impact").classList.remove("on");void $("impact").offsetWidth;$("impact").classList.add("on");msg="💥 "+collision.time.toFixed(2)+"秒後、出発点から"+pos.toFixed(1)+"mの位置で石が命中！ ";
+if(!eligible){msg+="第1実験では加速度を0にしてみよう。";combo=0}
+else if(!valid){msg+="第2実験では加速度を0.5以上にしてみよう。";combo=0}
+else if(!good){msg+="🎯 黄色い目標範囲には入らなかった。速さや発射時刻を変えてもう一度！";combo=0}
+else{combo++;if(!done[stage]){done[stage]=true;score+=100+combo*30;$("score").textContent="研究ポイント "+score;$("mission"+(stage+1)).classList.add("done");$("mission"+(stage+1)).textContent=(stage+1)+" ✅"}msg+="🎉 命中成功！ 連続"+combo+"回！";$("learning").textContent="👻 と 🪨 の位置–時間グラフの交点が、命中した時刻と場所。加速度が大きいと石の進む距離は時間に比例しなくなる。";if(stage<2){const solved=stage;stage++;load();$("result").textContent="🎉 第"+(solved+1)+"実験に成功！ 次のステージへ！";return}else{msg+=" 🏆 全3実験クリア！ 石敢當研究マスター！"}}}
 $("result").textContent=msg;
-$("learning").textContent=a===0?"等速運動では、同じ時間ごとに同じ距離を進む。距離–時間グラフは直線になる。":"加速度が一定で正なら、時間とともに速さが増す。距離–時間グラフの傾きが大きくなる。";
 }
-function tick(t){if(!locked)return;const dt=Math.min(.07,Math.max(0,(t-lastTime)/1000));lastTime=t;simTime=Math.min(arrival,simTime+dt*2.3);drawRoad(simTime);drawGraph(simTime);if(simTime>=arrival){finish();return}anim=requestAnimationFrame(tick)}
-$("go").addEventListener("click",()=>{cancelAnimationFrame(anim);settings();simTime=0;locked=true;$("go").disabled=true;$("ghost").classList.remove("hit");$("result").textContent="👀 観察中！ グラフの形と速さの変化に注目。";lastTime=performance.now();anim=requestAnimationFrame(tick)});
-$("reset").addEventListener("click",()=>{locked=false;cancelAnimationFrame(anim);$("go").disabled=false;$("go").textContent="▶ 実験スタート！";$("ghost").classList.remove("hit");settings();$("result").textContent="条件を変えて再実験しよう。"});
-for(const id of ["speed","accel","prediction"])$(id).addEventListener("input",()=>{if(locked)return;settings()});
-loadStep();
+function tick(now){if(!playing)return;const dt=Math.min(.06,Math.max(0,(now-previous)/1000));previous=now;t+=dt*2.5;const stop=collision?collision.time:d/enemyV;if(t>=stop){t=stop;paint(t);chart(t);finish();return}paint(t);chart(t);raf=requestAnimationFrame(tick)}
+$("go").addEventListener("click",()=>{cancelAnimationFrame(raf);read();playing=true;t=0;$("go").disabled=true;$("impact").classList.remove("on");$("result").textContent="👻 と 🪨 が近づいている！ グラフが交わる場所を見よう。";previous=performance.now();raf=requestAnimationFrame(tick)});
+$("reset").addEventListener("click",()=>{playing=false;cancelAnimationFrame(raf);$("go").disabled=false;$("go").textContent="🪨 石を発射して実験！";$("impact").classList.remove("on");read();$("result").textContent="条件を変えて、🎯 に石を命中させよう。"});
+for(const id of ["speed","accel","prediction"])$(id).addEventListener("input",()=>{if(!playing)read()});
+load();
 })();
 </script></body></html>
