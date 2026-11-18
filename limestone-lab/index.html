@@ -59,7 +59,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:4px solid var(-
 }
 .start-btn:active,.big-btn:active{transform:translateY(4px);box-shadow:0 2px #c7952b,0 0 0 3px #fff inset}
 .safety-note{font-size:10px;color:#466875;line-height:1.45;margin:11px auto 0;max-width:350px}
-.play-screen{padding:10px 10px 112px;min-height:calc(100dvh - 124px)}
+.play-screen{padding:10px 10px 112px;height:calc(100dvh - 124px);min-height:0;overflow:hidden}
 .mission{
   background:#fff;border-radius:18px;padding:10px 12px;box-shadow:0 4px rgba(26,93,115,.16);
   display:grid;grid-template-columns:auto 1fr;gap:9px;align-items:center
@@ -69,7 +69,7 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:4px solid var(-
 .mission h2{font-size:16px;line-height:1.25;margin:0 0 3px;color:#0a5d7d}
 .mission p{font-size:11px;line-height:1.45;margin:0;color:#456c78;font-weight:700}
 .lab{
-  position:relative;height:calc(100dvh - 390px);min-height:245px;max-height:430px;margin:8px 0;
+  position:relative;height:calc(100dvh - 430px);min-height:170px;max-height:340px;margin:6px 0;
   border-radius:24px;background:linear-gradient(#b9edf8 0 58%,#d9c89c 58% 100%);overflow:hidden;
   box-shadow:inset 0 0 0 3px #ffffff99
 }
@@ -104,9 +104,10 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:4px solid var(-
 .cloud-meter .row{display:flex;justify-content:space-between;font-size:9px;font-weight:900}
 .track{height:10px;border-radius:99px;background:#d9ebef;overflow:hidden;margin-top:4px;border:2px solid #fff}
 .track span{display:block;height:100%;width:0;background:linear-gradient(90deg,#71c7df,#fff);transition:width .16s}
+.status-panel{margin-top:7px}
 .reaction{
-  background:#fff;border-radius:18px;padding:9px 12px;min-height:54px;display:flex;align-items:center;gap:8px;
-  box-shadow:0 3px rgba(26,93,115,.14);font-size:12px;font-weight:900;line-height:1.35;color:#285d6f
+  background:#fff;border-radius:14px;padding:7px 10px;min-height:40px;display:flex;align-items:center;gap:7px;
+  box-shadow:0 3px rgba(26,93,115,.14);font-size:11px;font-weight:900;line-height:1.28;color:#285d6f
 }
 .reaction.good{background:#e4f8e8;color:#26633b}.reaction.warn{background:#fff3cf;color:#805a13}
 .controls{
@@ -121,20 +122,20 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:4px solid var(-
 .pump-btn.active{background:var(--yellow);transform:translateY(2px)}
 .observe-btn{background:var(--red);color:#fff;font-size:15px}
 .reset-btn{grid-column:1/-1;min-height:38px;background:#ffffff33;color:#fff;box-shadow:none;font-size:12px}
-.discovery{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.discovery{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
 .discovery-card{
-  min-width:0;min-height:58px;border-radius:16px;padding:8px 9px;
+  min-width:0;min-height:46px;border-radius:14px;padding:6px 7px;
   background:#edf7fa;border:2px solid #cfe5eb;color:#57727b;
-  display:grid;grid-template-columns:34px 1fr;gap:7px;align-items:center;
+  display:grid;grid-template-columns:28px 1fr;gap:6px;align-items:center;
   box-shadow:0 3px rgba(26,93,115,.10);transition:.2s ease
 }
 .discovery-card .mark{
-  width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
-  background:#d8e9ee;font-size:17px;filter:grayscale(.6);opacity:.7
+  width:28px;height:28px;border-radius:50%;display:grid;place-items:center;
+  background:#d8e9ee;font-size:14px;filter:grayscale(.6);opacity:.7
 }
 .discovery-card .copy{min-width:0}
-.discovery-card .eyebrow{display:block;font-size:8px;line-height:1.1;font-weight:1000;letter-spacing:.08em;color:#77909a}
-.discovery-card strong{display:block;margin-top:2px;font-size:11px;line-height:1.25;font-weight:1000;overflow-wrap:anywhere}
+.discovery-card .eyebrow{display:block;font-size:7px;line-height:1.05;font-weight:1000;letter-spacing:.07em;color:#77909a}
+.discovery-card strong{display:block;margin-top:1px;font-size:10px;line-height:1.15;font-weight:1000;overflow-wrap:anywhere}
 .discovery-card.got{
   background:#fff7c9;border-color:#ffd95a;color:#6f5212;
   box-shadow:0 3px #ddb43d,0 0 0 2px #fff inset;transform:translateY(-1px)
@@ -182,13 +183,15 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:4px solid var(-
 @keyframes float{to{transform:translateX(65px)}}
 @media(max-width:350px){
   .top{min-height:116px}.score{font-size:30px}.nextbubble{min-width:66px;height:44px}
-  .play-screen{padding-left:7px;padding-right:7px}.lab{min-height:230px}.beaker{width:166px;height:197px}
+  .play-screen{padding-left:7px;padding-right:7px}.lab{min-height:165px}.beaker{width:150px;height:158px}
   .co2-tank{width:62px;height:108px}.cloud-meter{left:82px}.shisa-face{font-size:40px}
 }
 @media(max-height:650px){
   .top{min-height:110px;padding-top:calc(6px + env(safe-area-inset-top,0px))}.score{font-size:29px}
   .progress-row{margin-top:5px}.play-screen{padding-top:6px}.mission{padding:7px 9px}.mission p{display:none}
-  .lab{height:calc(100dvh - 330px);min-height:205px;margin:5px 0}.reaction{min-height:43px;padding:7px 9px}
+  .lab{height:calc(100dvh - 405px);min-height:155px;margin:4px 0}.reaction{min-height:36px;padding:5px 8px;font-size:10px}
+  .status-panel{margin-top:4px}.discovery{gap:4px;margin-top:4px}.discovery-card{min-height:40px;padding:4px 6px}.discovery-card .mark{width:24px;height:24px;font-size:12px}.discovery-card{grid-template-columns:24px 1fr}.discovery-card strong{font-size:9px}.discovery-card .eyebrow{font-size:6px}
+  .beaker{width:142px;height:148px}.co2-tank{width:56px;height:92px}.hose{left:62px;bottom:66px;width:78px;height:58px}.cloud-meter{left:72px;top:8px;padding:5px 6px}
   .pump-btn,.observe-btn{min-height:57px}.title-screen{padding-top:16px}.shisa-big{font-size:76px}
 }
 @media(orientation:landscape) and (max-height:500px){
@@ -397,6 +400,21 @@ function App(){
         </div>
       </div>
 
+      <div className="status-panel">
+        <div className={"reaction "+reactionKind}>{reaction}</div>
+        <div className="discovery" aria-label="発見コレクション">
+          <div className={"discovery-card "+(foundCloud?"got":"")}>
+            <span className="mark">{foundCloud?"✓":"1"}</span>
+            <span className="copy"><span className="eyebrow">{foundCloud?"発見した！":"発見 1"}</span><strong>白くにごる</strong></span>
+          </div>
+          <div className={"discovery-card "+(foundClear?"got":"")}>
+            <span className="mark">{foundClear?"✓":"2"}</span>
+            <span className="copy"><span className="eyebrow">{foundClear?"発見した！":"発見 2"}</span><strong>入れすぎると透明へ</strong></span>
+          </div>
+          {foundCloud&&foundClear&&<div className="discovery-complete" role="status"><span className="spark">✨</span><span>2つの発見 コンプリート！</span><span className="spark">✨</span></div>}
+        </div>
+      </div>
+
       <div className="lab">
         <div className="cloud"></div><div className="coral-bg">🪸🐚</div>
         <div className="cloud-meter"><div className="row"><span>白いにごり</span><b>{Math.round(cloud*100)}%</b></div><div className="track"><span style={{width:(cloud*100)+"%"}}></span></div></div>
@@ -409,19 +427,6 @@ function App(){
             {pumping&&bubbles.map((b,i)=><i key={i+"-"+bubbleSeed} className="bubble" style={{"--x":b.x+"%","--t":b.t+"s"}}></i>)}
           </div>
         </div>
-      </div>
-
-      <div className={"reaction "+reactionKind}>{reaction}</div>
-      <div className="discovery" aria-label="発見コレクション">
-        <div className={"discovery-card "+(foundCloud?"got":"")}>
-          <span className="mark">{foundCloud?"✓":"1"}</span>
-          <span className="copy"><span className="eyebrow">{foundCloud?"発見した！":"発見 1"}</span><strong>白くにごる</strong></span>
-        </div>
-        <div className={"discovery-card "+(foundClear?"got":"")}>
-          <span className="mark">{foundClear?"✓":"2"}</span>
-          <span className="copy"><span className="eyebrow">{foundClear?"発見した！":"発見 2"}</span><strong>入れすぎると透明へ</strong></span>
-        </div>
-        {foundCloud&&foundClear&&<div className="discovery-complete" role="status"><span className="spark">✨</span><span>2つの発見 コンプリート！</span><span className="spark">✨</span></div>}
       </div>
 
       {foundCloud&&foundClear&&<div style={{marginTop:"8px",textAlign:"center"}}><button className="big-btn" onClick={goBridge}>沖縄の石灰岩へ！</button></div>}
