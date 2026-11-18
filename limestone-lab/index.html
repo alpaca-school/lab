@@ -202,7 +202,14 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:4px solid var(-
   min-height:65px;border-radius:20px;background:#fff;color:#0a6688;font-size:12px;font-weight:1000;
   display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;box-shadow:0 4px #063c52
 }
-.observe-btn{background:var(--red);color:#fff;font-size:15px}
+.observe-btn{
+  background:var(--red);color:#fff;font-size:15px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:2px;padding:7px 8px
+}
+.observe-btn .observe-main{font-size:15px;line-height:1.05}
+.observe-btn .observe-sub{font-size:8px;line-height:1.1;opacity:.92}
+.observe-btn.ready{background:#e85a43;animation:observePulse .85s ease-in-out infinite}
+@keyframes observePulse{50%{transform:translateY(-1px) scale(1.025);box-shadow:0 5px #063c52,0 0 0 4px #ffd95a88}}
 .reset-btn{grid-column:1/-1;min-height:38px;background:#ffffff33;color:#fff;box-shadow:none;font-size:12px}
 .discovery{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
 .discovery-card{
@@ -568,7 +575,10 @@ function App(){
         ? <div className="complete-actions"><button className="big-btn" onClick={goBridge}>🪨 沖縄の石灰岩へ！</button></div>
         : <div className="controls instrument-controls">
             <div className="instrument-guide">👆 ボトルの赤いバルブを長押し</div>
-            <button className="observe-btn" onClick={observe}>👀 ここだ！</button>
+            <button className={"observe-btn "+((dose>=28&&dose<=68)||(dose>=86)?"ready":"")} onClick={observe}>
+  <span className="observe-main">👀 観察する！</span>
+  <span className="observe-sub">{(dose>=28&&dose<=68)?"今、白さをチェック":dose>=86?"今、透明さをチェック":"変化したら押そう"}</span>
+</button>
             <button className="reset-btn" onClick={resetTrial}>↩ 石灰水だけ最初に戻す（発見は残る）</button>
           </div>}
     </section>
