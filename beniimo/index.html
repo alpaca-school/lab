@@ -150,7 +150,7 @@ button{font:inherit;border:0;cursor:pointer}
   <div class="titleBot"><div class="how">☀️ 光 ＋ 💧 水 ＋ ☁️ 二酸化炭素<br>3つを使って、紅芋の葉は <b>🫧酸素</b> をつくる！<br><span>このはたらきを「光合成」というよ。</span><br>ボタンを押して材料を届けよう！</div><button id="play" class="play">スタート！</button><div id="titleBest" class="bestLine">BEST 0000 O₂</div></div>
  </section>
 
- <section id="finish" class="modal"><div class="card"><h2>けんきゅう おわり！</h2><div id="finalScore" class="bigScore">0</div><div>O₂</div><div id="rank" class="rank">🌱 けんきゅういん</div><p id="resultText">3つをバランスよく届けよう！</p><button id="retry" class="retry">もういちど！</button></div></section>
+ <section id="finish" class="modal"><div class="card"><h2>けんきゅう おわり！</h2><div id="finalScore" class="bigScore">0</div><div>O₂</div><div id="rank" class="rank">🌱 けんきゅういん</div><p id="resultText" style="white-space:pre-line;overflow-wrap:anywhere">3つをバランスよく届けよう！</p><button id="retry" class="retry">もういちど！</button></div></section>
 </div>
 <script>
 (()=>{
@@ -314,7 +314,7 @@ function tryFullscreen(){
  if(el.requestFullscreen){try{const p=el.requestFullscreen({navigationUI:'hide'});if(p?.catch)p.catch(()=>{})}catch(e){}}
 }
 async function start(){stopBgm();const audioOk=await unlockAudio(true);if(audioOk)sfx('start');S.light=.44;S.water=.44;S.co2=.44;S.score=0;S.level=1;S.maxReached=false;S.time=60;S.running=true;S.last=performance.now();S.lastBubble=S.last;S.lastTick=S.last;S.lastRush=0;$('#wildlife').innerHTML='';$('#title').style.display='none';$('#finish').classList.remove('show');updateHUD();updateNeed();startBgm();requestAnimationFrame(loop)}
-function finish(){S.running=false;cancelAnimationFrame(S.raf);stopBgm();sfx('clear');$('#finalScore').textContent=Math.floor(S.score);let r='🌱 けんきゅういん',t='3つをバランスよく届けると、もっとO₂が増えるよ！';if(S.score>=330){r='👑 べにいもマスター';t='MAX達成！ 光・水・CO₂をそろえて、読谷の紅芋を大きく育てた！'}else if(S.score>=260){r='🍠🍠 大収穫！';t='紅芋がたくさん育った！ あと少しでMAX！'}else if(S.score>=150){r='🍠 べにいもエース';t='足りない材料をすばやく見つけて、土の中の紅芋を育てた！'}else if(S.score>=80){r='🪴 O₂名人';t='光合成のコツがわかってきた！'}$('#rank').textContent=r;$('#resultText').textContent=t;$('#finish').classList.add('show')}
+function finish(){S.running=false;cancelAnimationFrame(S.raf);stopBgm();sfx('clear');$('#finalScore').textContent=Math.floor(S.score);let r='🌱 けんきゅういん',t='3つをバランスよく届けると、\nもっとO₂が増えるよ！';if(S.score>=330){r='👑 べにいもマスター';t='MAX達成！\n光・水・CO₂をそろえて、読谷の紅芋を大きく育てた！'}else if(S.score>=260){r='🍠🍠 大収穫！';t='紅芋がたくさん育った！\nあと少しでMAX！'}else if(S.score>=150){r='🍠 べにいもエース';t='足りない材料をすばやく見つけて、\n土の中の紅芋を育てた！'}else if(S.score>=80){r='🪴 O₂名人';t='光合成のコツがわかってきた！'}$('#rank').textContent=r;$('#resultText').textContent=t;$('#finish').classList.add('show')}
 ['gesturestart','gesturechange','gestureend'].forEach(type=>document.addEventListener(type,e=>e.preventDefault(),{passive:false}));
 document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
 let lastTouchEnd=0;
