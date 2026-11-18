@@ -115,6 +115,17 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:4px solid var(-
   padding:8px 10px calc(10px + var(--safe));background:linear-gradient(180deg,#0c6f92ee,#07516fee);
   border-top:3px solid #ffffff77;display:grid;grid-template-columns:1.25fr .75fr;gap:8px
 }
+.complete-actions{
+  position:fixed;z-index:60;left:50%;transform:translateX(-50%);bottom:0;width:min(100vw,480px);
+  padding:10px 12px calc(12px + var(--safe));
+  background:linear-gradient(180deg,#fff7cfef,#ffd95af5);
+  border-top:3px solid #fff;box-shadow:0 -6px 18px rgba(31,88,108,.20)
+}
+.complete-actions .big-btn{
+  max-width:none;min-height:58px;font-size:18px;
+  animation:completeCta 1.2s ease-in-out infinite
+}
+@keyframes completeCta{50%{transform:translateY(-2px) scale(1.015)}}
 .pump-btn,.observe-btn,.reset-btn{
   min-height:65px;border:0;border-radius:20px;font-weight:1000;box-shadow:0 4px #063c52;
 }
@@ -429,13 +440,13 @@ function App(){
         </div>
       </div>
 
-      {foundCloud&&foundClear&&<div style={{marginTop:"8px",textAlign:"center"}}><button className="big-btn" onClick={goBridge}>沖縄の石灰岩へ！</button></div>}
-
-      <div className="controls">
-        <button className={"pump-btn "+(pumping?"active":"")} onPointerDown={startPump} onPointerUp={stopPump} onPointerCancel={stopPump} onPointerLeave={stopPump}>☁️ 押してる間 CO₂</button>
-        <button className="observe-btn" onClick={observe}>👀 ここだ！</button>
-        <button className="reset-btn" onClick={resetTrial}>↩ 石灰水だけ最初に戻す（発見は残る）</button>
-      </div>
+      {foundCloud&&foundClear
+        ? <div className="complete-actions"><button className="big-btn" onClick={goBridge}>🪨 沖縄の石灰岩へ！</button></div>
+        : <div className="controls">
+            <button className={"pump-btn "+(pumping?"active":"")} onPointerDown={startPump} onPointerUp={stopPump} onPointerCancel={stopPump} onPointerLeave={stopPump}>☁️ 押してる間 CO₂</button>
+            <button className="observe-btn" onClick={observe}>👀 ここだ！</button>
+            <button className="reset-btn" onClick={resetTrial}>↩ 石灰水だけ最初に戻す（発見は残る）</button>
+          </div>}
     </section>
 
     <section className={"screen bridge-screen "+(screen==="bridge"?"active":"")}>
