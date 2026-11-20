@@ -190,7 +190,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 (()=>{
 const $=s=>document.querySelector(s);
 const thresholds=[0,30,80,150,260],maxTarget=330,icons=['🌱','🌿','🍃','🍠','🍠🍠'];
-const S={light:.45,water:.45,co2:.45,score:0,best:0,level:1,maxReached:false,running:false,time:60,last:0,lastBubble:0,lastTick:0,lastRush:0,highSince:null,muted:false,audio:null,master:null,bgmGain:null,bgmTimer:null,bgmStep:0,soundReady:false,needsAudioReset:false,raf:0,guideActive:false,guideStep:0,guideTimer:0,countdownTimer:0};
+const S={light:0,water:0,co2:0,score:0,best:0,level:1,maxReached:false,running:false,time:60,last:0,lastBubble:0,lastTick:0,lastRush:0,highSince:null,muted:false,audio:null,master:null,bgmGain:null,bgmTimer:null,bgmStep:0,soundReady:false,needsAudioReset:false,raf:0,guideActive:false,guideStep:0,guideTimer:0,countdownTimer:0};
 const guideSteps=[
  {k:'light',title:'☀️ 「ひかり！」を押してみよう',text:'太陽が大きく、明るくなるよ。'},
  {k:'water',title:'💧 「みず！」を押してみよう',text:'水滴が土へ降って、土がうるおうよ。'},
@@ -245,6 +245,8 @@ function sfx(k){
  }
  if(k==='level'){[523,659,784,1047].forEach((f,i)=>tone(f,.16,.055,'triangle',i*.075))}
  if(k==='start'){tone(660,.12,.075,'triangle');tone(990,.18,.06,'sine',.09)}
+ if(k==='countdown'){tone(520,.11,.06,'triangle');tone(260,.11,.018,'sine')}
+ if(k==='countdownGo'){tone(880,.14,.075,'triangle');tone(1320,.22,.055,'sine',.07)}
  if(k==='clear'){[659,784,988,1175,1568].forEach((f,i)=>tone(f,.38,.06,'triangle',i*.085));[523,659,784,1047].forEach((f,i)=>tone(f,.75,.032,'sine',.48+i*.025))}
 }
 function fmt(n){return String(Math.floor(n)).padStart(4,'0')}
@@ -307,7 +309,7 @@ function updateNeed(){
  $('#soilMoisture').style.setProperty('--moisture',(.08+S.water*.72).toFixed(2));
 
  // CO2：葉のまわりへ届く様子を供給量に応じて見せる
- $('#co2Stream').style.opacity=(.12+S.co2*.68).toFixed(2);
+ $('#co2Stream').style.opacity=S.co2<=.001?'0':(.18+S.co2*.72).toFixed(2);
 
  const p=power(),st=$('#statusPill');
  if(p>.83)st.innerHTML='🌿 <b>3つそろった！</b> 葉で養分をつくり、酸素も出ているよ！';
@@ -362,17 +364,19 @@ function showGuideStep(){
 }
 function beginGuide(){
  clearTimeout(S.guideTimer);S.running=false;S.guideActive=true;S.guideStep=0;
+ S.light=0;S.water=0;S.co2=0;S.score=0;S.level=1;S.maxReached=false;
+ updateHUD();updateNeed();
  $('#timer').textContent='🧪 まずは練習';$('#statusPill').style.visibility='hidden';
  $('#guide').classList.add('show');showGuideStep();
 }
 function startRun(){
  clearTimeout(S.guideTimer);clearTimeout(S.countdownTimer);S.guideActive=false;clearGuideTarget();$('#guide').classList.remove('show');$('#countdown').classList.remove('show');$('#statusPill').style.visibility='';
- S.light=.44;S.water=.44;S.co2=.44;S.score=0;S.level=1;S.maxReached=false;S.time=60;$('#timer').textContent='⏱ あと 60 秒';
+ S.light=0;S.water=0;S.co2=0;S.score=0;S.level=1;S.maxReached=false;S.time=60;$('#timer').textContent='⏱ あと 60 秒';
  S.running=true;S.last=performance.now();S.lastBubble=S.last;S.lastTick=S.last;S.lastRush=0;$('#wildlife').innerHTML='';
  updateHUD();updateNeed();startBgm();S.raf=requestAnimationFrame(loop);
 }
 function showCountdownValue(value,isStart=false){
- const el=$('#countdownNumber');el.textContent=value;el.classList.toggle('start',isStart);el.style.animation='none';void el.offsetWidth;el.style.animation='';
+ const el=$('#countdownNumber');el.textContent=value;el.classList.toggle('start',isStart);el.style.animation='none';void el.offsetWidth;el.style.animation='';sfx(isStart?'countdownGo':'countdown');
 }
 function beginCountdown(){
  clearTimeout(S.guideTimer);clearTimeout(S.countdownTimer);S.running=false;S.guideActive=false;clearGuideTarget();$('#guide').classList.remove('show');
@@ -388,7 +392,7 @@ function finishGuide(){
 }
 async function start(){
  stopBgm();clearTimeout(S.guideTimer);clearTimeout(S.countdownTimer);$('#countdown').classList.remove('show');const audioOk=await unlockAudio(true);if(audioOk)sfx('start');
- S.light=.44;S.water=.44;S.co2=.44;S.score=0;S.level=1;S.maxReached=false;S.time=60;
+ S.light=0;S.water=0;S.co2=0;S.score=0;S.level=1;S.maxReached=false;S.time=60;
  $('#lesson').classList.remove('show');$('#quizFeedback').textContent='';$('#wildlife').innerHTML='';$('#title').style.display='none';$('#finish').classList.remove('show');
  updateHUD();updateNeed();beginGuide();
 }
