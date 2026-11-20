@@ -367,6 +367,7 @@ function beginGuide(){
  S.light=0;S.water=0;S.co2=0;S.score=0;S.level=1;S.maxReached=false;
  updateHUD();updateNeed();
  $('#timer').textContent='🧪 まずは練習';$('#statusPill').style.visibility='hidden';
+ $('#guideSkip').textContent='ガイドをとばす';
  $('#guide').classList.add('show');showGuideStep();
 }
 function startRun(){
@@ -386,9 +387,12 @@ function beginCountdown(){
  step();
 }
 function finishGuide(){
- S.guideActive=false;clearGuideTarget();$('#guideBadge').textContent='✓';
- $('#guideTitle').textContent='準備OK！';$('#guideText').textContent='3つの様子を見ながら、60秒チャレンジ！';
- S.guideTimer=setTimeout(beginCountdown,700);
+ S.guideStep=guideSteps.length;S.guideActive=true;clearGuideTarget();
+ const guide=$('#guide');guide.classList.remove('target-light','target-water','target-co2');
+ $('#guideBadge').textContent='自由練習';
+ $('#guideTitle').textContent='☀️💧☁️ 自由に試してみよう';
+ $('#guideText').textContent='3つのボタンを何度でも押して、変化を見てみよう。準備ができたら「ゲームへ進む」！';
+ $('#guideSkip').textContent='ゲームへ進む';
 }
 async function start(){
  stopBgm();clearTimeout(S.guideTimer);clearTimeout(S.countdownTimer);$('#countdown').classList.remove('show');const audioOk=await unlockAudio(true);if(audioOk)sfx('start');
@@ -404,6 +408,7 @@ function finish(){S.running=false;cancelAnimationFrame(S.raf);stopBgm();sfx('cle
 document.querySelectorAll('.btn').forEach(btn=>{const act=async e=>{
  await unlockAudio(S.needsAudioReset);
  if(S.guideActive){
+  if(S.guideStep>=guideSteps.length){feed(btn.dataset.k,btn);return}
   const step=guideSteps[S.guideStep];if(!step||btn.dataset.k!==step.k)return;
   feed(btn.dataset.k,btn);S.guideStep++;
   if(S.guideStep>=guideSteps.length){finishGuide()}else{S.guideTimer=setTimeout(showGuideStep,350)}
@@ -411,7 +416,7 @@ document.querySelectorAll('.btn').forEach(btn=>{const act=async e=>{
  }
  if(!S.running)return;feed(btn.dataset.k,btn)
 };btn.addEventListener('click',act)});
-$('#guideSkip').addEventListener('click',()=>{if(S.guideActive)beginCountdown()});
+$('#guideSkip').addEventListener('click',()=>{if(!S.guideActive)return;if(S.guideStep>=guideSteps.length)beginCountdown();else beginCountdown()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){S.needsAudioReset=true;stopBgm()}else setPlaybackSession(true)});
 window.addEventListener('pageshow',()=>{setPlaybackSession(true);S.needsAudioReset=true});
 $('#learn').addEventListener('click',()=>{$('#finish').classList.remove('show');$('#lesson').classList.add('show')});$('#backResult').addEventListener('click',()=>{$('#lesson').classList.remove('show');$('#finish').classList.add('show')});$('#retryFromLesson').addEventListener('click',start);document.querySelectorAll('.quizChoice').forEach(b=>b.addEventListener('click',()=>{$('#quizFeedback').innerHTML=b.dataset.answer==='b'?'🎉 <ruby>正解<rt>せいかい</rt></ruby>！ <ruby>二酸化炭素<rt>にさんかたんそ</rt></ruby>が<ruby>不足<rt>ふそく</rt></ruby>すると、ほかの<ruby>条件<rt>じょうけん</rt></ruby>が<ruby>十分<rt>じゅうぶん</rt></ruby>でも<ruby>光合成<rt>こうごうせい</rt></ruby>の<ruby>速<rt>はや</rt></ruby>さが<ruby>制限<rt>せいげん</rt></ruby>されることがあるよ。':'おしい！ <ruby>正解<rt>せいかい</rt></ruby>はB。<ruby>材料<rt>ざいりょう</rt></ruby>の一つが<ruby>不足<rt>ふそく</rt></ruby>すると、<ruby>光合成<rt>こうごうせい</rt></ruby>の<ruby>速<rt>はや</rt></ruby>さが<ruby>制限<rt>せいげん</rt></ruby>されることがあるよ。'}));$('#play').addEventListener('click',start);$('#retry').addEventListener('click',start);$('#mute').addEventListener('click',async e=>{S.muted=!S.muted;e.currentTarget.textContent=S.muted?'🔇':'🔊';if(S.muted){stopBgm()}else{const ok=await unlockAudio(true);if(ok){sfx('start');if(S.running)startBgm()}}});
