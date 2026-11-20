@@ -134,10 +134,10 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
    <div class="roadInner">
     <div class="evoTrack"><span id="growthBar"></span></div>
     <span class="roadStop reached current" data-road="0" style="left:0%">🌱</span>
-    <span class="roadStop next" data-road="1" style="left:9.09%">🌿</span>
-    <span class="roadStop" data-road="2" style="left:24.24%">🍃</span>
-    <span class="roadStop" data-road="3" style="left:45.45%">🍠</span>
-    <span class="roadStop" data-road="4" style="left:78.79%">🍠🍠</span>
+    <span class="roadStop next" data-road="1" style="left:20%">🌿</span>
+    <span class="roadStop" data-road="2" style="left:40%">🍃</span>
+    <span class="roadStop" data-road="3" style="left:60%">🍠</span>
+    <span class="roadStop" data-road="4" style="left:80%">🍠🍠</span>
     <span class="roadStop" data-road="5" style="left:100%">👑</span>
    </div>
   </div>
@@ -262,6 +262,15 @@ function fmt(n){return String(Math.floor(n)).padStart(4,'0')}
 function calcLevel(score){let l=1;for(let i=1;i<thresholds.length;i++)if(score>=thresholds[i])l=i+1;return l}
 function nextTarget(){return thresholds[Math.min(S.level,thresholds.length-1)]}
 function grow01(v){return Math.max(0,Math.min(1,v))}
+function roadProgress(score){
+ if(score<=roadScores[0])return 0;
+ const last=roadScores.length-1;
+ if(score>=roadScores[last])return 100;
+ let seg=0;
+ for(let i=0;i<last;i++){if(score>=roadScores[i]&&score<roadScores[i+1]){seg=i;break}}
+ const start=roadScores[seg],end=roadScores[seg+1],local=(score-start)/(end-start);
+ return ((seg+local)/last)*100;
+}
 function updateGrowthVisual(){
  const g=grow01(S.score/260);
  const leaves=[...document.querySelectorAll('#plant .leaf')];
@@ -283,7 +292,7 @@ function updateGrowthVisual(){
  });
 }
 function updateHUD(){
- $('#score').textContent=fmt(S.score);$('#best').textContent='BEST '+fmt(S.best);$('#titleBest').textContent='BEST '+fmt(S.best);$('#growthBar').style.width=Math.min(100,S.score/maxTarget*100)+'%';
+ $('#score').textContent=fmt(S.score);$('#best').textContent='BEST '+fmt(S.best);$('#titleBest').textContent='BEST '+fmt(S.best);$('#growthBar').style.width=roadProgress(S.score)+'%';
  const nl=calcLevel(S.score);if(nl>S.level){S.level=nl;levelUp()}else S.level=nl;
  $('#plant').className='plantWrap lv'+S.level;$('#soilCrop').className='soilCrop lv'+S.level;updateGrowthVisual();
 
