@@ -15,13 +15,81 @@ const quizzes=[
 ];
 let food=null,stage=0,count=0,q=0,score=0,locked=false,introLockUntil=0,finalExitTimer=null;
 const root=document.getElementById("app");
+
+let audioCtx=null,bgmTimer=null,bgmStep=0,soundMuted=false;
+const bgmMelody=[261.63,329.63,392.00,329.63,293.66,349.23,440.00,349.23];
+const bgmBass=[130.81,146.83,174.61,146.83];
+
+function ensureAudio(){
+ try{
+   if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+   if(audioCtx.state==="suspended")audioCtx.resume();
+   return audioCtx;
+ }catch(e){console.warn("Audio unavailable",e);return null}
+}
+function tone(freq,when,dur,type="triangle",vol=.025){
+ const ctx=audioCtx;if(!ctx||soundMuted)return;
+ try{
+   const osc=ctx.createOscillator(),gain=ctx.createGain();
+   osc.type=type;osc.frequency.setValueAtTime(freq,when);
+   gain.gain.setValueAtTime(.0001,when);
+   gain.gain.exponentialRampToValueAtTime(vol,when+.02);
+   gain.gain.exponentialRampToValueAtTime(.0001,when+dur);
+   osc.connect(gain);gain.connect(ctx.destination);
+   osc.start(when);osc.stop(when+dur+.03);
+ }catch(e){}
+}
+function scheduleBgm(){
+ const ctx=ensureAudio();if(!ctx||soundMuted)return;
+ const start=ctx.currentTime+.05;
+ for(let i=0;i<8;i++){
+   const n=bgmMelody[(bgmStep+i)%bgmMelody.length];
+   tone(n,start+i*.24,.20,i%3===0?"sine":"triangle",.018);
+   if(i%2===0)tone(n*2,start+i*.24+.04,.12,"sine",.007);
+ }
+ for(let i=0;i<4;i++){
+   const b=bgmBass[(Math.floor(bgmStep/2)+i)%bgmBass.length];
+   tone(b,start+i*.48,.38,"sine",.013);
+ }
+ bgmStep=(bgmStep+1)%bgmMelody.length;
+}
+function startBgm(){
+ if(soundMuted)return;
+ ensureAudio();
+ if(bgmTimer)return;
+ scheduleBgm();
+ bgmTimer=setInterval(scheduleBgm,1880);
+}
+function stopBgm(){
+ if(bgmTimer){clearInterval(bgmTimer);bgmTimer=null}
+}
+function setMuted(v){
+ soundMuted=!!v;
+ const btn=document.getElementById("soundToggle");
+ if(btn){
+   btn.textContent=soundMuted?"🔇 BGM":"🔊 BGM";
+   btn.setAttribute("aria-pressed",String(soundMuted));
+   btn.setAttribute("aria-label",soundMuted?"BGMをつける":"BGMを消す");
+ }
+ if(soundMuted)stopBgm();else startBgm();
+}
+function actionSound(si){
+ const ctx=ensureAudio();if(!ctx||soundMuted)return;
+ const now=ctx.currentTime+.01;
+ const roots=[523.25,392,329.63,659.25,587.33,261.63];
+ const f=roots[si]||440;
+ tone(f,now,.12,"triangle",.045);
+ tone(f*1.25,now+.07,.14,"sine",.025);
+}
+const soundToggle=document.getElementById("soundToggle");
+if(soundToggle)soundToggle.addEventListener("click",()=>{ensureAudio();setMuted(!soundMuted)});
 function safe(fn){try{fn()}catch(e){console.error(e);const box=document.getElementById("error");box.style.display="block";box.textContent="画面の表示でエラーが起きました。ページを再読み込みしてください。";}}
 window.addEventListener("error",e=>{console.error(e.error||e.message)});
 window.addEventListener("unhandledrejection",e=>{console.error(e.reason)});
 function renderStart(){
  root.innerHTML='<section class="stage"><div class="card hero"><h1>🍙 しょうかの たび</h1><p>食べものといっしょに、からだの中へ出発！<br>自分で動かしながら、消化の流れを観察しよう。</p><div class="foods" aria-label="食べものを選ぶ"><button class="food" data-food="🍙 おにぎり"><span>🍙</span>おにぎり</button><button class="food" data-food="🍎 りんご"><span>🍎</span>りんご</button><button class="food" data-food="🥕 にんじん"><span>🥕</span>にんじん</button></div><button id="startBtn" class="primary" disabled>食べものを選んで出発！</button><p class="note">この教材は消化の流れを学ぶために簡略化しています。実際の体の働きは、複数の器官や消化液などが協力して進みます。</p></div></section>';
  document.querySelectorAll(".food").forEach(b=>b.addEventListener("click",()=>{food=b.dataset.food;document.querySelectorAll(".food").forEach(x=>x.classList.toggle("selected",x===b));const s=document.getElementById("startBtn");s.disabled=false;s.textContent=food+" と出発！";}));
- document.getElementById("startBtn").addEventListener("click",()=>{stage=0;count=0;renderStage();});
+ document.getElementById("startBtn").addEventListener("click",()=>{startBgm();stage=0;count=0;renderStage();});
 }
 function chips(){return '<div class="topbar">'+stages.map((s,i)=>'<div class="chip '+(i<stage?'ok':i===stage?'on':'')+'"><b>'+s.icon+'</b>'+s.name+'</div>').join("")+'</div>'}
 function renderStage(){
@@ -42,7 +110,7 @@ function renderStage(){
 }
 function act(){
  if(locked)return;locked=true;
- const s=stages[stage], organ=document.getElementById("organ");
+ const s=stages[stage], organ=document.getElementById("organ"); actionSound(stage);
  if(stage===5){
    if(finalExitTimer)clearTimeout(finalExitTimer);
    finalExitTimer=setTimeout(()=>{finalExitTimer=null;locked=false;stage=6;count=0;renderQuiz()},2600);
@@ -95,7 +163,7 @@ function finishJourney(){
    }catch(e){console.error("final exit visual failed",e)}
  },900);
 }
-function renderQuiz(){q=0;score=0;renderQuestion()}
+function renderQuiz(){const ctx=ensureAudio();if(ctx&&!soundMuted){const n=ctx.currentTime+.02;[523.25,659.25,783.99,1046.5].forEach((f,i)=>tone(f,n+i*.10,.24,"triangle",.035))}q=0;score=0;renderQuestion()}
 function renderQuestion(){
  const x=quizzes[q];
  root.innerHTML='<section class="stage"><div class="card quizbox"><div class="topbar"><div class="chip on"><b>🧠</b>クイズ '+(q+1)+' / '+quizzes.length+'</div></div><p class="question">'+x.q+'</p><div class="choices">'+x.choices.map((c,i)=>'<button class="choice" data-i="'+i+'">'+c+'</button>').join("")+'</div><div id="fb" class="feedback">答えを選んでね。</div></div></section>';
