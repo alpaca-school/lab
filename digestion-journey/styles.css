@@ -52,3 +52,96 @@ a{color:inherit}.app{min-height:100dvh;display:flex;flex-direction:column;overfl
 /* v3d7: 食べもの追尾カメラ + ミニマップ */
 .organ{min-height:340px}
 @media(max-width:640px){.organ{min-height:285px}}
+
+/* v3d13: 体内ビューを主役にした大型レイアウト */
+.stage{
+  padding:56px 12px 12px;
+  align-items:stretch;
+}
+.card{
+  width:min(1120px,100%);
+  min-height:calc(100dvh - 78px);
+  padding:16px 18px;
+  display:flex;
+  flex-direction:column;
+}
+.topbar{
+  flex:0 0 auto;
+  margin-bottom:8px;
+}
+.progress{
+  flex:0 0 auto;
+  margin:6px 0 10px;
+}
+.scene{
+  flex:1;
+  min-height:0;
+  grid-template-columns:minmax(0,1.55fr) minmax(260px,.65fr);
+  gap:14px;
+  align-items:stretch;
+}
+.organ{
+  min-height:0!important;
+  height:100%;
+  min-height:58vh!important;
+}
+.info{
+  align-self:stretch;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:8px;
+  padding:4px 0;
+}
+.info h2{font-size:28px}
+.info .lead{font-size:16px;line-height:1.5;margin:0}
+.task{margin:4px 0;padding:10px}
+.fact{padding:9px 10px;line-height:1.45}
+.actions{margin-top:6px}
+
+@media(max-width:760px){
+  .stage{padding:50px 6px 6px}
+  .card{
+    min-height:calc(100dvh - 58px);
+    padding:10px;
+    border-radius:18px;
+  }
+  .topbar{gap:4px;margin-bottom:4px}
+  .chip{min-width:54px;padding:4px 2px;font-size:10px}
+  .chip b{font-size:17px}
+  .progress{height:8px;margin:4px 0 8px}
+  .scene{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    min-height:0;
+  }
+  .organ{
+    flex:1 1 auto;
+    min-height:48vh!important;
+    height:52vh!important;
+    border-radius:18px;
+  }
+  .info{
+    flex:0 0 auto;
+    gap:4px;
+    padding:0;
+  }
+  .info h2{font-size:22px;margin:0}
+  .info .lead{font-size:14px;line-height:1.35;margin:0}
+  .task{font-size:14px;padding:7px 9px;margin:2px 0}
+  .fact{font-size:12px;padding:7px 9px;line-height:1.35}
+  .actions{
+    flex-direction:row;
+    gap:6px;
+    margin-top:4px;
+  }
+  .actions .primary{font-size:17px;padding:11px 12px}
+  .secondary{padding:10px 12px;font-size:13px}
+  .three-badge{font-size:10px;right:7px;bottom:6px}
+}
+@media(max-width:430px){
+  .organ{min-height:50vh!important;height:50vh!important}
+  .info .lead{display:none}
+  .fact{max-height:72px;overflow:auto}
+}
