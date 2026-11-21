@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#6a3f2d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>喜名番所 おしごと大作戦！</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:#2b211b}
+body{font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",system-ui,sans-serif;color:#fff}
+button{font:inherit;border:0;cursor:pointer}
+.app{position:relative;width:min(100vw,calc(100dvh*.62));height:100dvh;margin:auto;overflow:hidden;background:linear-gradient(#87c9d4 0%,#cfe1c6 45%,#d9bb82 72%,#b68a55 100%);user-select:none;touch-action:none}
+
+/* HUD */
+.hud{position:absolute;z-index:30;left:0;right:0;top:0;height:145px;padding:8px 12px 0;background:#7a4630}
+.wave{position:absolute;left:0;right:0;top:144px;height:12px;background:radial-gradient(circle at 12px 0,#7a4630 11px,transparent 12px) repeat-x;background-size:24px 12px}
+.row1{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.lbl{font-size:10px;font-weight:900;letter-spacing:.1em;opacity:.9}
+.score{font-size:36px;line-height:1;color:#ffe16d;font-weight:900;text-shadow:0 3px #4e291d;font-variant-numeric:tabular-nums}
+.best{font-size:11px;font-weight:800;margin-top:2px}
+.nextWrap{display:flex;align-items:center;gap:6px}
+.soundBtn{width:34px;height:34px;border-radius:50%;background:#fff;color:#5b4332;font-size:17px;font-weight:900;box-shadow:0 3px #4e291d}
+.nextBubble{width:58px;height:58px;border-radius:50%;background:#fff;color:#594334;display:grid;place-items:center;box-shadow:0 3px #4e291d;position:relative}
+.nextBubble::after{content:"";position:absolute;left:-4px;bottom:6px;border:8px solid transparent;border-right-color:#fff;border-left:0;transform:rotate(-20deg)}
+.nextFace{font-size:30px;animation:bob 1.5s ease-in-out infinite}
+.evo{display:flex;gap:4px;align-items:center;margin-top:6px;padding:4px 6px;background:rgba(0,0,0,.18);border-radius:14px}
+.tier{flex:1;text-align:center;font-size:8px;font-weight:900;opacity:.32;transition:.25s;min-width:0}
+.tier span{display:block;font-size:17px;line-height:1.05}
+.tier.on{opacity:1;transform:translateY(-1px)}
+.tier.now{background:#ffffff1f;border-radius:9px;padding:2px 0}
+.goalRow{display:flex;align-items:center;gap:7px;margin-top:4px;font-size:9px;font-weight:900}
+.goalText{white-space:nowrap;color:#fff6d2}.goalBar{height:8px;flex:1;background:#ffffff24;border-radius:99px;overflow:hidden}.goalBar i{display:block;width:0;height:100%;background:#ffe16b;border-radius:99px;transition:width .25s}
+.maxBadge{font-size:9px;color:#ffe16b;white-space:nowrap}
+
+/* play field */
+.field{position:absolute;inset:157px 0 96px;overflow:hidden}
+.road{position:absolute;left:0;right:0;bottom:0;height:38%;background:#bc8f5c;clip-path:polygon(0 38%,100% 0,100% 100%,0 100%)}
+.house{position:absolute;left:50%;bottom:19%;width:56%;height:40%;transform:translateX(-50%);background:#95724f;border:5px solid #5c4736}
+.roof{position:absolute;left:50%;bottom:56%;width:72%;height:18%;transform:translateX(-50%);background:#60625b;clip-path:polygon(8% 100%,20% 20%,50% 0,80% 20%,92% 100%)}
+.door{position:absolute;left:50%;bottom:19%;width:13%;height:26%;transform:translateX(-50%);background:#49382e}
+.tree{position:absolute;bottom:31%;width:9px;height:30%;background:#614b38}.tree::before{content:"";position:absolute;left:50%;top:-7px;width:50px;height:30px;border-radius:50%;background:#52795a;transform:translateX(-50%)}.tree.a{left:6%}.tree.b{right:7%}
+.sign{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);background:#fff7de;color:#684f38;border:3px solid #7c6145;border-radius:12px;padding:5px 10px;font-size:11px;font-weight:900}
+
+.station{position:absolute;z-index:5;width:86px;height:62px;border-radius:18px;background:#fff8e6;color:#5a4331;border:3px solid #d9b35e;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;font-weight:900;box-shadow:0 4px rgba(70,45,28,.18);transition:.18s}
+.station span{font-size:25px;line-height:1}.station small{font-size:8px;color:#7b695b}.station.inn{left:3%;top:12%}.station.admin{right:3%;top:12%}.station.guide{left:3%;bottom:12%}.station.exchange{right:3%;bottom:12%}
+.station.locked{filter:grayscale(1);opacity:.35}.station.hot{animation:stationPulse .55s ease-in-out infinite alternate;box-shadow:0 0 0 5px #fff3a5,0 4px rgba(70,45,28,.18)}
+.station.served{animation:servedPop .55s cubic-bezier(.2,1.5,.4,1)}
+.house.level1{box-shadow:0 0 0 4px rgba(255,225,107,.18)}
+.house.level2{box-shadow:0 0 0 6px rgba(255,225,107,.24)}
+.house.level3{box-shadow:0 0 0 8px rgba(255,225,107,.30)}
+.house.maxed{box-shadow:0 0 0 10px rgba(255,225,107,.42);animation:houseMax 1s ease-in-out infinite alternate}
+.rushLayer{position:absolute;z-index:22;inset:0;pointer-events:none;overflow:hidden}
+.rushFace{position:absolute;font-size:24px;animation:rushFloat 1.2s ease-out forwards}
+.walker{position:absolute;z-index:18;width:48px;height:48px;border-radius:50%;background:#fff;border:3px solid #f0c95f;display:grid;place-items:center;font-size:28px;box-shadow:0 4px rgba(55,36,24,.22);pointer-events:none}
+.queueLane{position:absolute;inset:0;z-index:12;pointer-events:none}
+.queueDots{position:absolute;left:4%;bottom:7%;width:58%;height:32%;border-bottom:4px dashed rgba(102,76,48,.35);transform:rotate(-18deg);transform-origin:left bottom;pointer-events:none}
+.guest{position:absolute;width:54px;height:76px;transition:left .42s cubic-bezier(.2,.8,.25,1),top .42s cubic-bezier(.2,.8,.25,1),opacity .2s,transform .2s;pointer-events:none;filter:drop-shadow(0 3px 2px rgba(55,35,22,.22))}
+.guest .personHead{position:absolute;left:17px;top:9px;width:22px;height:22px;border-radius:50%;background:#d7a47e;border:2px solid #fff}
+.guest .personBody{position:absolute;left:13px;top:29px;width:30px;height:34px;border-radius:10px 10px 7px 7px;background:var(--shirt,#69899a);border:2px solid #fff}
+.guest .legs{position:absolute;left:17px;top:59px;width:22px;height:14px;border-left:6px solid #4c423b;border-right:6px solid #4c423b}
+.guest .prop{position:absolute;right:-5px;top:27px;width:28px;height:28px;border-radius:50%;background:#fff7d8;border:3px solid #e0b757;display:grid;place-items:center;font-size:17px}
+.guest .frontMark{display:none;position:absolute;left:50%;top:-18px;transform:translateX(-50%);white-space:nowrap;background:#ffe16b;color:#62472f;border-radius:999px;padding:3px 7px;font-size:9px;font-weight:900;box-shadow:0 2px #a97d2f}
+.guest.current .frontMark{display:block}
+.guest.current{animation:personBounce .75s ease-in-out infinite alternate}
+.guest.current .prop{box-shadow:0 0 0 4px #fff3a5}
+.patience{position:absolute;left:8px;right:8px;bottom:-6px;height:6px;border-radius:6px;background:#e7ddd0;overflow:hidden}.patience i{display:block;height:100%;width:100%;background:#67a96c;transition:width .1s,background .1s}
+.guest.bad{animation:personShake .18s linear 2}.guest.done{opacity:0;transform:scale(.6) translateY(-20px)}
+@keyframes personBounce{to{transform:translateY(-4px)}}
+@keyframes personShake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.pop{position:absolute;z-index:25;pointer-events:none;font-size:24px;font-weight:900;color:#fff;text-shadow:0 3px #6d3c2a;animation:popUp .9s ease-out forwards}
+.combo{position:absolute;z-index:20;left:50%;top:37%;transform:translateX(-50%);font-size:31px;font-weight:900;color:#ffe162;text-shadow:0 4px #75402b;pointer-events:none;animation:comboPop .8s ease-out forwards}
+.toast{position:absolute;z-index:24;left:50%;top:57%;transform:translateX(-50%);max-width:82%;background:#fff;color:#604735;border-radius:22px;padding:10px 15px;font-size:12px;font-weight:900;text-align:center;box-shadow:0 5px rgba(70,45,28,.2);animation:toastIn .2s ease-out}
+
+/* bottom controls */
+.bar{position:absolute;z-index:30;left:0;right:0;bottom:0;height:96px;padding:7px 8px calc(10px + env(safe-area-inset-bottom));display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:linear-gradient(transparent,#3b6e95 18%)}
+.service{position:relative;height:64px;border-radius:23px;background:#fff;color:#5b4332;font-weight:900;font-size:10px;box-shadow:0 4px #1b527b,0 0 0 3px #ffe16c inset;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05;transition:.08s}
+.service span{font-size:24px;line-height:1}.service:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px #1b527b,0 0 0 3px #ffe16c inset}.service:disabled{filter:grayscale(1);opacity:.34}
+.lock{position:absolute;right:-2px;top:-7px;background:#6b7890;color:#fff;border-radius:999px;padding:3px 6px;font-size:9px;border:2px solid #fff}
+.specials{position:absolute;z-index:31;right:8px;bottom:103px;display:flex;flex-direction:column;gap:6px}
+.special{width:58px;height:58px;border-radius:50%;background:#fff;color:#5d4330;font-size:10px;font-weight:900;box-shadow:0 4px #396c90,0 0 0 3px #ffe16c inset}.special span{display:block;font-size:22px}.special:disabled{opacity:.35;filter:grayscale(.7)}.badgeCount{position:absolute;right:-4px;top:-5px;min-width:22px;height:22px;border-radius:12px;background:#d8584f;color:#fff;font-size:12px;display:grid;place-items:center;border:2px solid #fff}
+
+/* title/modal */
+.title{position:absolute;z-index:50;inset:0;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(rgba(69,43,31,.28),rgba(255,255,255,.02) 40%,rgba(69,43,31,.4));pointer-events:none}
+.titleTop{padding-top:calc(28px + env(safe-area-inset-top));text-align:center}
+.chip{display:inline-block;background:#7a4630;color:#fff;font-weight:900;font-size:13px;padding:6px 16px;border-radius:20px;box-shadow:0 3px #4d2a1d;margin-bottom:14px}
+.logo{margin:0;font-weight:900;line-height:1.02;transform:rotate(-3deg)}.ln{display:block;color:#ffe16b;text-shadow:0 6px #5b4030}.ln.a{font-size:min(14vw,70px)}.ln.b{font-size:min(12vw,62px)}
+.titleBot{padding:0 20px calc(24px + env(safe-area-inset-bottom));text-align:center;pointer-events:none}
+.play{pointer-events:auto;width:80%;max-width:320px;height:68px;border-radius:36px;background:#7a4630;color:#fff;font-size:27px;font-weight:900;letter-spacing:.08em;box-shadow:0 6px #4d2a1d,0 0 0 5px #ffe16b;animation:pulse 1.6s ease-in-out infinite}
+.howto{margin-top:18px;font-size:14px;font-weight:800;text-shadow:0 2px #5e4632}.howto b{color:#ffe16b}
+.modal{position:absolute;z-index:60;inset:0;display:none;align-items:center;justify-content:center;background:rgba(45,32,24,.6);padding:24px}.modal.show{display:flex}
+.card{width:100%;max-width:340px;background:#fff;color:#5c4535;border-radius:30px;padding:22px;text-align:center;box-shadow:0 8px rgba(0,0,0,.18),0 0 0 6px #7a4630;animation:cardPop .35s cubic-bezier(.2,1.5,.4,1)}
+.card h2{margin:0;color:#7a4630;font-size:24px}.bigScore{font-size:50px;font-weight:900;color:#7a4630;line-height:1.05;margin-top:8px}.smallLine{font-size:12px;font-weight:800;margin-top:5px}.clearIcon{font-size:72px;margin:6px auto}.again{width:100%;height:58px;border-radius:29px;background:#7a4630;color:#fff;font-size:19px;font-weight:900;box-shadow:0 5px #4d2a1d,0 0 0 4px #ffe16b;margin-top:14px}
+
+@keyframes bob{50%{transform:translateY(-4px) rotate(4deg)}}
+@keyframes pulse{50%{transform:scale(1.04)}}
+@keyframes currentPulse{to{transform:translateX(-50%) scale(1.025)}}
+@keyframes shake{25%{transform:translateX(calc(-50% - 6px))}75%{transform:translateX(calc(-50% + 6px))}}
+@keyframes popUp{to{opacity:0;transform:translateY(-70px) scale(1.25)}}
+@keyframes comboPop{to{opacity:0;transform:translate(-50%,-45px) scale(1.2)}}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,10px)}}
+@keyframes stationPulse{to{transform:scale(1.06)}}
+@keyframes servedPop{45%{transform:scale(1.14) rotate(-2deg)}}
+@keyframes houseMax{to{filter:brightness(1.12)}}
+@keyframes rushFloat{0%{opacity:0;transform:translateY(25px) scale(.6)}25%{opacity:1}100%{opacity:0;transform:translateY(-120px) scale(1.2)}}
+@keyframes cardPop{from{transform:scale(.6);opacity:0}}
+</style>
+<style id="lab-home-link-style">
+.lab-home-link{position:fixed;top:max(8px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));z-index:2147483647;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;border:2px solid rgba(255,255,255,.78);border-radius:999px;background:rgba(20,72,61,.94);color:#fff!important;text-decoration:none!important;font:800 13px/1.2 system-ui,-apple-system,"Yu Gothic",sans-serif;box-shadow:0 3px 12px rgba(0,0,0,.22);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.lab-home-link:focus-visible{outline:3px solid #ffd76a;outline-offset:2px}
+@media(max-width:380px){.lab-home-link{padding:7px 10px;font-size:12px}}
+</style>
+</head>
+<body>
+<a class="lab-home-link" href="https://lab.alpaca-school.okinawa/" aria-label="アルパカすく〜るラボ作品一覧に戻る">← 🔬 ラボ一覧</a>
+<div class="app" id="app">
+  <div class="hud" id="hud">
+    <div class="row1">
+      <div>
+        <div class="lbl">ばんじょポイント</div>
+        <div class="score" id="score">0</div>
+        <div class="best">BEST <span id="best">0</span></div>
+      </div>
+      <div class="nextWrap">
+        <div><div class="lbl">つぎの人</div></div>
+        <div class="nextBubble"><div class="nextFace" id="nextFace">🙂</div></div>
+        <button class="soundBtn" id="soundBtn" aria-label="音を切り替える">🔊</button>
+      </div>
+    </div>
+    <div class="evo" id="evo">
+      <div class="tier on now" data-tier="0"><span>🛏️</span>宿</div>
+      <div class="tier" data-tier="1"><span>📜</span>行政</div>
+      <div class="tier" data-tier="2"><span>🪧</span>道案内</div>
+      <div class="tier" data-tier="3"><span>🤝</span>交流</div>
+      <div class="tier" data-tier="4"><span>👑</span>MAX</div>
+    </div>
+    <div class="goalRow"><span class="goalText" id="goalText">📜 あと800</span><div class="goalBar"><i id="goalBar"></i></div><span class="maxBadge">7000 MAX</span></div>
+    <div class="wave"></div>
+  </div>
+
+  <div class="field" id="field">
+    <div class="road"></div>
+    <div class="house" id="house"></div><div class="roof"></div><div class="door"></div>
+    <div class="tree a"></div><div class="tree b"></div>
+    <div class="sign">喜名番所</div>
+    <div class="station inn" data-station="inn"><span>🛏️</span>宿・休けい<small>旅人はこちら</small></div>
+    <div class="station admin locked" data-station="admin"><span>📜</span>村の仕事<small>800点で開く</small></div>
+    <div class="station guide locked" data-station="guide"><span>🪧</span>道案内<small>2200点で開く</small></div>
+    <div class="station exchange locked" data-station="exchange"><span>🤝</span>交流<small>4500点で開く</small></div>
+    <div class="queueDots"></div><div class="queueLane" id="queueLane"></div><div class="rushLayer" id="rushLayer"></div>
+    <div class="specials">
+      <button class="special" id="tea"><span>🍵</span>お茶<div class="badgeCount" id="teaCount">2</div></button>
+      <button class="special" id="help"><span>👴</span>お助け<div class="badgeCount" id="helpCount">1</div></button>
+    </div>
+  </div>
+
+  <div class="bar">
+    <button class="service" data-type="inn"><span>🛏️</span>やすむ</button>
+    <button class="service" data-type="admin" disabled><span>📜</span>村の仕事<div class="lock">800</div></button>
+    <button class="service" data-type="guide" disabled><span>🪧</span>道案内<div class="lock">2200</div></button>
+    <button class="service" data-type="exchange" disabled><span>🤝</span>交流<div class="lock">4500</div></button>
+  </div>
+
+  <div class="title" id="title">
+    <div class="titleTop">
+      <div class="chip">小学4年生向け｜ずっと遊べる番所ゲーム</div>
+      <h1 class="logo"><span class="ln a">喜名番所</span><span class="ln b">おしごと大作戦！</span></h1>
+    </div>
+    <div class="titleBot">
+      <button class="play" id="play">スタート！</button>
+      <div class="howto"><b>人が道から歩いてきて行列になる！</b><br>先頭の人が持つマークを見て、ぴったりの行き先ボタンを押そう。</div>
+    </div>
+  </div>
+
+  <div class="modal" id="overModal">
+    <div class="card">
+      <div class="clearIcon">😵</div>
+      <h2>行列がいっぱい！</h2>
+      <div class="bigScore" id="overScore">0</div>
+      <div class="smallLine">行列が長くなる前に、先頭の人からどんどん案内しよう！</div>
+      <button class="again" id="again">もう一回！</button>
+    </div>
+  </div>
+
+  <div class="modal" id="clearModal">
+    <div class="card">
+      <div class="clearIcon">🏆</div>
+      <h2>喜名番所マスター！</h2>
+      <div class="bigScore" id="clearScore">0</div>
+      <div class="smallLine">宿・行政・道案内・交流。いろいろな役わりを回せた！</div>
+      <button class="again" id="continue">つづけて遊ぶ！</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(()=>{
+const TYPES={
+  inn:{icon:'🛏️',face:'🙂',prop:'🛏️',shirt:'#66899b',pts:90,station:'🛏️'},
+  admin:{icon:'📜',face:'🙂',prop:'📜',shirt:'#8c6553',pts:130,station:'📜'},
+  guide:{icon:'🪧',face:'🙂',prop:'🪧',shirt:'#6f855f',pts:170,station:'🪧'},
+  exchange:{icon:'🤝',face:'🙂',prop:'🤝',shirt:'#8a7295',pts:210,station:'🤝'}
+};
+const unlocks=[0,800,2200,4500];
+const clearScoreTarget=7000;
+let state={screen:'title',score:0,best:0,tier:0,mastery:0,combo:0,lastHit:0,guests:[],nextType:'inn',spawnT:0,spawnGap:1.6,time:0,tea:2,help:1,slowed:0,cleared:false,uid:1,rushes:0};
+try{state.best=+localStorage.getItem('kina_bansho_best')||0}catch(e){}
+const $=s=>document.querySelector(s);
+const lane=$('#queueLane'),scoreEl=$('#score'),bestEl=$('#best'),nextFace=$('#nextFace');
+const field=$('#field');
+bestEl.textContent=state.best;
+let audio=null,muted=false,audioNeedsWake=true;
+
+function wakeAudio(){
+ if(muted)return;
+ try{
+  if(audioNeedsWake||!audio){if(audio)try{audio.close()}catch(e){};audio=new (window.AudioContext||window.webkitAudioContext)();audioNeedsWake=false}
+  if(audio.state==='suspended'||audio.state==='interrupted')audio.resume()
+ }catch(e){}
+}
+function tone(freq=440,d=.07,g=.035,type='triangle'){
+ if(muted)return;
+ try{
+  wakeAudio();
+  if(audio.state==='suspended')audio.resume();
+  const o=audio.createOscillator(),a=audio.createGain(),t=audio.currentTime;
+  o.type=type;o.frequency.value=freq;
+  a.gain.setValueAtTime(.0001,t);a.gain.exponentialRampToValueAtTime(g,t+.01);a.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.connect(a).connect(audio.destination);o.start();o.stop(t+d+.03)
+ }catch(e){}
+}
+function sfxService(type){
+ const notes={inn:[660,880],admin:[440,554],guide:[760,1010],exchange:[520,690]}[type]||[620,820];
+ tone(notes[0],.11,.038);setTimeout(()=>tone(notes[1],.13,.025),55)
+}
+function sfxBad(){tone(150,.13,.045,'sawtooth')}
+function sfxUnlock(){[523,659,784].forEach((f,i)=>setTimeout(()=>tone(f,.18,.035),i*80))}
+function sfxRush(){[523,659,784,988,1175,1397].forEach((f,i)=>setTimeout(()=>tone(f,.16,.032),i*55))}
+function randomType(){
+ const avail=['inn'];
+ if(state.tier>=1)avail.push('admin');
+ if(state.tier>=2)avail.push('guide');
+ if(state.tier>=3)avail.push('exchange');
+ return avail[Math.floor(Math.random()*avail.length)]
+}
+function reset(){
+ state.score=0;state.combo=0;state.lastHit=0;state.guests=[];state.tier=0;state.mastery=0;state.rushes=0;state.spawnT=.4;state.spawnGap=1.55;state.time=0;state.tea=2;state.help=1;state.slowed=0;state.cleared=false;state.uid=1;state.nextType='inn';
+ lane.innerHTML='';$('#teaCount').textContent=2;$('#helpCount').textContent=1;$('#tea').disabled=false;$('#help').disabled=false;
+ $('#overModal').classList.remove('show');$('#clearModal').classList.remove('show');updateHUD()
+}
+function start(){
+ wakeAudio();tone(880,.07,.025);reset();state.screen='play';$('#title').style.display='none';spawnGuest();state.nextType=randomType()
+}
+function saveBest(){try{localStorage.setItem('kina_bansho_best',String(state.best))}catch(e){}}
+function updateTier(){
+ let nt=0;for(let i=0;i<unlocks.length;i++)if(state.score>=unlocks[i])nt=i;
+ if(nt>state.tier){
+   state.tier=nt;sfxUnlock();toast(['宿のお仕事スタート！','📜 村の仕事が開放！','🪧 道案内が開放！','🤝 交流が開放！'][nt]);
+   if(nt===1)state.help++;
+   if(nt===2)state.tea++;
+   $('#helpCount').textContent=state.help;$('#teaCount').textContent=state.tea
+ }
+}
+function updateMastery(){
+ const s=state.score;
+ state.mastery=s>=7000?4:s>=4500?3:s>=2200?2:s>=800?1:0;
+ const goals=[
+  {at:800,label:'📜 あと'},{at:2200,label:'🪧 あと'},{at:4500,label:'🤝 あと'},{at:7000,label:'👑 あと'}
+ ];
+ const g=goals[Math.min(state.mastery,3)];
+ const prev=[0,800,2200,4500][Math.min(state.mastery,3)];
+ const next=g.at;
+ const pct=state.mastery===4?100:Math.max(0,Math.min(100,(s-prev)/(next-prev)*100));
+ $('#goalBar').style.width=pct+'%';
+ $('#goalText').textContent=state.mastery===4?'👑 MAX！':g.label+Math.max(0,next-s);
+ document.querySelectorAll('.tier').forEach((e,i)=>{
+   e.classList.toggle('on',i<=state.mastery);
+   e.classList.toggle('now',i===state.mastery)
+ });
+ const h=$('#house');h.className='house'+(state.mastery===1?' level1':state.mastery===2?' level2':state.mastery===3?' level3':state.mastery===4?' maxed':'')
+}
+function updateHUD(){
+ scoreEl.textContent=state.score;bestEl.textContent=state.best;nextFace.textContent=TYPES[state.nextType].prop;
+ updateTier();
+ document.querySelectorAll('.service').forEach((b,i)=>{
+   const locked=i>state.tier;b.disabled=locked;
+   const lk=b.querySelector('.lock');if(lk)lk.style.display=locked?'block':'none'
+ });
+ updateMastery();
+ document.querySelectorAll('.station').forEach((s,i)=>s.classList.toggle('locked',i>state.tier));
+ const front=state.guests[0];
+ document.querySelectorAll('.station').forEach(s=>s.classList.toggle('hot',!!front&&s.dataset.station===front.type&&state.score<350));
+ $('#tea').disabled=state.tea<=0;$('#help').disabled=state.help<=0
+}
+function stationCenter(type){
+ const s=document.querySelector('.station[data-station="'+type+'"]'),fr=field.getBoundingClientRect(),r=s.getBoundingClientRect();
+ return{x:r.left-fr.left+r.width/2,y:r.top-fr.top+r.height/2}
+}
+function animateWalker(g,type,successMove=true){
+ const fr=field.getBoundingClientRect(),gr=g.el.getBoundingClientRect(),to=stationCenter(type);
+ const w=document.createElement('div');w.className='walker';w.textContent='🚶';
+ w.style.left=(gr.left-fr.left+8)+'px';w.style.top=(gr.top-fr.top+10)+'px';field.appendChild(w);
+ const sx=parseFloat(w.style.left),sy=parseFloat(w.style.top),tx=to.x-24,ty=to.y-24;
+ const frames=successMove
+   ?[{left:sx+'px',top:sy+'px',transform:'scale(1)'},{left:tx+'px',top:ty+'px',transform:'scale(1.08)'},{left:tx+'px',top:ty+'px',transform:'scale(.75)',opacity:.15}]
+   :[{left:sx+'px',top:sy+'px'},{left:(sx+(tx-sx)*.55)+'px',top:(sy+(ty-sy)*.55)+'px'},{left:sx+'px',top:sy+'px'}];
+ const a=w.animate(frames,{duration:successMove?650:430,easing:'ease-in-out'});
+ a.onfinish=()=>w.remove()
+}
+const QUEUE_POS=[
+ {left:48,top:43},{left:38,top:54},{left:28,top:64},
+ {left:19,top:73},{left:11,top:81},{left:4,top:88}
+];
+function spawnGuest(){
+ if(state.guests.length>=6){gameOver();return}
+ const type=state.guests.length===0?'inn':state.nextType;
+ state.nextType=randomType();
+ const data=TYPES[type],g={id:state.uid++,type,pat:1,el:null};
+ const el=document.createElement('div');el.className='guest';el.dataset.id=g.id;el.style.setProperty('--shirt',data.shirt);
+ el.innerHTML='<div class="frontMark">せんとう</div><div class="personHead"></div><div class="personBody"></div><div class="legs"></div><div class="prop">'+data.prop+'</div><div class="patience"><i></i></div>';
+ lane.appendChild(el);g.el=el;state.guests.push(g);
+ const start={left:92,top:88};el.style.left=start.left+'%';el.style.top=start.top+'%';
+ requestAnimationFrame(()=>{layoutGuests();updateCurrent();updateHUD()})
+}
+function layoutGuests(){
+ state.guests.forEach((g,i)=>{
+   const p=QUEUE_POS[Math.min(i,QUEUE_POS.length-1)];
+   g.el.style.left=p.left+'%';g.el.style.top=p.top+'%'
+ })
+}
+function updateCurrent(){
+ state.guests.forEach((g,i)=>g.el.classList.toggle('current',i===0));
+ const front=state.guests[0];
+ document.querySelectorAll('.station').forEach(s=>s.classList.toggle('hot',!!front&&s.dataset.station===front.type&&state.score<350));
+}
+function service(type){
+ if(state.screen!=='play'||!state.guests.length)return;
+ const g=state.guests[0];
+ if(g.type===type)success(g);else fail(g)
+}
+function rush(){
+ state.rushes++;state.score+=300;state.tea=Math.min(5,state.tea+1);$('#teaCount').textContent=state.tea;
+ sfxRush();addCombo('大にぎわいラッシュ！ +300');
+ toast('🎉 5人れんぞく！ 番所が大にぎわい！');
+ const layer=$('#rushLayer');
+ ['😊','✨','😊','✨','😊','🎉','✨'].forEach((x,i)=>{
+   const d=document.createElement('div');d.className='rushFace';d.textContent=x;
+   d.style.left=(8+(i*13)%82)+'%';d.style.top=(60+(i%3)*7)+'%';d.style.animationDelay=(i*.06)+'s';
+   layer.appendChild(d);setTimeout(()=>d.remove(),1500)
+ });
+ updateHUD()
+}
+function success(g){
+ const now=state.time;
+ state.combo=now-state.lastHit<1.7?state.combo+1:1;state.lastHit=now;
+ const base=TYPES[g.type].pts,bonus=Math.round(base*(1+.35*(state.combo-1))),points=bonus+Math.round(g.pat*40);
+ state.score+=points;if(state.score>state.best){state.best=state.score;saveBest()}
+ addPop('+'+points,g.el);if(state.combo>=2)addCombo('れんぞく ×'+state.combo+'！');
+ sfxService(g.type);
+ animateWalker(g,g.type,true);
+ const st=document.querySelector('.station[data-station="'+g.type+'"]');st.classList.add('hot','served');setTimeout(()=>st.classList.remove('hot','served'),700);
+ g.el.classList.add('done');state.guests.shift();setTimeout(()=>g.el.remove(),620);layoutGuests();updateCurrent();
+ if(g.type==='inn'&&state.score<300)toast('旅人を休ませる「宿場」の仕事！');
+ if(g.type==='admin'&&state.score<1600)toast('村の相談を受ける「行政」の仕事！');
+ if(g.type==='guide'&&state.score<3500)toast('喜名は北へ向かう道の大事な場所！');
+ if(g.type==='exchange'&&state.score<6000)toast('人が集まると、話や情報も集まる！');
+ if(state.combo>0&&state.combo%5===0)rush();
+ state.spawnGap=Math.max(.72,1.55-state.score/11000);
+ if(!state.cleared&&state.score>=clearScoreTarget){state.cleared=true;setTimeout(showClear,350)}
+ updateHUD()
+}
+function fail(g){
+ state.combo=0;g.pat=Math.max(0,g.pat-.22);g.el.classList.add('bad');setTimeout(()=>g.el.classList.remove('bad'),420);
+ const i=g.el.querySelector('.patience i');i.style.width=(g.pat*100)+'%';i.style.background=g.pat<.35?'#d85c53':'#e7a94c';
+ const pressed=window.__lastServiceType||g.type;animateWalker(g,pressed,false);
+ addPop('ちがう！',g.el,'#ff6b61');sfxBad();
+ if(g.pat<=0){toast('お客さんが帰っちゃった！');g.el.classList.add('done');state.guests.shift();setTimeout(()=>g.el.remove(),180);layoutGuests();updateCurrent()}
+}
+function addPop(txt,el,color='#fff'){
+ const r=el.getBoundingClientRect(),fr=$('#field').getBoundingClientRect(),p=document.createElement('div');p.className='pop';p.textContent=txt;p.style.color=color;p.style.left=(r.left-fr.left+r.width/2-28)+'px';p.style.top=(r.top-fr.top+8)+'px';$('#field').appendChild(p);setTimeout(()=>p.remove(),950)
+}
+function addCombo(txt){const d=document.createElement('div');d.className='combo';d.textContent=txt;$('#field').appendChild(d);setTimeout(()=>d.remove(),850)}
+function toast(txt){const old=$('#field .toast');if(old)old.remove();const d=document.createElement('div');d.className='toast';d.textContent=txt;$('#field').appendChild(d);setTimeout(()=>d.remove(),1500)}
+function useTea(){
+ if(state.screen!=='play'||state.tea<=0)return;state.tea--;state.slowed=6;state.guests.forEach(g=>{g.pat=Math.min(1,g.pat+.35);const i=g.el.querySelector('.patience i');i.style.width=(g.pat*100)+'%';i.style.background='#67a96c'});toast('🍵 お茶でみんなニコニコ！');tone(1100,.14,.03);updateHUD();$('#teaCount').textContent=state.tea
+}
+function useHelp(){
+ if(state.screen!=='play'||state.help<=0||!state.guests.length)return;state.help--;toast('👴 おじぃが手伝ってくれた！');success(state.guests[0]);$('#helpCount').textContent=state.help;updateHUD()
+}
+function gameOver(){
+ if(state.screen!=='play')return;state.screen='over';saveBest();$('#overScore').textContent=state.score;$('#overModal').classList.add('show');tone(330,.2,.04);setTimeout(()=>tone(240,.25,.035),140)
+}
+function showClear(){if(state.screen!=='play')return;state.screen='clear';$('#clearScore').textContent=state.score;$('#clearModal').classList.add('show');[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.25,.04),i*100))}
+let last=performance.now();
+function loop(now){
+ const dt=Math.min(.035,(now-last)/1000);last=now;
+ if(state.screen==='play'){
+   state.time+=dt;
+   if(state.slowed>0)state.slowed-=dt;
+   const slow=state.slowed>0?.48:1;
+   state.spawnT-=dt*slow;
+   if(state.spawnT<=0){spawnGuest();state.spawnT=state.spawnGap}
+   state.guests.forEach((g,i)=>{
+     const drain=(.038+state.score/160000)*dt*slow*(1+i*.08);g.pat=Math.max(0,g.pat-drain);
+     const bar=g.el.querySelector('.patience i');bar.style.width=(g.pat*100)+'%';bar.style.background=g.pat<.3?'#d85c53':g.pat<.55?'#e7aa4b':'#67a96c';
+   });
+   if(state.guests[0]&&state.guests[0].pat<=0){const g=state.guests[0];g.el.classList.add('done');state.guests.shift();setTimeout(()=>g.el.remove(),180);layoutGuests();updateCurrent();state.combo=0}
+   if(state.guests.length>=6)gameOver()
+ }
+ requestAnimationFrame(loop)
+}
+requestAnimationFrame(loop);
+
+document.querySelectorAll('.service').forEach(b=>b.addEventListener('click',()=>{window.__lastServiceType=b.dataset.type;service(b.dataset.type)}));
+$('#tea').onclick=useTea;$('#help').onclick=useHelp;
+$('#soundBtn').onclick=()=>{
+ muted=!muted;$('#soundBtn').textContent=muted?'🔇':'🔊';
+ if(!muted){audioNeedsWake=true;wakeAudio();tone(880,.08,.025)}
+};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)audioNeedsWake=true});
+window.addEventListener('pageshow',()=>audioNeedsWake=true);
+['gesturestart','gesturechange','gestureend'].forEach(n=>document.addEventListener(n,e=>e.preventDefault(),{passive:false}));
+document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
+let lastTouchEnd=0;document.addEventListener('touchend',e=>{const now=Date.now();if(now-lastTouchEnd<320)e.preventDefault();lastTouchEnd=now},{passive:false});
+$('#play').onclick=start;$('#again').onclick=start;
+$('#continue').onclick=()=>{state.screen='play';$('#clearModal').classList.remove('show');toast('まだまだ営業中！')};
+})();
+</script>
+</body>
+</html>
