@@ -16,73 +16,119 @@ const quizzes=[
 let food=null,stage=0,count=0,q=0,score=0,locked=false,introLockUntil=0,finalExitTimer=null;
 const root=document.getElementById("app");
 
-let audioCtx=null,bgmTimer=null,bgmStep=0,soundMuted=false;
-const bgmMelody=[261.63,329.63,392.00,329.63,293.66,349.23,440.00,349.23];
-const bgmBass=[130.81,146.83,174.61,146.83];
+let audioCtx=null,masterGain=null,bgmGain=null,bgmTimer=null,bgmStep=0,soundMuted=false,soundReady=false,bgmWanted=false;
 
-function ensureAudio(){
+function setPlaybackSession(cycle=false){
+ if(!("audioSession" in navigator))return;
  try{
-   if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-   if(audioCtx.state==="suspended")audioCtx.resume();
-   return audioCtx;
- }catch(e){console.warn("Audio unavailable",e);return null}
-}
-function tone(freq,when,dur,type="triangle",vol=.025){
- const ctx=audioCtx;if(!ctx||soundMuted)return;
- try{
-   const osc=ctx.createOscillator(),gain=ctx.createGain();
-   osc.type=type;osc.frequency.setValueAtTime(freq,when);
-   gain.gain.setValueAtTime(.0001,when);
-   gain.gain.exponentialRampToValueAtTime(vol,when+.02);
-   gain.gain.exponentialRampToValueAtTime(.0001,when+dur);
-   osc.connect(gain);gain.connect(ctx.destination);
-   osc.start(when);osc.stop(when+dur+.03);
+  if(cycle){
+   navigator.audioSession.type="ambient";
+   setTimeout(()=>{try{navigator.audioSession.type="playback"}catch(e){}},0);
+  }else navigator.audioSession.type="playback";
  }catch(e){}
 }
-function scheduleBgm(){
- const ctx=ensureAudio();if(!ctx||soundMuted)return;
- const start=ctx.currentTime+.05;
- for(let i=0;i<8;i++){
-   const n=bgmMelody[(bgmStep+i)%bgmMelody.length];
-   tone(n,start+i*.24,.20,i%3===0?"sine":"triangle",.018);
-   if(i%2===0)tone(n*2,start+i*.24+.04,.12,"sine",.007);
- }
- for(let i=0;i<4;i++){
-   const b=bgmBass[(Math.floor(bgmStep/2)+i)%bgmBass.length];
-   tone(b,start+i*.48,.38,"sine",.013);
- }
- bgmStep=(bgmStep+1)%bgmMelody.length;
+function createAudioEngine(){
+ const C=window.AudioContext||window.webkitAudioContext;
+ if(!C)return false;
+ try{audioCtx=new C({latencyHint:"interactive"})}
+ catch(e){try{audioCtx=new C()}catch(e2){return false}}
+ masterGain=audioCtx.createGain();masterGain.gain.value=.78;masterGain.connect(audioCtx.destination);
+ bgmGain=audioCtx.createGain();bgmGain.gain.value=.58;bgmGain.connect(masterGain);
+ soundReady=false;
+ return true;
 }
-function startBgm(){
- if(soundMuted)return;
- ensureAudio();
- if(bgmTimer)return;
- scheduleBgm();
- bgmTimer=setInterval(scheduleBgm,1880);
+async function unlockAudio(forceReset=false){
+ if(soundMuted)return false;
+ setPlaybackSession(forceReset);
+ if(forceReset&&audioCtx){
+  stopBgm(false);
+  try{await audioCtx.close()}catch(e){}
+  audioCtx=null;masterGain=null;bgmGain=null;soundReady=false;
+ }
+ if(!audioCtx||audioCtx.state==="closed"){
+  if(!createAudioEngine())return false;
+ }
+ try{if(audioCtx.state!=="running")await audioCtx.resume()}catch(e){}
+ if(audioCtx&&audioCtx.state==="running"){
+  if(!soundReady){
+   const o=audioCtx.createOscillator(),g=audioCtx.createGain(),t=audioCtx.currentTime;
+   g.gain.value=.0001;o.connect(g).connect(masterGain);o.start(t);o.stop(t+.02);
+   soundReady=true;
+  }
+  return true;
+ }
+ return false;
 }
-function stopBgm(){
+setPlaybackSession(false);
+
+function tone(freq,dur=.10,vol=.04,type="sine",delay=0,target=null){
+ if(soundMuted||!audioCtx||!masterGain||audioCtx.state!=="running")return;
+ try{
+  const t=audioCtx.currentTime+delay,o=audioCtx.createOscillator(),g=audioCtx.createGain();
+  o.type=type;o.frequency.setValueAtTime(freq,t);
+  g.gain.setValueAtTime(.0001,t);
+  g.gain.exponentialRampToValueAtTime(vol,t+.012);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g).connect(target||masterGain);
+  o.start(t);o.stop(t+dur+.03);
+ }catch(e){}
+}
+function bgmNote(freq){
+ if(!bgmGain)return;
+ tone(freq,.34,.020,"triangle",0,bgmGain);
+ tone(freq/2,.40,.008,"sine",.015,bgmGain);
+}
+function playBgmStep(){
+ if(!bgmWanted||soundMuted||!soundReady)return;
+ const melody=[392,466.16,523.25,466.16,349.23,415.30,493.88,415.30];
+ const bass=[196,174.61,207.65,174.61];
+ bgmNote(melody[bgmStep%melody.length]);
+ if(bgmStep%2===0)tone(bass[Math.floor(bgmStep/2)%bass.length],.72,.007,"sine",0,bgmGain);
+ if(bgmStep%4===3)tone(melody[bgmStep%melody.length]*2,.11,.006,"sine",.12,bgmGain);
+ bgmStep++;
+}
+async function startBgm(){
+ bgmWanted=true;
+ const ok=await unlockAudio(false);
+ if(!ok||soundMuted||bgmTimer)return;
+ bgmStep=0;playBgmStep();
+ bgmTimer=setInterval(playBgmStep,480);
+}
+function stopBgm(clearWanted=true){
  if(bgmTimer){clearInterval(bgmTimer);bgmTimer=null}
+ if(clearWanted)bgmWanted=false;
 }
-function setMuted(v){
+async function setMuted(v){
  soundMuted=!!v;
  const btn=document.getElementById("soundToggle");
  if(btn){
-   btn.textContent=soundMuted?"🔇 BGM":"🔊 BGM";
-   btn.setAttribute("aria-pressed",String(soundMuted));
-   btn.setAttribute("aria-label",soundMuted?"BGMをつける":"BGMを消す");
+  btn.textContent=soundMuted?"🔇":"🔊";
+  btn.setAttribute("aria-pressed",String(soundMuted));
+  btn.setAttribute("aria-label",soundMuted?"音をつける":"音を消す");
  }
- if(soundMuted)stopBgm();else startBgm();
+ if(soundMuted){stopBgm(false);return}
+ const ok=await unlockAudio(true);
+ if(ok&&bgmWanted&&!bgmTimer){bgmStep=0;playBgmStep();bgmTimer=setInterval(playBgmStep,480)}
 }
 function actionSound(si){
- const ctx=ensureAudio();if(!ctx||soundMuted)return;
- const now=ctx.currentTime+.01;
- const roots=[523.25,392,329.63,659.25,587.33,261.63];
- const f=roots[si]||440;
- tone(f,now,.12,"triangle",.045);
- tone(f*1.25,now+.07,.14,"sine",.025);
+ if(soundMuted||!soundReady)return;
+ const fx=[
+  ()=>{tone(620,.07,.045,"triangle");tone(930,.11,.022,"sine",.04)},
+  ()=>{tone(390,.10,.040,"sine");tone(260,.18,.025,"triangle",.05)},
+  ()=>{tone(300,.12,.035,"sine");tone(450,.16,.025,"triangle",.06)},
+  ()=>{tone(720,.08,.040,"triangle");tone(1080,.13,.024,"sine",.05)},
+  ()=>{tone(520,.06,.030,"sine");tone(780,.09,.020,"triangle",.04)},
+  ()=>{tone(220,.12,.040,"sine");tone(330,.16,.026,"triangle",.06)}
+ ][si];
+ if(fx)fx();
+}
+function clearSound(){
+ if(soundMuted||!soundReady)return;
+ [523.25,659.25,783.99,1046.5].forEach((f,i)=>tone(f,.30,.040,"triangle",i*.09));
 }
 const soundToggle=document.getElementById("soundToggle");
-if(soundToggle)soundToggle.addEventListener("click",()=>{ensureAudio();setMuted(!soundMuted)});
+if(soundToggle)soundToggle.addEventListener("click",()=>setMuted(!soundMuted));
+
 function safe(fn){try{fn()}catch(e){console.error(e);const box=document.getElementById("error");box.style.display="block";box.textContent="画面の表示でエラーが起きました。ページを再読み込みしてください。";}}
 window.addEventListener("error",e=>{console.error(e.error||e.message)});
 window.addEventListener("unhandledrejection",e=>{console.error(e.reason)});
