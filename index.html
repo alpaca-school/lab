@@ -3,199 +3,166 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#17614f">
-<meta name="description" content="遊びながら発見する、アルパカすく〜るの学習ゲーム一覧。理科・沖縄文化の体験型Webゲームを集めたラボです。">
-<title>アルパカすく〜るラボ｜学習ゲーム一覧</title>
+<meta name="theme-color" content="#102a2a">
+<meta name="description" content="アルパカすく〜るラボ。沖縄の自然・文化・科学を、遊びながら発見し、みんなで育てる学習ゲームの公開研究所。">
+<title>アルパカすく〜るラボ</title>
 <style>
-:root{
-  --green:#17614f;--green2:#2e8a6b;--cream:#fff9ec;--ink:#263f3b;
-  --line:#d8dfcf;--orange:#e97548;--soft:#edf5e8;--gold:#f1c568;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;background:var(--cream);color:var(--ink)}
-a{color:inherit}
-.hero{padding:48px 18px 32px;background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;text-align:center;border-bottom:6px solid var(--gold)}
-.hero .brand{font-size:12px;font-weight:900;letter-spacing:.14em;opacity:.9}
-.hero h1{font-size:clamp(30px,8vw,56px);margin:8px 0 7px;line-height:1.15}
-.hero p{max-width:680px;margin:0 auto;line-height:1.75;font-size:clamp(14px,3vw,17px)}
-main{max-width:1100px;margin:auto;padding:24px 16px 64px}
-.filters{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:5px 0 25px}
-.filter{appearance:none;border:1px solid #b9d0b8;background:#f1f7ec;color:#285d4d;border-radius:999px;padding:11px 16px;font-weight:900;min-height:44px;cursor:pointer}
-.filter[aria-pressed="true"]{background:var(--green);color:#fff;border-color:var(--green)}
-.section-title{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:24px 2px 12px}
-.section-title h2{margin:0;font-size:22px}.section-title small{color:#687c74}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
-.game-card{background:#fff;border:2px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 8px 22px #42665512;display:grid;grid-template-columns:38% 1fr;min-height:222px}
-.game-card[hidden]{display:none}
-.thumb{display:grid;place-items:center;position:relative;font-size:clamp(60px,9vw,88px);background:linear-gradient(155deg,#e7f2d8,#f7e3b9);overflow:hidden}
-.thumb::after{content:"";position:absolute;width:110px;height:110px;border-radius:50%;background:#fff6;right:-30px;top:-35px}
-.game-body{padding:19px;display:flex;flex-direction:column;align-items:flex-start;min-width:0}
-.meta{font-size:11px;font-weight:900;color:#38735d;background:#e7f3e9;border-radius:999px;padding:5px 9px}
-h3{font-size:23px;margin:10px 0 6px;line-height:1.35}
-.game-body p{font-size:14px;line-height:1.7;margin:0 0 16px}
-.tags{display:flex;gap:5px;flex-wrap:wrap;margin:-5px 0 15px}
-.tags span{font-size:10px;border:1px solid #d7dfd0;border-radius:999px;padding:4px 7px;color:#587067}
-.play{margin-top:auto;text-decoration:none;background:var(--orange);color:#fff;border-radius:12px;padding:11px 17px;font-weight:1000;min-height:44px;display:inline-flex;align-items:center}
-.library{margin-top:34px;background:#edf4e9;border:1px solid #c8dbc1;border-radius:18px;padding:18px;line-height:1.7}
-.library h2{margin:0 0 7px;font-size:19px}
-.library a{font-weight:900;color:#116854}
-.archive{margin-top:28px;border-top:1px solid #d7dfce;padding-top:20px}
-.archive details{background:#f4efe4;border-radius:14px;padding:12px 14px}
-.archive summary{font-weight:900;cursor:pointer;min-height:44px;display:flex;align-items:center}
-.archive-list{display:flex;gap:10px;flex-wrap:wrap;padding:10px 0 3px}
-.archive-list a{background:#fff;border:1px solid #d8d1c4;border-radius:10px;padding:9px 12px;text-decoration:none;font-size:13px;font-weight:800}
-footer{text-align:center;color:#65766f;font-size:11px;margin-top:32px;line-height:1.8}
-.empty{display:none;text-align:center;padding:30px;background:#fff;border-radius:16px;color:#6a7c74}
-.empty.show{display:block}
-@media(max-width:760px){
- .grid{grid-template-columns:1fr}
- .game-card{grid-template-columns:110px 1fr;min-height:188px}
- .thumb{font-size:58px}
- .game-body{padding:15px}
- h3{font-size:20px}
-}
-@media(max-width:380px){
- main{padding-left:11px;padding-right:11px}
- .game-card{grid-template-columns:88px 1fr}
- .thumb{font-size:48px}
- .filter{padding:10px 12px;font-size:13px}
-}
+:root{--bg:#102a2a;--panel:#173a3a;--panel2:#1d4542;--line:#55746a;--cream:#fff6df;--text:#f8eed7;--muted:#d1e0d5;--gold:#f4c968;--orange:#e87b4d;--green:#70ad7a;--ink:#173a3a}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;background:var(--bg);color:var(--text)}a{color:inherit}
+.hero{min-height:48vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:54px 20px 68px;position:relative;overflow:hidden;background:
+radial-gradient(circle at 18% 12%,#4f6a4566 0 9%,transparent 10%),
+radial-gradient(circle at 85% 22%,#8c56364d 0 8%,transparent 9%),
+linear-gradient(180deg,#274d44 0,#173837 48%,#102a2a 100%)}
+.hero:after{content:"🌺　🌿　🪨　🏮　🦙";position:absolute;bottom:17px;left:0;right:0;font-size:27px;opacity:.8;letter-spacing:8px}
+.brand{font-weight:1000;letter-spacing:.08em;font-size:13px;color:#f9d88b}.hero h1{font-size:clamp(36px,9vw,68px);margin:8px 0 12px;line-height:1.08}.hero p{max-width:730px;margin:0 auto;color:#e1ebdf;line-height:1.85;font-size:clamp(14px,3vw,18px)}
+.world-link{display:inline-flex;margin-top:18px;border:1px solid #8fac91;border-radius:999px;padding:9px 14px;color:#f9df9c;text-decoration:none;font-weight:900;background:#0e272780}
+main{max-width:1100px;margin:auto;padding:28px 16px 70px}
+.world-card{background:linear-gradient(135deg,#1b4541,#254e45);border:1px solid #69867a;border-radius:22px;padding:20px;margin:-7px 0 27px;box-shadow:0 12px 30px #0003}
+.world-card h2{margin:0 0 9px;color:#ffd980;font-size:21px}.world-card p{margin:5px 0;line-height:1.8;color:#dce8dc}.mission-flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px}.mission-flow span{background:#102e2e;border:1px solid #58796c;border-radius:999px;padding:7px 10px;font-size:12px;font-weight:900}.arrow{opacity:.6}
+.filters{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:4px 0 28px}.filter{appearance:none;border:1px solid #637f73;background:#173b39;color:#e9f0e7;border-radius:999px;padding:11px 15px;font-weight:900;min-height:44px;cursor:pointer}.filter[aria-pressed="true"]{background:var(--gold);color:#46320f;border-color:#ffe5a0}
+.section{margin-top:34px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:0 2px 14px}.section-head h2{margin:0;font-size:24px}.section-head p{margin:4px 0 0;color:#bcd0c3;font-size:13px}.count{color:#d5e2d9;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.game-card{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:22px;overflow:hidden;display:grid;grid-template-columns:35% 1fr;min-height:240px;box-shadow:0 12px 28px #0003}.game-card[hidden]{display:none}.game-card.published{border-color:#b8a05b;box-shadow:0 0 0 1px #f1cb6650,0 12px 30px #0003}.thumb{display:grid;place-items:center;font-size:clamp(58px,9vw,84px);background:linear-gradient(145deg,#294f47,#665a38);position:relative}.thumb:after{content:"";position:absolute;inset:12px;border:1px solid #ffffff1f;border-radius:50%}.game-body{padding:18px;display:flex;flex-direction:column;align-items:flex-start}.status{font-size:11px;font-weight:1000;border-radius:999px;padding:5px 9px;margin-bottom:8px}.status.published{background:#f7d773;color:#4a3812}.status.dev{background:#754f2c;color:#ffe9b8;border:1px solid #a67845}.meta{font-size:11px;color:#f0cb7a;font-weight:900}h3{font-size:22px;margin:6px 0 6px;line-height:1.35}.game-body p{margin:0 0 13px;line-height:1.65;color:#d6e3d8;font-size:14px}.tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}.tags span{font-size:10px;border:1px solid #5f776d;border-radius:999px;padding:4px 7px;color:#bdd1c4}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:auto}.play,.idea{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 13px;border-radius:11px;text-decoration:none;font-weight:1000;font-size:13px}.play{background:var(--gold);color:#4b3510}.devplay{background:#e5b860}.idea{background:#244e47;border:1px solid #78958a;color:#ecf4ec}
+.invite{margin-top:38px;background:linear-gradient(135deg,#362d22,#4c3b28);border:1px solid #886e46;border-radius:22px;padding:22px;text-align:center}.invite .lantern{font-size:42px}.invite h2{margin:5px 0 8px;color:#ffda82}.invite p{max-width:760px;margin:0 auto 17px;line-height:1.8;color:#eadfc7}.invite a{display:inline-flex;min-height:48px;align-items:center;justify-content:center;border-radius:999px;padding:11px 18px;background:#f1c15c;color:#402f12;text-decoration:none;font-weight:1000}
+.library{margin-top:26px;border:1px solid #526e65;border-radius:18px;padding:17px;background:#153433}.library h2{margin:0 0 6px;font-size:18px;color:#f2d48d}.library p{margin:0 0 7px;color:#c8d7cf;line-height:1.65}.library a{font-weight:900;color:#f0cc73}.archive{margin-top:22px;border-top:1px solid #4a655d;padding-top:18px}.archive details{background:#153332;border-radius:14px;padding:12px 14px}.archive summary{cursor:pointer;font-weight:900;min-height:44px;display:flex;align-items:center}.archive-list{display:flex;gap:8px;flex-wrap:wrap;padding-top:8px}.archive-list a{background:#254640;border:1px solid #5b756b;border-radius:10px;padding:9px 11px;text-decoration:none;font-size:12px}
+footer{text-align:center;color:#9fb4a8;font-size:11px;margin-top:34px;line-height:1.8}.empty{display:none;text-align:center;padding:30px;background:#173a3a;border-radius:16px;color:#c5d4cb}.empty.show{display:block}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.game-card{grid-template-columns:105px 1fr;min-height:205px}.thumb{font-size:54px}.game-body{padding:15px}.hero{min-height:42vh}.section-head{align-items:flex-start;flex-direction:column}}
+@media(max-width:390px){main{padding-left:11px;padding-right:11px}.game-card{grid-template-columns:88px 1fr}.thumb{font-size:47px}.filter{padding:9px 11px;font-size:12px}.actions{width:100%}.play,.idea{flex:1;padding:9px 8px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
 <header class="hero">
-  <div class="brand">🔬 ALPACA SCHOOL LAB</div>
-  <h1>今日は、なにを探検する？</h1>
-  <p>遊んで、試して、発見する。沖縄の文化や身近な科学をテーマにした、アルパカすく〜るの学習ゲーム。</p>
+  <div>
+    <div class="brand">🌿 OKINAWA × SCIENCE × PLAY</div>
+    <h1>アルパカすく〜るラボ</h1>
+    <p>沖縄の暮らし、自然、文化。その中にある「なぜ？」を、ゲームで試して発見する公開研究所。</p>
+    <a class="world-link" href="#alpaca-world">🦙 アルパカわ〜るどにつながるラボ</a>
+  </div>
 </header>
 <main>
-  <nav class="filters" aria-label="作品を分類">
-    <button class="filter" type="button" data-filter="all" aria-pressed="true">🌈 すべて</button>
-    <button class="filter" type="button" data-filter="science" aria-pressed="false">🧪 理科</button>
-    <button class="filter" type="button" data-filter="okinawa" aria-pressed="false">🌺 沖縄文化</button>
-    <button class="filter" type="button" data-filter="middle" aria-pressed="false">📘 中学理科</button>
-    <button class="filter" type="button" data-filter="math" aria-pressed="false">📐 数学</button>
-    <button class="filter" type="button" data-filter="programming" aria-pressed="false">💻 プログラミング</button>
-  </nav>
+<section class="world-card" id="alpaca-world">
+  <h2>🦙 ラボは「アルパカわ〜るど」のデジタル実験室</h2>
+  <p>アルパカわ〜るどは、散歩・ゴミ拾い・自然や文化の発見を「ミッション」にして、現実の世界をもっと楽しむためのARG（代替現実ゲーム）。ラボでは、その入口になる学びや体験をWebゲームとして試作していく。</p>
+  <p>ゲームで気になったことを、今度は外へ出て見つけてみる。地域の花、木、カー、グスク、古い道、仕事や人の知恵——身近な場所そのものが次のステージになる。</p>
+  <div class="mission-flow"><span>🎮 ラボで試す</span><span class="arrow">→</span><span>👀 まちで発見</span><span class="arrow">→</span><span>📸 記録・共有</span><span class="arrow">→</span><span>🦙 次のミッションへ</span></div>
+</section>
 
-  <div class="section-title"><h2>🎮 ゲーム一覧</h2><small id="count">15作品</small></div>
-  <section class="grid" id="games">
-    <article class="game-card" data-tags="science okinawa">
-      <div class="thumb" aria-hidden="true">🍠</div>
-      <div class="game-body"><div class="meta">植物・光合成</div><h3>べにいもラボ！</h3><p>光・水・CO₂を調節して、紅芋を育てよう。条件がそろうと成長がどんどん進むよ。</p><div class="tags"><span>理科</span><span>沖縄</span><span>育成</span></div><a class="play" href="./beniimo/">▶ あそぶ</a></div>
-    </article>
+<nav class="filters" aria-label="作品を分類">
+  <button class="filter" data-filter="all" aria-pressed="true">🌈 すべて</button>
+  <button class="filter" data-filter="published" aria-pressed="false">✨ 公開中</button>
+  <button class="filter" data-filter="dev" aria-pressed="false">🛠️ 開発中</button>
+  <button class="filter" data-filter="science" aria-pressed="false">🧪 理科</button>
+  <button class="filter" data-filter="okinawa" aria-pressed="false">🌺 沖縄文化</button>
+  <button class="filter" data-filter="math" aria-pressed="false">📐 数学</button>
+</nav>
 
-    <article class="game-card" data-tags="okinawa">
-      <div class="thumb" aria-hidden="true">🪨</div>
-      <div class="game-body"><div class="meta">沖縄文化・地域学習</div><h3>石敢當職人！</h3><p>石敢當を刻み、丁字路に置いて集落を守る。沖縄のまちと文化をゲームで体験。</p><div class="tags"><span>沖縄文化</span><span>石敢當</span><span>地域</span></div><a class="play" href="./ishiganto/">▶ あそぶ</a></div>
-    </article>
+<section class="section" data-section="published">
+  <div class="section-head"><div><h2>✨ 公開中</h2><p>いま遊んでほしい、おすすめ作品。</p></div><span class="count">2作品</span></div>
+  <div class="grid"><article class="game-card published" data-status="published" data-tags="science okinawa">
+  <div class="thumb" aria-hidden="true">🍠</div>
+  <div class="game-body"><div class="status published">✨ 公開中</div><div class="meta">植物・光合成</div><h3>べにいもラボ！</h3><p>光・水・CO₂を調節して、紅芋を育てよう。条件がそろうと成長がどんどん進む。</p><div class="tags"><span>理科</span><span>沖縄</span><span>育成</span></div><div class="actions"><a class="play" href="./beniimo/">▶ あそぶ</a></div></div>
+ </article>
+<article class="game-card published" data-status="published" data-tags="programming">
+  <div class="thumb" aria-hidden="true">🐠</div>
+  <div class="game-body"><div class="status published">✨ 公開中</div><div class="meta">デジタル・創作</div><h3>ビスケットすいぞくかん</h3><p>水族館をテーマにしたデジタル作品。画面の中の生きものの動きを楽しみながら体験しよう。</p><div class="tags"><span>デジタル</span><span>水族館</span><span>創作</span></div><div class="actions"><a class="play" href="./biscuit-suizokukan/">▶ あそぶ</a></div></div>
+ </article></div>
+</section>
 
+<section class="section" data-section="dev">
+  <div class="section-head"><div><h2>🛠️ ただいま開発中</h2><p>完成前も公開しています。遊んで、「もっとこうして！」を聞かせてください。</p></div><span class="count">13作品</span></div>
+  <div class="grid"><article class="game-card dev" data-status="dev" data-tags="okinawa">
+  <div class="thumb" aria-hidden="true">🪨</div>
+  <div class="game-body"><div class="status dev">🛠️ 開発中・アイデア募集中</div><div class="meta">沖縄文化・地域学習</div><h3>石敢當職人！</h3><p>石敢當を刻み、丁字路に置いて集落を守る。沖縄のまちと文化をゲームで体験。</p><div class="tags"><span>沖縄文化</span><span>石敢當</span><span>地域</span></div><div class="actions"><a class="play devplay" href="./ishiganto/">🧪 開発版をあそぶ</a><a class="idea" href="https://ittoushouguu.ryukyu-tane.com/" target="_blank" rel="noopener">🏮 もっとこうして！</a></div></div>
+ </article>
+<article class="game-card dev" data-status="dev" data-tags="okinawa">
+  <div class="thumb" aria-hidden="true">🈶</div>
+  <div class="game-body"><div class="status dev">🛠️ 開発中・アイデア募集中</div><div class="meta">沖縄文化・漢字ゲーム</div><h3>石敢當職人！ 漢字防衛版</h3><p>正しい漢字を選んで「カン！」と彫り、T字路に石敢當を設置。5つの波から村を守ろう。</p><div class="tags"><span>沖縄文化</span><span>石敢當</span><span>漢字</span></div><div class="actions"><a class="play devplay" href="./ishiganto-kanji/">🧪 開発版をあそぶ</a><a class="idea" href="https://ittoushouguu.ryukyu-tane.com/" target="_blank" rel="noopener">🏮 もっとこうして！</a></div></div>
+ </article>
+<article class="game-card dev" data-status="dev" data-tags="science middle okinawa">
+  <div class="thumb" aria-hidden="true">⛏️</div>
+  <div class="game-body"><div class="status dev">🛠️ 開発中・アイデア募集中</div><div class="meta">中1理科・大地</div><h3>岩石ハンター！発掘の島</h3><p>地面を掘って標本を発見。ピントを合わせ、岩石の特徴を観察して博物館を完成させよう。</p><div class="tags"><span>中1</span><span>岩石</span><span>発掘</span></div><div class="actions"><a class="play devplay" href="./rock-lab/">🧪 開発版をあそぶ</a><a class="idea" href="https://ittoushouguu.ryukyu-tane.com/" target="_blank" rel="noopener">🏮 もっとこうして！</a></div></div>
+ </article>
+<article class="game-card dev" data-status="dev" data-tags="science middle okinawa">
+  <div class="thumb" aria-hidden="true">🎯</div>
+  <div class="game-body"><div class="status dev">🛠️ 開発中・アイデア募集中</div><div class="meta">中3理科・運動</div><h3>石敢當ヒット！</h3><p>石の速さと加速度を工夫し、迫るマジムンを迎撃。村を育てながら運動の規則性を学ぼう。</p><div class="tags"><span>中3</span><span>速さ</span><span>加速度</span></div><div class="actions"><a class="play devplay" href="./motion-lab/">🧪 開発版をあそぶ</a><a class="idea" href="https://ittoushouguu.ryukyu-tane.com/" target="_blank" rel="noopener">🏮 もっとこうして！</a></div></div>
+ </article>
+<article class="game-card dev" data-status="dev" data-tags="science okinawa">
+  <div class="thumb" aria-hidden="true">🧪</div>
+  <div class="game-body"><div class="status dev">🛠️ 開発中・アイデア募集中</div><div class="meta">小3〜6理科・沖縄</div><h3>にごりラボ！</h3><p>CO₂を送ると石灰水はどう変わる？ 白くにごり、また変化する瞬間を自分の目で見つけよう。</p><div class="tags"><span>理科</span><span>石灰水</span><span>琉球石灰岩</span></div><div class="actions"><a class="play devplay" href="./limestone-lab/">🧪 開発版をあそぶ</a><a class="idea" href="https://ittoushouguu.ryukyu-tane.com/" target="_blank" rel="noopener">🏮 もっとこうして！</a></div></div>
+ </article>
+<article class="game-card dev" data-status="dev" data-tags="science">
+  <div class="thumb" aria-hidden="true">🍯</div>
+  <div class="game-body"><div class="status dev">🛠️ 開発中・アイデア募集中</div><div class="meta">身近な科学・加熱</div><h3>おさとうラボ！</h3><p>砂糖水を温めると、シロップ、カラメルへどう変わる？ 色と温度の変化を観察しよう。</p><div class="tags"><span>理科</span><span>加熱</span><span>観察</span></div><div class="actions"><a class="play devplay" href="./sugar-lab/">🧪 開発版をあそぶ</a><a class="idea" href="https://ittoushouguu.ryukyu-tane.com/" target="_blank" rel="noopener">🏮 もっとこうして！</a></div></div>
+ </article>
+<article class="game-card dev" data-status="dev" data-tags="science middle">
+  <div class="thumb" aria-hidden="true">🔥</div>
+  <div class="game-body"><div class="status dev">🛠️ 開発中・アイデア募集中</div><div class="meta">理科・実験器具</div><h3>ガスバーナー名人！</h3><p>安全な操作順を選び、火をつけて調節する。操作だけでなく「なぜ？」まで学ぶ実験ゲーム。</p><div class="tags"><span>理科</span><span>実験</span><span>安全操作</span></div><div class="actions"><a class="play devplay" href="./gas-burner/">🧪 開発版をあそぶ</a><a class="idea" href="https://ittoushouguu.ryukyu-tane.com/" target="_blank" rel="noopener">🏮 もっとこうして！</a></div></div>
+ </article>
+<article class="game-card dev" data-status="dev" data-tags="science middle">
+  <div class="thumb" aria-hidden="true">🔬</div>
+  <div class="game-body"><div class="status dev">🛠️ 開発中・アイデア募集中</div><div class="meta">理科・観察器具</div><h3>顕微鏡操作名人</h3><p>反射鏡やピントなどを実際に操作。失敗も発見に変えながら、顕微鏡の使い方を身につけよう。</p><div class="tags"><span>理科</span><span>顕微鏡</span><span>観察</span></div><div class="actions"><a class="play devplay" href="./microscope/">🧪 開発版をあそぶ</a><a class="idea" href="https://ittoushouguu.ryukyu-tane.com/" target="_blank" rel="noopener">🏮 もっとこうして！</a></div></div>
+ </article>
+<article class="game-card dev" data-status="dev" data-tags="science middle">
+  <div class="thumb" aria-hidden="true">💧</div>
+  <div class="game-body"><div class="status dev">🛠️ 開発中・アイデア募集中</div><div class="meta">理科・天気</div><h3>しずくハンター</h3><p>氷でコップを冷やして、最初の水滴が現れる温度を発見。露点をゲームで体験しよう。</p><div class="tags"><span>理科</span><span>露点</span><span>天気</span></div><div class="actions"><a class="play devplay" href="./dew-point/">🧪 開発版をあそぶ</a><a class="idea" href="https://ittoushouguu.ryukyu-tane.com/" target="_blank" rel="noopener">🏮 もっとこうして！</a></div></div>
+ </article>
+<article class="game-card dev" data-status="dev" data-tags="science middle">
+  <div class="thumb" aria-hidden="true">🍙</div>
+  <div class="game-body"><div class="status dev">🛠️ 開発中・アイデア募集中</div><div class="meta">理科・人体</div><h3>消化の大冒険！ 見え方ラボ</h3><p>口から消化器官をめぐり、変化・手順・つながり・全体像の4つの見方から消化を観察しよう。</p><div class="tags"><span>理科</span><span>消化</span><span>人体</span></div><div class="actions"><a class="play devplay" href="./digestion/">🧪 開発版をあそぶ</a><a class="idea" href="https://ittoushouguu.ryukyu-tane.com/" target="_blank" rel="noopener">🏮 もっとこうして！</a></div></div>
+ </article>
+<article class="game-card dev" data-status="dev" data-tags="science">
+  <div class="thumb" aria-hidden="true">💡</div>
+  <div class="game-body"><div class="status dev">🛠️ 開発中・アイデア募集中</div><div class="meta">電気・回路</div><h3>11円電池でLEDを光らせよう！</h3><p>10円玉と1円玉を使った電池モデルで、作る・測る・光らない原因を直すまでを体験。</p><div class="tags"><span>電気</span><span>回路</span><span>実験</span></div><div class="actions"><a class="play devplay" href="./electric-circuit/">🧪 開発版をあそぶ</a><a class="idea" href="https://ittoushouguu.ryukyu-tane.com/" target="_blank" rel="noopener">🏮 もっとこうして！</a></div></div>
+ </article>
+<article class="game-card dev" data-status="dev" data-tags="math middle">
+  <div class="thumb" aria-hidden="true">📐</div>
+  <div class="game-body"><div class="status dev">🛠️ 開発中・アイデア募集中</div><div class="meta">中学数学・図形</div><h3>三角形ラボ！</h3><p>辺と角を直接タップし、合同・相似の条件を重ね合わせながら発見する図形ゲーム。</p><div class="tags"><span>数学</span><span>合同</span><span>相似</span></div><div class="actions"><a class="play devplay" href="./triangle-conditions/">🧪 開発版をあそぶ</a><a class="idea" href="https://ittoushouguu.ryukyu-tane.com/" target="_blank" rel="noopener">🏮 もっとこうして！</a></div></div>
+ </article>
+<article class="game-card dev" data-status="dev" data-tags="okinawa">
+  <div class="thumb" aria-hidden="true">🏯</div>
+  <div class="game-body"><div class="status dev">🛠️ 開発中・アイデア募集中</div><div class="meta">小学4年・沖縄文化</div><h3>喜名番所 おしごと大作戦！</h3><p>旅人を宿・行政・道案内・交流へ案内しながら、喜名番所のいろいろな役割を体験。</p><div class="tags"><span>沖縄文化</span><span>喜名番所</span><span>地域</span></div><div class="actions"><a class="play devplay" href="./kina-bansho/">🧪 開発版をあそぶ</a><a class="idea" href="https://ittoushouguu.ryukyu-tane.com/" target="_blank" rel="noopener">🏮 もっとこうして！</a></div></div>
+ </article></div>
+</section>
+<div class="empty" id="empty">この分類の作品はまだありません。</div>
 
-    <article class="game-card" data-tags="okinawa">
-      <div class="thumb" aria-hidden="true">🈶</div>
-      <div class="game-body"><div class="meta">沖縄文化・漢字ゲーム</div><h3>石敢當職人！ 漢字防衛版</h3><p>正しい漢字を選んで「カン！」と彫り、T字路に石敢當を設置。5つの波から村を守ろう。</p><div class="tags"><span>沖縄文化</span><span>石敢當</span><span>漢字</span></div><a class="play" href="./ishiganto-kanji/">▶ あそぶ</a></div>
-    </article>
+<section class="invite">
+  <div class="lantern">🏮</div>
+  <h2>あなたの一言が、次のゲームを育てます</h2>
+  <p>「ここが面白かった」「ここが分かりにくい」「こんな仕掛けがほしい」。小さな気づきを、一つの灯として集めています。開発中の作品は、みんなの灯を受け取りながら育てていきます。</p>
+  <a href="https://ittoushouguu.ryukyu-tane.com/" target="_blank" rel="noopener">🏮 アイデアの灯を送る</a>
+</section>
 
-    <article class="game-card" data-tags="science middle okinawa">
-      <div class="thumb" aria-hidden="true">⛏️</div>
-      <div class="game-body"><div class="meta">中1理科・大地</div><h3>岩石ハンター！発掘の島</h3><p>地面を掘って標本を発見。ピントを合わせ、岩石の特徴を観察して博物館を完成させよう。</p><div class="tags"><span>中1</span><span>岩石</span><span>発掘</span></div><a class="play" href="./rock-lab/">▶ あそぶ</a></div>
-    </article>
+<section class="library">
+  <h2>📚 先生・保護者の方へ</h2>
+  <p>学年・教科・教材から詳しく探す場合は「アルパカすく〜る教材ライブラリ」へ。</p>
+  <a href="https://alpaca-school.okinawa/index2.html">教材ライブラリを見る →</a>
+</section>
 
-    <article class="game-card" data-tags="science middle okinawa">
-      <div class="thumb" aria-hidden="true">🎯</div>
-      <div class="game-body"><div class="meta">中3理科・運動</div><h3>石敢當ヒット！</h3><p>石の速さと加速度を工夫し、迫るマジムンを迎撃。村を育てながら運動の規則性を学ぼう。</p><div class="tags"><span>中3</span><span>速さ</span><span>加速度</span></div><a class="play" href="./motion-lab/">▶ あそぶ</a></div>
-    </article>
+<section class="archive">
+  <details><summary>🧰 開発アーカイブを見る</summary>
+    <div class="archive-list"><a href="./beniimo-ver3/">べにいもラボ！ ver3</a><a href="./beniimo-ver4/">べにいもラボ！ ver4</a></div>
+  </details>
+</section>
 
-    <article class="game-card" data-tags="science okinawa">
-      <div class="thumb" aria-hidden="true">🧪</div>
-      <div class="game-body"><div class="meta">小3〜6理科・沖縄</div><h3>にごりラボ！</h3><p>CO₂を送ると石灰水はどう変わる？ 白くにごり、また変化する瞬間を自分の目で見つけよう。</p><div class="tags"><span>理科</span><span>石灰水</span><span>琉球石灰岩</span></div><a class="play" href="./limestone-lab/">▶ あそぶ</a></div>
-    </article>
-
-    <article class="game-card" data-tags="science">
-      <div class="thumb" aria-hidden="true">🍯</div>
-      <div class="game-body"><div class="meta">身近な科学・加熱</div><h3>おさとうラボ！</h3><p>砂糖水を温めると、シロップ、カラメルへどう変わる？ 色と温度の変化を観察しよう。</p><div class="tags"><span>理科</span><span>加熱</span><span>観察</span></div><a class="play" href="./sugar-lab/">▶ あそぶ</a></div>
-    </article>
-
-    <article class="game-card" data-tags="science middle">
-      <div class="thumb" aria-hidden="true">🔥</div>
-      <div class="game-body"><div class="meta">理科・実験器具</div><h3>ガスバーナー名人！</h3><p>安全な操作順を選び、火をつけて調節する。操作だけでなく「なぜ？」まで学ぶ実験ゲーム。</p><div class="tags"><span>理科</span><span>実験</span><span>安全操作</span></div><a class="play" href="./gas-burner/">▶ あそぶ</a></div>
-    </article>
-
-    <article class="game-card" data-tags="science middle">
-      <div class="thumb" aria-hidden="true">🔬</div>
-      <div class="game-body"><div class="meta">理科・観察器具</div><h3>顕微鏡操作名人</h3><p>反射鏡やピントなどを実際に操作。失敗も発見に変えながら、顕微鏡の使い方を身につけよう。</p><div class="tags"><span>理科</span><span>顕微鏡</span><span>観察</span></div><a class="play" href="./microscope/">▶ あそぶ</a></div>
-    </article>
-
-    <article class="game-card" data-tags="science middle">
-      <div class="thumb" aria-hidden="true">💧</div>
-      <div class="game-body"><div class="meta">理科・天気</div><h3>しずくハンター</h3><p>氷でコップを冷やして、最初の水滴が現れる温度を発見。露点をゲームで体験しよう。</p><div class="tags"><span>理科</span><span>露点</span><span>天気</span></div><a class="play" href="./dew-point/">▶ あそぶ</a></div>
-    </article>
-
-    <article class="game-card" data-tags="science middle">
-      <div class="thumb" aria-hidden="true">🍙</div>
-      <div class="game-body"><div class="meta">理科・人体</div><h3>消化の大冒険！ 見え方ラボ</h3><p>口から消化器官をめぐり、変化・手順・つながり・全体像の4つの見方から消化を観察しよう。</p><div class="tags"><span>理科</span><span>消化</span><span>人体</span></div><a class="play" href="./digestion/">▶ あそぶ</a></div>
-    </article>
-
-    <article class="game-card" data-tags="science">
-      <div class="thumb" aria-hidden="true">💡</div>
-      <div class="game-body"><div class="meta">電気・回路</div><h3>11円電池でLEDを光らせよう！</h3><p>10円玉と1円玉を使った電池モデルで、作る・測る・光らない原因を直すまでを体験。</p><div class="tags"><span>電気</span><span>回路</span><span>実験</span></div><a class="play" href="./electric-circuit/">▶ あそぶ</a></div>
-    </article>
-
-    <article class="game-card" data-tags="math middle">
-      <div class="thumb" aria-hidden="true">📐</div>
-      <div class="game-body"><div class="meta">中学数学・図形</div><h3>三角形ラボ！</h3><p>辺と角を直接タップし、合同・相似の条件を重ね合わせながら発見する図形ゲーム。</p><div class="tags"><span>数学</span><span>合同</span><span>相似</span></div><a class="play" href="./triangle-conditions/">▶ あそぶ</a></div>
-    </article>
-
-    <article class="game-card" data-tags="okinawa">
-      <div class="thumb" aria-hidden="true">🏯</div>
-      <div class="game-body"><div class="meta">小学4年・沖縄文化</div><h3>喜名番所 おしごと大作戦！</h3><p>旅人を宿・行政・道案内・交流へ案内しながら、喜名番所のいろいろな役割を体験。</p><div class="tags"><span>沖縄文化</span><span>喜名番所</span><span>地域</span></div><a class="play" href="./kina-bansho/">▶ あそぶ</a></div>
-    </article>
-
-    <article class="game-card" data-tags="programming">
-      <div class="thumb" aria-hidden="true">🐠</div>
-      <div class="game-body"><div class="meta">デジタル・創作</div><h3>ビスケットすいぞくかん</h3><p>水族館をテーマにしたデジタル作品。画面の中の生きものの動きを楽しみながら体験しよう。</p><div class="tags"><span>デジタル</span><span>水族館</span><span>創作</span></div><a class="play" href="./biscuit-suizokukan/">▶ あそぶ</a></div>
-    </article>
-  </section>
-  <div class="empty" id="empty">この分類のゲームはまだありません。</div>
-
-  <section class="library">
-    <h2>📚 先生・保護者の方へ</h2>
-    <p>学年・教科・教材から詳しく探す場合は、既存の「アルパカすく〜る教材ライブラリ」も利用できます。</p>
-    <a href="https://alpaca-school.okinawa/index2.html">教材ライブラリを見る →</a>
-  </section>
-
-  <section class="archive">
-    <details>
-      <summary>🧰 開発アーカイブを見る</summary>
-      <p>同じ作品の過去の試作版です。通常は上の現行版で遊んでください。</p>
-      <div class="archive-list">
-        <a href="./beniimo-ver3/">べにいもラボ！ ver3 試作</a>
-        <a href="./beniimo-ver4/">べにいもラボ！ ver4 試作</a>
-      </div>
-    </details>
-  </section>
-
-  <footer>
-    アルパカすく〜るラボ｜遊びながら発見する学習ゲーム<br>
-    各ゲームの学習表現は、実験・文化・科学的事実を区別して扱います。
-  </footer>
+<footer>アルパカすく〜るラボ｜遊んで、試して、地域へつながる公開研究所</footer>
 </main>
 <script>
 (()=>{"use strict";
-const buttons=[...document.querySelectorAll(".filter")],cards=[...document.querySelectorAll(".game-card")],count=document.getElementById("count"),empty=document.getElementById("empty");
+const buttons=[...document.querySelectorAll(".filter")],cards=[...document.querySelectorAll(".game-card")],sections=[...document.querySelectorAll("[data-section]")],empty=document.getElementById("empty");
 function apply(filter){
-  let shown=0;
-  for(const card of cards){
-    const yes=filter==="all"||card.dataset.tags.split(/\s+/).includes(filter);
-    card.hidden=!yes;if(yes)shown++;
-  }
-  count.textContent=shown+"作品";empty.classList.toggle("show",shown===0);
-  for(const b of buttons)b.setAttribute("aria-pressed",String(b.dataset.filter===filter));
+ let shown=0;
+ for(const card of cards){
+   const yes=filter==="all" || card.dataset.status===filter || card.dataset.tags.split(/\s+/).includes(filter);
+   card.hidden=!yes;if(yes)shown++;
+ }
+ for(const sec of sections){
+   const visible=[...sec.querySelectorAll(".game-card")].some(c=>!c.hidden);
+   sec.hidden=!visible;
+ }
+ empty.classList.toggle("show",shown===0);
+ for(const b of buttons)b.setAttribute("aria-pressed",String(b.dataset.filter===filter));
 }
-for(const b of buttons)b.addEventListener("click",()=>apply(b.dataset.filter));
+buttons.forEach(b=>b.addEventListener("click",()=>apply(b.dataset.filter)));
 })();
 </script>
-</body>
-</html>
+</body></html>
