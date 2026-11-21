@@ -1,0 +1,850 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0878b3">
+<title>ガスバーナー名人 — 実験ラボ</title>
+<style>
+:root{--red:#df493b;--blue:#0784c1;--dark:#073c5b;--yellow:#ffe66d;--sea:#41c7df;--white:#fff;--good:#167d66}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none}body{font-family:"Hiragino Maru Gothic ProN","Yu Gothic",system-ui,sans-serif;background:#06324f;color:white}button{font:inherit;cursor:pointer;touch-action:manipulation}button:focus-visible,input:focus-visible{outline:4px solid var(--yellow);outline-offset:2px}
+#app{position:relative;width:min(100vw,480px);height:100vh;height:100dvh;min-height:560px;margin:auto;overflow:hidden;background:linear-gradient(180deg,#149ace 0%,#6bd6e5 56%,#beeecb 100%);user-select:none;-webkit-user-select:none;touch-action:none;isolation:isolate}
+#app::before{content:"";position:absolute;top:0;left:0;right:0;height:7px;background:repeating-linear-gradient(90deg,#ba4a38 0 28px,#e07952 28px 34px);z-index:7}
+.decor{position:absolute;inset:0;pointer-events:none;overflow:hidden}.sun{position:absolute;top:16%;right:7%;width:65px;height:65px;background:#fff1a1;border-radius:50%;box-shadow:0 0 35px #fff8bc99}.cloud{position:absolute;border-radius:50px;background:#fff9;filter:blur(1px);width:90px;height:24px;top:25%;left:-20px;animation:float 10s ease-in-out infinite alternate}.cloud::before{content:"";position:absolute;width:43px;height:38px;left:18px;top:-17px;border-radius:50%;background:#fffc}.c2{top:37%;left:80%;transform:scale(.7);animation-delay:-4s}.wave{position:absolute;left:-10%;width:120%;height:160px;bottom:-90px;border-radius:48%;background:#009cc0aa;animation:wave 8s ease-in-out infinite alternate}.wave.w2{bottom:-120px;background:#006ba777;animation-delay:-3s}.bubbles span{position:absolute;width:9px;height:9px;border:2px solid #fff7;border-radius:50%;bottom:-20px;animation:rise var(--t,8s) linear infinite;left:var(--x,15%);animation-delay:var(--d,0s)}@keyframes rise{to{transform:translateY(-950px);opacity:0}}@keyframes wave{to{transform:translateX(22px) rotate(-3deg)}}@keyframes float{to{transform:translateX(48px)}}
+header{position:absolute;z-index:5;top:7px;left:0;right:0;height:122px;background:var(--red);padding:11px 14px 10px;box-shadow:0 6px 0 #a83a32}header:after{content:"";position:absolute;top:100%;left:0;right:0;height:11px;background:radial-gradient(circle at 12px 0,var(--red) 11px,transparent 12px) repeat-x;background-size:24px 11px}.hudrow{display:flex;justify-content:space-between;align-items:start;gap:10px}.little{font-size:11px;font-weight:900;letter-spacing:.08em}.score{font-weight:1000;font-size:33px;line-height:1.05;color:var(--yellow);text-shadow:0 3px #96352f;font-variant-numeric:tabular-nums}.mute{min-width:65px;min-height:38px;background:#fff;border:2px solid #ffe66d;border-radius:30px;color:#a8322a;font-weight:900}.pills{display:flex;gap:7px;margin-top:8px}.pill{flex:1;text-align:center;border-radius:30px;background:#ad312c;color:#ffdfd5;padding:7px 2px;font-size:12px;font-weight:900;white-space:nowrap}.pill.on{background:var(--yellow);color:#9b3923}.pill.done{background:#fff;color:var(--good)}
+.screen{position:absolute;inset:0;z-index:2;display:none}.screen.active{display:block}.titleScreen{padding:157px 20px 20px;text-align:center}.tag{display:inline-block;background:#fff;color:#0b669b;padding:7px 16px;border-radius:100px;font-size:13px;font-weight:1000;box-shadow:0 4px #036f9a}.titleScreen h1{font-size:clamp(33px,9vw,46px);color:#fff;margin:13px 0 0;text-shadow:3px 4px 0 #026a9b;letter-spacing:-.05em}.titleScreen h1 em{font-style:normal;color:var(--yellow)}.subtitle{font-weight:900;color:#064767;font-size:14px;margin:6px 0 0}.hero{position:relative;margin:0 auto;height:min(39dvh,315px);min-height:215px;max-width:330px;display:flex;justify-content:center;align-items:center}.hero .labsvg{width:90%;height:100%;filter:drop-shadow(0 13px 12px #004d6270)}.startBtn,.action{display:block;border:0;background:var(--yellow);color:#94422b;font-weight:1000;border-radius:40px;box-shadow:0 6px 0 #c18d28,0 0 0 3px white inset}.startBtn{width:100%;max-width:300px;margin:4px auto;padding:16px;font-size:22px;animation:bob 2s ease-in-out infinite}.startBtn:active,.action:active{transform:translateY(4px);box-shadow:0 2px 0 #c18d28,0 0 0 3px white inset}.caption{font-size:12px;color:#06496a;font-weight:800}.safety{color:#084866;font-size:11px;line-height:1.4;font-weight:800;margin:12px auto 0;max-width:335px}.game{padding-top:149px}.task{background:#fff;color:#10495f;border-radius:23px;padding:11px 14px;position:relative;margin:0 15px 5px;box-shadow:0 5px #0087ae66}.task .kicker{font-weight:1000;color:var(--red);font-size:11px}.task h2{font-weight:1000;font-size:clamp(17px,4.4vw,22px);margin:2px 0}.task p{margin:0;font-size:12px;line-height:1.45;font-weight:800;color:#477180}.timer{float:right;background:#e5f7fc;border-radius:20px;padding:4px 9px;font-weight:900;color:#0c6f95}.labArea{height:calc(100dvh - 475px);min-height:135px;max-height:330px;display:flex;justify-content:center;align-items:center;position:relative}.labArea svg{height:100%;width:100%;max-width:340px;overflow:visible}.labArea .flameY{transform-origin:50% 100%;animation:flicker .75s ease-in-out infinite alternate}.labArea .flameB{transform-origin:50% 100%;animation:flicker .5s ease-in-out infinite alternate}@keyframes flicker{to{transform:scale(.9,1.08) rotate(2deg)}}@keyframes bob{50%{transform:translateY(-6px)}}.note{position:absolute;z-index:1;top:9px;right:13px;color:#08516c;font-size:11px;font-weight:900;background:#ffffffda;padding:6px 9px;border-radius:20px}.message{min-height:53px;margin:2px 14px 7px;border-radius:15px;background:#ffffffed;color:#0d516b;box-shadow:0 4px #008db04d;padding:10px 12px;line-height:1.35;font-size:13px;font-weight:900;display:flex;align-items:center;gap:8px}.message.bad{background:#ffe0dc;color:#ac2a27;animation:shake .28s}.message.good{background:#daf9cf;color:#17623c}@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}.controls{position:absolute;bottom:0;left:0;right:0;padding:10px 13px calc(14px + env(safe-area-inset-bottom));background:#036e9de8;border-top:4px solid #fff7;min-height:174px}.question{font-size:12px;font-weight:1000;margin:0 0 9px;color:#e4faff}.choices{display:grid;grid-template-columns:1fr 1fr;gap:9px}.action{padding:11px 5px;min-height:56px;font-size:14px;line-height:1.2;touch-action:manipulation}.action:disabled{opacity:.45;filter:grayscale(.6);cursor:default}.action.alt{background:white;color:#056ca1;box-shadow:0 5px #19637c}.steptext{font-weight:900;font-size:13px;margin:3px 0 13px}.sliderWrap{display:flex;align-items:center;gap:13px}.dial{width:76px;height:76px;border-radius:50%;background:conic-gradient(#ffe66d 0 var(--angle,0%),#1d7fa4 var(--angle,0%) 100%);border:6px solid white;display:grid;place-items:center;touch-action:none;box-shadow:0 4px #00445c;position:relative;flex-shrink:0}.dial:after{content:"";position:absolute;inset:8px;border:5px solid #0b78a7;border-radius:50%;background:#dff6ff}.dial span{z-index:1;color:#075b85;font-size:21px;font-weight:1000}.sliderinfo{flex:1;font-weight:900;font-size:13px}.sliderinfo small{display:block;color:#d9f9ff;font-size:11px;margin-top:6px}.gauge{height:12px;border-radius:10px;border:2px solid #fff;background:linear-gradient(90deg,#ffbd52,#ffe77a 28%,#7ecaf6 63%,#0f7be4);margin-top:8px;position:relative}.pointer{position:absolute;left:var(--p,0%);width:4px;height:23px;top:-8px;border-radius:5px;background:white;box-shadow:0 0 0 2px #045f88;transform:translateX(-50%)}.miniActions{display:flex;gap:8px;margin-top:10px}.miniActions button{flex:1}.end{padding:155px 20px 15px;text-align:center;overflow:auto;height:100%}.end h1{font-size:33px;text-shadow:3px 3px #056b92;margin:8px 0}.bigscore{font-weight:1000;font-size:65px;line-height:1;color:var(--yellow);text-shadow:0 4px #0c7ba0}.review{background:#fff;color:#164b65;text-align:left;border-radius:20px;padding:14px;margin:14px 0;max-height:30dvh;overflow:auto;box-shadow:0 5px #047a9b}.review p{font-size:12px;margin:6px 0 10px;line-height:1.5}.review strong{color:#bd4e35}.next{margin:15px auto;width:100%;max-width:340px}.feedbackOverlay{position:absolute;inset:0;z-index:9;background:#033c61c9;display:none;place-items:center;padding:25px}.feedbackOverlay.show{display:grid}.feedbackCard{width:100%;max-width:340px;background:#fff;color:#0a506d;padding:22px 18px;border-radius:25px;text-align:center;box-shadow:0 10px 0 #00384c}.feedbackCard h2{margin:3px 0 6px;font-size:27px;color:var(--good)}.feedbackCard p{font-size:14px;font-weight:800;line-height:1.6}.feedbackCard .action{width:100%;margin-top:10px}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+@media(max-height:720px){header{height:110px}.game{padding-top:137px}.titleScreen{padding-top:138px}.hero{height:30dvh;min-height:170px}.labArea{height:calc(100dvh - 445px);min-height:110px}.controls{padding-top:8px;padding-bottom:9px;min-height:158px}.message{min-height:45px}.task{padding:9px 13px}.end{padding-top:135px}}
+@media(max-height:590px){.labArea{min-height:85px;height:calc(100dvh - 433px)}.titleScreen .safety{display:none}.hero{min-height:130px;height:25dvh}.controls{min-height:150px}.action{min-height:49px;padding:8px 4px}}
+/* iPhone Safari: controls-first fluid viewport layout */
+#app{height:100svh;height:100dvh;min-height:0;}
+.screen.active.game{display:flex;flex-direction:column;padding-top:clamp(112px,16dvh,149px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;touch-action:pan-y;min-height:0;scrollbar-width:none;}
+.screen.active.game::-webkit-scrollbar{display:none}
+.game .task{flex:0 0 auto;margin-bottom:4px;padding:9px 12px}
+.game .task p{line-height:1.28}
+.game .labArea{height:auto;min-height:72px;max-height:none;flex:1 1 125px;overflow:hidden}
+.game .labArea svg{height:100%;max-height:100%;width:100%;overflow:hidden}
+.game .message{flex:0 0 auto;min-height:43px;padding:7px 11px;margin:3px 12px 6px;font-size:12px}
+.game .controls{position:sticky;bottom:0;z-index:5;flex:0 0 auto;min-height:0;margin-top:auto;padding:10px 12px calc(10px + env(safe-area-inset-bottom));}
+.game .controls .action{min-height:48px;padding:9px 5px}
+.game .controls .choices{gap:8px}
+.game .controls .question{margin-bottom:7px}
+.game .controls .steptext{margin:2px 0 8px}
+.titleScreen.active,.end.active{overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+.titleScreen .hero{min-height:120px;height:clamp(130px,28dvh,260px)}
+@media(max-height:750px){.screen.active.game{padding-top:116px}.game .task h2{font-size:17px}.game .controls .action{min-height:44px}.game .controls .dial{width:66px;height:66px}.game .message{min-height:37px}.game .labArea{min-height:65px}}
+@media(max-height:610px){.screen.active.game{padding-top:112px}.game .task p{font-size:11px}.game .labArea{min-height:55px}.titleScreen.active{padding-top:124px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+/* iPhone 17 / Dynamic Island safe-area header repair */
+:root{--ui-safe-top:env(safe-area-inset-top,0px);}
+#app{padding-top:0;}
+#app>header{
+  top:0;
+  height:calc(140px + var(--ui-safe-top));
+  padding:calc(14px + var(--ui-safe-top)) 14px 12px;
+  overflow:visible;
+}
+#app>header .hudrow{min-height:67px;align-items:flex-start;}
+#app>header .pills{position:relative;margin-top:6px;gap:6px;min-height:35px;}
+#app>header .pill{
+  display:flex;align-items:center;justify-content:center;
+  min-width:0;min-height:34px;line-height:1.2;
+  padding:7px 3px;white-space:nowrap;
+}
+#app>.screen.active.game{
+  padding-top:calc(154px + var(--ui-safe-top));
+  scroll-padding-top:calc(154px + var(--ui-safe-top));
+}
+#app>.titleScreen.active{padding-top:calc(162px + var(--ui-safe-top));}
+#app>.end.active{padding-top:calc(157px + var(--ui-safe-top));}
+@media(max-height:750px){
+ #app>header{height:calc(133px + var(--ui-safe-top));padding-top:calc(10px + var(--ui-safe-top));}
+ #app>header .hudrow{min-height:61px;}
+ #app>.screen.active.game{padding-top:calc(146px + var(--ui-safe-top));}
+ #app>.titleScreen.active{padding-top:calc(146px + var(--ui-safe-top));}
+ #app>.end.active{padding-top:calc(144px + var(--ui-safe-top));}
+}
+@media(max-height:610px){
+ #app>header{height:calc(126px + var(--ui-safe-top));padding-top:calc(8px + var(--ui-safe-top));}
+ #app>header .hudrow{min-height:58px;}
+ #app>header .pill{min-height:31px;padding-block:5px;}
+ #app>.screen.active.game{padding-top:calc(138px + var(--ui-safe-top));}
+ #app>.titleScreen.active{padding-top:calc(138px + var(--ui-safe-top));}
+ #app>.end.active{padding-top:calc(135px + var(--ui-safe-top));}
+}
+
+
+/* Stage 1: step-linked equipment motion */
+@keyframes flameLight{0%{opacity:0;transform:scale(.3,.08)}45%{opacity:1;transform:scale(.65,.6)}100%{opacity:1;transform:scale(1)}}
+.ignite-rise{transform-origin:160px 85px;animation:flameLight .65s cubic-bezier(.2,.85,.3,1.1) both}
+
+@keyframes matchApproach{from{transform:translate(115px,48px);opacity:0}to{transform:translate(0,0);opacity:1}}
+@keyframes knobTurn{from{transform:rotate(0deg)}to{transform:rotate(80deg)}}
+@keyframes cockTurn{from{transform:rotate(0deg)}to{transform:rotate(75deg)}}
+@keyframes checkPulse{0%{opacity:0;transform:scale(.88)}60%{opacity:1}100%{opacity:1;transform:scale(1)}}
+@keyframes sparkPop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}
+.match-enter{animation:matchApproach .75s ease-out both;transform-box:fill-box}
+.gas-turn{animation:knobTurn .65s ease-out both}
+.cock-turn{animation:cockTurn .65s ease-out both;transform-origin:0 0}
+.check-pop{animation:checkPulse .6s ease-out both;transform-origin:160px 215px}
+.spark-pop{animation:sparkPop .45s ease-out both;transform-origin:160px 83px}
+@media(prefers-reduced-motion:reduce){.match-enter,.gas-turn,.cock-turn,.check-pop,.spark-pop{animation-duration:.01ms}}
+
+/* Stage 3: each closing action animates its corresponding equipment */
+@keyframes extAirTurn{from{transform:rotate(0deg)}to{transform:rotate(-115deg)}}
+@keyframes extGasTurn{from{transform:rotate(0deg)}to{transform:rotate(-110deg)}}
+@keyframes extCockTurn{from{transform:rotate(0deg)}to{transform:rotate(-90deg)}}
+@keyframes extFocus{0%{opacity:0;transform:scale(.8)}100%{opacity:1;transform:scale(1)}}
+@keyframes extFlameOff{0%,15%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.2,.08)}}
+.ext-air-turn,.ext-gas-turn,.ext-cock-turn{transform-origin:0 0;animation-duration:.65s;animation-timing-function:ease-out;animation-fill-mode:forwards}
+.ext-air-turn{animation-name:extAirTurn}
+.ext-gas-turn{animation-name:extGasTurn}
+.ext-cock-turn{animation-name:extCockTurn}
+.ext-focus{animation:extFocus .35s ease-out both;transform-origin:center}
+.ext-flame-out{animation:extFlameOff .7s ease-in both}
+@media(prefers-reduced-motion:reduce){.ext-air-turn,.ext-gas-turn,.ext-cock-turn,.ext-focus,.ext-flame-out{animation-duration:.01ms}}
+
+/* Stage 2: visible air-control movement and iPhone-friendly input */
+.airControl{background:#ffffff1a;border:2px solid #ffffff75;border-radius:17px;padding:8px 10px 9px}
+.airHelp,.airScale{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.airHelp{font-size:12px;font-weight:900;margin-bottom:6px}.airHelp strong{color:#ffe66d}
+.airAdjust{display:flex;align-items:center;gap:9px}
+.airNudge{height:46px;width:48px;min-width:48px;border-radius:13px;border:2px solid white;background:#ffe66d;color:#064767;font-size:27px;font-weight:1000}
+.airNudge:active{transform:scale(.96)}
+.airRange{appearance:none;-webkit-appearance:none;flex:1;width:100%;height:30px;min-width:0;background:transparent;touch-action:pan-x;cursor:pointer}
+.airRange::-webkit-slider-runnable-track{height:14px;border:2px solid #fff;border-radius:15px;background:linear-gradient(to right,#ffda67 0%,#ffda67 var(--air-progress,12%),#0a70a3 var(--air-progress,12%),#0a70a3 100%)}
+.airRange::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:32px;height:32px;margin-top:-11px;border-radius:50%;border:4px solid #fff;background:#ffef8b;box-shadow:0 2px 0 #004769}
+.airRange::-moz-range-track{height:14px;border:2px solid #fff;border-radius:15px;background:#0a70a3}
+.airRange::-moz-range-thumb{height:27px;width:27px;border:4px solid #fff;border-radius:50%;background:#ffef8b}
+.airScale{font-size:10px;font-weight:900;margin-top:2px}.airScale strong{font-size:15px;color:#ffe66d}.airHelpSmall{font-size:10px;text-align:center;color:#e8fbff;font-weight:800;margin-top:4px}
+.air-flow{animation:airPuff 1.1s ease-in-out infinite alternate}
+@keyframes airPuff{from{opacity:.35}to{opacity:1}}
+@media(max-height:750px){.airControl{padding:6px 8px}.airNudge{height:40px;width:43px;min-width:43px}.airHelpSmall{display:none}}
+@media(prefers-reduced-motion:reduce){.air-flow{animation:none}}
+
+/* iPhone compact laboratory: preserve burner illustration instead of shrinking to thumbnail */
+#app.stage2-mode>header{
+ height:calc(98px + var(--ui-safe-top));
+ padding:calc(7px + var(--ui-safe-top)) 12px 6px;
+ box-shadow:0 3px 0 #a83a32;
+}
+#app.stage2-mode>header .hudrow{min-height:42px;align-items:center;gap:6px}
+#app.stage2-mode>header .little{font-size:9px;line-height:1.1}
+#app.stage2-mode>header #best{display:none}
+#app.stage2-mode>header .score{font-size:26px;line-height:1.05}
+#app.stage2-mode>header .mute{min-height:32px;padding:2px 9px;font-size:12px;min-width:72px}
+#app.stage2-mode>header .pills{margin-top:3px;gap:5px;min-height:27px}
+#app.stage2-mode>header .pill{min-height:27px;padding:4px 2px;font-size:11px}
+#app.stage2-mode>.screen.active.game{
+ padding-top:calc(108px + var(--ui-safe-top));
+ min-height:0;
+}
+#app.stage2-mode .task{
+ padding:6px 11px;margin:0 10px 2px;border-radius:15px;
+ box-shadow:0 2px #0087ae66;
+}
+#app.stage2-mode .task .kicker{font-size:10px}
+#app.stage2-mode .task h2{font-size:17px;margin:0;line-height:1.3}
+#app.stage2-mode .task p{font-size:11px;line-height:1.25;margin-top:2px}
+#app.stage2-mode .task .timer{font-size:12px;padding:3px 8px}
+#app.stage2-mode .labArea{
+ min-height:170px;flex:1 0 170px;
+ height:auto;max-height:none;overflow:visible;
+ margin:0 2px;isolation:isolate;
+}
+#app.stage2-mode .labArea #labImage{height:100%!important;min-height:170px;overflow:visible}
+#app.stage2-mode .labArea svg{max-width:none;width:100%;height:100%;max-height:100%;overflow:visible}
+#app.stage2-mode .labArea .note{top:3px;right:6px;font-size:10px;padding:4px 7px;z-index:2}
+#app.stage2-mode .message{
+ min-height:32px;font-size:11px;line-height:1.22;
+ padding:5px 9px;margin:2px 10px 3px;border-radius:10px;
+}
+#app.stage2-mode .controls{
+ position:sticky;bottom:0;z-index:6;
+ min-height:0;flex:0 0 auto;
+ padding:6px 10px calc(6px + env(safe-area-inset-bottom));
+ border-top-width:2px;
+}
+#app.stage2-mode .controls>.question{display:none}
+#app.stage2-mode .controls .airControl{padding:5px 7px 6px;border-radius:12px;border-width:1px}
+#app.stage2-mode .controls .airHelp{font-size:11px;margin-bottom:3px}
+#app.stage2-mode .controls .airAdjust{gap:7px}
+#app.stage2-mode .controls .airNudge{
+ height:39px;min-height:39px;width:43px;min-width:43px;
+ font-size:23px;border-radius:10px;
+}
+#app.stage2-mode .controls .airRange{height:28px}
+#app.stage2-mode .controls .airScale{font-size:9px;margin-top:0}
+#app.stage2-mode .controls .airScale strong{font-size:13px}
+#app.stage2-mode .controls .airHelpSmall{display:none}
+#app.stage2-mode .controls .miniActions{margin-top:6px;gap:7px}
+#app.stage2-mode .controls .miniActions .action{min-height:43px;padding:8px 5px;font-size:14px}
+@media(max-height:650px){
+ #app.stage2-mode>header{height:calc(90px + var(--ui-safe-top))}
+ #app.stage2-mode>header .hudrow{min-height:38px}
+ #app.stage2-mode>header .pills{margin-top:2px}
+ #app.stage2-mode>.screen.active.game{padding-top:calc(100px + var(--ui-safe-top))}
+ #app.stage2-mode .labArea,#app.stage2-mode .labArea #labImage{min-height:155px}
+ #app.stage2-mode .labArea{flex-basis:155px}
+ #app.stage2-mode .message{min-height:29px}
+}
+
+/* Title-screen mobile-first viewport redesign: preserve the start button */
+#app.title-mode>header{
+ top:0;height:calc(84px + var(--ui-safe-top));
+ padding:calc(6px + var(--ui-safe-top)) 12px 5px;
+ box-shadow:0 3px 0 #a83a32;
+}
+#app.title-mode>header .hudrow{min-height:38px;align-items:center;gap:6px}
+#app.title-mode>header .little{font-size:9px;letter-spacing:0;line-height:1.1}
+#app.title-mode>header #best{display:none}
+#app.title-mode>header .score{font-size:25px;line-height:1}
+#app.title-mode>header .mute{min-height:29px;min-width:66px;padding:3px 8px;font-size:12px}
+#app.title-mode>header .pills{margin-top:1px;min-height:27px;gap:5px}
+#app.title-mode>header .pill{min-height:27px;padding:4px 3px;font-size:11px}
+#app.title-mode>.titleScreen.active{
+ display:flex;flex-direction:column;align-items:center;
+ padding:calc(97px + var(--ui-safe-top)) 14px calc(10px + env(safe-area-inset-bottom));
+ gap:0;overflow-y:auto;overflow-x:hidden;
+ height:100%;max-height:100%;min-height:0;
+}
+#app.title-mode .titleScreen .tag{flex:0 0 auto;padding:5px 12px;font-size:11px}
+#app.title-mode .titleScreen h1{
+ flex:0 0 auto;
+ font-size:clamp(27px,8vw,37px);line-height:1.08;
+ margin:6px 0 2px;text-shadow:2px 3px 0 #026a9b;
+}
+#app.title-mode .titleScreen .subtitle{flex:0 0 auto;margin:3px 0;font-size:12px;line-height:1.3}
+#app.title-mode .titleScreen .hero{
+ flex:1 1 100px;min-height:74px;max-height:170px;
+ height:auto;width:100%;max-width:310px;
+ margin:0 auto;overflow:visible;
+}
+#app.title-mode .titleScreen .hero .labsvg{
+ width:100%;height:100%;max-height:100%;object-fit:contain;
+}
+#app.title-mode .titleScreen .startBtn{
+ flex:0 0 auto;align-self:center;
+ min-height:56px;width:min(100%,300px);
+ margin:6px auto 5px;padding:11px 10px;
+ font-size:19px;line-height:1.25;
+ animation:none;
+}
+#app.title-mode .titleScreen .caption{flex:0 0 auto;margin:3px auto;font-size:10px}
+#app.title-mode .titleScreen .safety{flex:0 0 auto;margin:4px auto 0;font-size:9px;line-height:1.25}
+@media(max-height:650px){
+ #app.title-mode>header{height:calc(75px + var(--ui-safe-top))}
+ #app.title-mode>header .hudrow{min-height:34px}
+ #app.title-mode>header .score{font-size:22px}
+ #app.title-mode>header .pills{min-height:25px}
+ #app.title-mode>header .pill{min-height:25px;padding:2px 3px}
+ #app.title-mode>.titleScreen.active{padding-top:calc(87px + var(--ui-safe-top));padding-bottom:calc(6px + env(safe-area-inset-bottom))}
+ #app.title-mode .titleScreen h1{font-size:30px;margin:4px 0 1px}
+ #app.title-mode .titleScreen .hero{min-height:65px;max-height:135px}
+ #app.title-mode .titleScreen .startBtn{min-height:51px;margin:4px auto;padding:9px;font-size:17px}
+ #app.title-mode .titleScreen .safety{display:none}
+}
+@media(max-height:510px){
+ #app.title-mode .titleScreen .caption{display:none}
+ #app.title-mode .titleScreen .hero{min-height:55px}
+ #app.title-mode .titleScreen .tag{font-size:10px}
+ #app.title-mode .titleScreen h1{font-size:27px}
+}
+/* Unified iPhone portrait layout: one geometry for ALL three stages */
+#app{--layout-safe-top:env(safe-area-inset-top,0px);--layout-hud:76px;}
+#app>header,#app.stage2-mode>header,#app.title-mode>header{
+ top:0;height:calc(var(--layout-hud) + var(--layout-safe-top));
+ padding:calc(5px + var(--layout-safe-top)) 11px 5px;
+ overflow:visible;box-shadow:0 2px 0 #a83a32;
+}
+#app>header .hudrow,#app.stage2-mode>header .hudrow,#app.title-mode>header .hudrow{min-height:34px;height:34px;align-items:center;gap:7px}
+#app>header .little,#app.stage2-mode>header .little,#app.title-mode>header .little{font-size:9px;line-height:1.1;letter-spacing:0}
+#app>header #best,#app.stage2-mode>header #best,#app.title-mode>header #best{display:none}
+#app>header .score,#app.stage2-mode>header .score,#app.title-mode>header .score{font-size:23px;line-height:1}
+#app>header .mute,#app.stage2-mode>header .mute,#app.title-mode>header .mute{min-width:76px;min-height:30px;padding:3px 8px;font-size:12px;border-width:2px}
+#app>header .pills,#app.stage2-mode>header .pills,#app.title-mode>header .pills{margin-top:1px;min-height:26px;gap:5px}
+#app>header .pill,#app.stage2-mode>header .pill,#app.title-mode>header .pill{min-height:26px;font-size:11px;line-height:1.1;padding:4px 3px}
+#app>header:after{height:7px;background-size:18px 7px;background:radial-gradient(circle at 9px 0,var(--red) 7px,transparent 8px) repeat-x;background-size:18px 7px}
+#app>.screen.active.game,#app.stage2-mode>.screen.active.game{
+ display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto auto;
+ padding:calc(var(--layout-hud) + var(--layout-safe-top) + 9px) 0 0;
+ height:100%;min-height:0;max-height:100%;
+ overflow:hidden;touch-action:manipulation;scroll-padding:0;
+}
+#app .game .task,#app.stage2-mode .game .task{margin:0 10px 2px;padding:6px 10px;border-radius:14px;box-shadow:0 2px #0087ae66;min-height:0}
+#app .game .task .kicker,#app.stage2-mode .game .task .kicker{font-size:10px;line-height:1.15}
+#app .game .task h2,#app.stage2-mode .game .task h2{font-size:17px;line-height:1.22;margin:1px 0 0}
+#app .game .task p,#app.stage2-mode .game .task p{font-size:11px;line-height:1.2;margin:1px 0 0}
+#app .game .task .timer,#app.stage2-mode .game .task .timer{font-size:12px;padding:3px 7px}
+#app .game .labArea,#app.stage2-mode .game .labArea{
+ display:flex;align-items:center;justify-content:center;
+ flex:none;height:100%;max-height:none;min-height:0;overflow:hidden;
+ margin:0 2px;padding:0;position:relative;
+}
+#app .game .labArea #labImage,#app.stage2-mode .game .labArea #labImage{height:100%!important;width:100%;min-height:0;max-height:100%;overflow:hidden;display:flex!important;align-items:center;justify-content:center}
+#app .game .labArea svg,#app.stage2-mode .game .labArea svg{width:100%;height:100%;max-width:350px;max-height:100%;overflow:visible}
+#app .game .labArea .note,#app.stage2-mode .game .labArea .note{top:4px;right:7px;padding:4px 7px;font-size:10px;z-index:2}
+#app .game .message,#app.stage2-mode .game .message{
+ min-height:31px;max-height:48px;padding:5px 9px;
+ margin:2px 9px 3px;border-radius:10px;
+ font-size:11px;line-height:1.2;overflow:auto;
+ box-shadow:0 2px #008db04d;
+}
+#app .game .controls,#app.stage2-mode .game .controls{
+ position:relative;bottom:auto;left:auto;right:auto;z-index:5;
+ flex:none;min-height:0;height:auto;max-height:min(35dvh,190px);
+ overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
+ margin:0;padding:7px 10px calc(7px + env(safe-area-inset-bottom));
+ border-top:2px solid #fff7;background:#036e9df2;
+}
+#app .game .controls .question,#app.stage2-mode .game .controls .question{font-size:11px;line-height:1.2;margin:0 0 4px}
+#app .game .controls .steptext,#app.stage2-mode .game .controls .steptext{font-size:11px;line-height:1.2;margin:2px 0 6px}
+#app .game .controls .choices,#app.stage2-mode .game .controls .choices{gap:7px}
+#app .game .controls .action,#app.stage2-mode .game .controls .action{min-height:46px;padding:9px 5px;font-size:13px;line-height:1.15}
+#app .game .controls .airControl,#app.stage2-mode .game .controls .airControl{padding:5px 7px;border-radius:12px;border-width:1px}
+#app .game .controls .airHelp,#app.stage2-mode .game .controls .airHelp{font-size:11px;margin-bottom:3px}
+#app .game .controls .airAdjust,#app.stage2-mode .game .controls .airAdjust{gap:7px}
+#app .game .controls .airNudge,#app.stage2-mode .game .controls .airNudge{min-height:41px;height:41px;min-width:45px;width:45px;font-size:23px}
+#app .game .controls .airHelpSmall,#app.stage2-mode .game .controls .airHelpSmall{display:none}
+#app .game .controls .miniActions,#app.stage2-mode .game .controls .miniActions{margin-top:6px;gap:7px}
+#app.title-mode>.titleScreen.active{
+ padding:calc(var(--layout-hud) + var(--layout-safe-top) + 11px) 14px calc(9px + env(safe-area-inset-bottom));
+}
+#app.title-mode .titleScreen .hero{flex:1 1 65px;min-height:56px;max-height:190px}
+#app>.end.active{padding-top:calc(var(--layout-hud) + var(--layout-safe-top) + 15px)}
+@media(max-height:520px){
+ #app{--layout-hud:70px}
+ #app .game .task p{display:none}
+ #app .game .controls,#app.stage2-mode .game .controls{max-height:38dvh}
+ #app .game .controls .action{min-height:43px}
+ #app .game .message{min-height:27px}
+ #app.title-mode .titleScreen .hero{max-height:125px}
+}
+
+/* Stages 4-6: reasoning game */
+#app.reason-mode .labArea{min-height:120px}
+#app.reason-mode .controls{max-height:min(45dvh,245px)}
+#app.reason-mode .message{max-height:58px}
+.reasonScene{width:min(96%,340px);margin:auto;color:#07506e;text-align:center;display:grid;gap:9px;place-items:center}
+.compareFlames{display:flex;align-items:end;justify-content:center;gap:16px;width:100%}
+.compareFlames>div{display:grid;place-items:center;gap:2px;font-size:11px}.compareFlames b{font-size:12px}.compareFlames small{font-size:10px}
+.arrowWhy{align-self:center!important;color:#0877a4;font-size:14px;font-weight:1000}
+.miniFlame{display:block;width:37px;height:62px;border-radius:55% 45% 55% 45%;transform:rotate(45deg);box-shadow:0 3px 0 #07506e33}
+.miniFlame.yellow{background:radial-gradient(circle at 70% 70%,#fff6b0 0 18%,#ffc34c 20% 58%,#f28b34 60%)}
+.miniFlame.blue{background:radial-gradient(circle at 70% 70%,#cbfbff 0 18%,#55cfff 20% 58%,#167ce8 60%)}
+.reasonFormula{background:#ffffffdd;border:2px solid #8fd7e3;border-radius:14px;padding:7px 10px;font-size:11px;font-weight:900;line-height:1.3}
+.whySequence{display:flex;align-items:center;justify-content:center;gap:5px;flex-wrap:wrap;background:#ffffffc7;border-radius:17px;padding:10px}
+.whySequence span{background:#e9fbff;border:1px solid #75cbd9;border-radius:12px;padding:8px 7px;font-size:11px;font-weight:900}.whySequence b{color:#0877a4}
+.reasonScene.scenario{background:#ffffffce;border-radius:18px;padding:12px}.scenarioIcon{font-size:44px;line-height:1}.reasonScene.scenario strong{font-size:14px}.reasonScene.scenario small{font-size:11px}
+.reasonProgress{font-size:10px;font-weight:1000;color:#ffe66d;margin-bottom:3px}
+.reasonQuestion{margin:0 0 7px;font-size:13px;line-height:1.35;font-weight:1000;color:#fff}
+.reasonChoices{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.reasonChoice{min-height:56px!important;height:auto!important;padding:7px!important;font-size:11px!important;line-height:1.28!important;background:#fff!important;color:#075575!important;box-shadow:0 4px #164f67!important}
+.reasonChoice.rightPick{background:#d9f9ce!important;color:#145f38!important;box-shadow:0 4px #2c8f67!important}
+.reasonChoice.wrongPick{background:#ffd9d3!important;color:#a42e2b!important;box-shadow:0 4px #a94a3b!important;animation:shake .25s}
+@media(max-height:600px){
+ #app.reason-mode .controls{max-height:48dvh}
+ #app.reason-mode .labArea{min-height:90px}
+ .reasonChoice{min-height:48px!important;font-size:10px!important}
+ .reasonScene{gap:5px}.miniFlame{width:31px;height:49px}
+}
+
+/* iPhone readability pass for reasoning stages */
+#app.reason-mode .controls{max-height:min(50dvh,290px);padding-top:6px}
+#app.reason-mode .reasonChoices{grid-template-columns:1fr;gap:6px}
+#app.reason-mode .reasonChoice{
+ min-height:42px!important;
+ padding:7px 10px!important;
+ font-size:12px!important;
+ line-height:1.3!important;
+ text-align:left!important;
+ border-radius:12px!important;
+}
+#app.reason-mode .reasonQuestion{font-size:13px;line-height:1.35;margin:0 0 6px}
+#app.reason-mode .reasonProgress{font-size:10px;margin-bottom:2px}
+#app.reason-mode .labArea{min-height:92px}
+@media(max-height:600px){
+ #app.reason-mode .controls{max-height:52dvh}
+ #app.reason-mode .reasonChoice{min-height:39px!important;font-size:11px!important;padding:6px 8px!important}
+ #app.reason-mode .reasonQuestion{font-size:12px}
+ #app.reason-mode .labArea{min-height:76px}
+}
+
+/* Stage 4: failure-as-discovery simulation */
+#app.stage4-mode .labArea{min-height:180px}
+#app.stage4-mode .controls{max-height:min(36dvh,210px)}
+.stage4Lab{width:100%;height:100%;display:grid;grid-template-rows:minmax(0,1fr) auto;place-items:center;position:relative}
+.stage4Burner{width:100%;height:100%;min-height:0;display:grid;place-items:center}
+.stage4Burner .labsvg{width:100%;height:100%;max-height:100%;max-width:345px}
+.stage4Status{align-self:end;background:#ffffffea;color:#075575;border:2px solid #8bd6df;border-radius:20px;padding:5px 11px;font-size:11px;font-weight:1000;margin-bottom:2px}
+.stage4Lab.wrong .flameY{animation:stage4Flutter .18s ease-in-out infinite alternate!important;transform-origin:160px 85px}
+.stage4Lab.wrong .stage4Status{background:#ffe0d9;color:#9b3027;border-color:#ef8b77}
+.stage4Lab.air .stage4Status{background:#fff5c8;color:#8b5912}
+.stage4Lab.gas .stage4Status{background:#dcf9e8;color:#176443}
+.stage4Choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stage4Try{min-height:52px!important;font-size:12px!important;line-height:1.2!important}
+.stage4Hint{font-size:9px;color:#dff8ff;text-align:center;margin:6px 0 0}
+.discoveryBadge{background:#fff3a9;color:#705000;border-radius:12px;padding:5px 8px;font-size:10px;font-weight:900;margin-bottom:5px}
+.discoveryCard{background:#ffffffed;color:#0b526f;border-radius:14px;padding:10px;font-size:11px;line-height:1.45}
+.discoveryCard strong{font-size:13px;color:#9b5b00}.discoveryCard p{margin:5px 0 8px}
+@keyframes stage4Flutter{from{transform:scale(.62,.85) rotate(-2deg);opacity:.72}to{transform:scale(.82,1.02) rotate(3deg);opacity:1}}
+@media(max-height:600px){#app.stage4-mode .labArea{min-height:145px}.stage4Try{min-height:47px!important}}
+@media(prefers-reduced-motion:reduce){.stage4Lab.wrong .flameY{animation:none!important}}
+</style>
+<style id="lab-home-link-style">
+.lab-home-link{position:fixed;top:max(8px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));z-index:2147483647;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;border:2px solid rgba(255,255,255,.78);border-radius:999px;background:rgba(20,72,61,.94);color:#fff!important;text-decoration:none!important;font:800 13px/1.2 system-ui,-apple-system,"Yu Gothic",sans-serif;box-shadow:0 3px 12px rgba(0,0,0,.22);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.lab-home-link:focus-visible{outline:3px solid #ffd76a;outline-offset:2px}
+@media(max-width:380px){.lab-home-link{padding:7px 10px;font-size:12px}}
+</style>
+</head>
+<body>
+<a class="lab-home-link" href="https://lab.alpaca-school.okinawa/" aria-label="アルパカすく〜るラボ作品一覧に戻る">← 🔬 ラボ一覧</a><div id="app" class="title-mode">
+<div class="decor" aria-hidden="true"><div class="sun"></div><div class="cloud"></div><div class="cloud c2"></div><div class="wave"></div><div class="wave w2"></div><div class="bubbles"><span style="--x:13%;--t:9s;--d:-2s"></span><span style="--x:70%;--t:7s;--d:-4s"></span><span style="--x:35%;--t:11s;--d:-6s"></span><span style="--x:82%;--t:8s;--d:-1s"></span></div></div>
+<header><div class="hudrow"><div><div class="little">おきなわ理科チャレンジ</div><div class="score" id="score">0000</div><div class="little" id="best">ベスト 0000</div></div><button class="mute" id="sound" aria-label="おとの切り替え">♪ おと ON</button></div><div class="pills" id="pills"><span class="pill on">操作 1〜3</span><span class="pill">考える 4〜6</span></div></header>
+<section id="title" class="screen titleScreen active"><span class="tag">⚗ 操作して「なぜ？」まで学ぶ</span><h1>ガスバーナー<br><em>名人！</em></h1><p class="subtitle">操作して、理由まで説明できるようになろう！</p><div class="hero" id="hero"></div><button class="startBtn" id="start">▶ じっけん開始！</button><p class="caption">6ステージ ・ 操作3＋思考3 ・ 何度でも挑戦！</p><p class="safety">※これは学習用シミュレーションです。実物の操作は必ず先生の指導で行いましょう。</p></section>
+<section id="game" class="screen game"><div class="task"><span class="timer" id="timer">45秒</span><div class="kicker" id="phase">ステージ 1 / 6</div><h2 id="tasktitle">点火しよう！</h2><p id="taskdesc">安全な順番を選ぼう</p></div><div class="labArea" id="labArea"><span class="note" id="flameNote">火が消えているよ</span><div id="labImage" style="height:100%;width:100%;display:grid;place-items:center"></div></div><div class="message" id="message" role="status" aria-live="polite">何から始めるかな？</div><div class="controls" id="controls"></div></section>
+<section id="end" class="screen end"><span class="tag">実験おわり！</span><h1>実験レポート</h1><div class="bigscore" id="finalScore">0</div><p style="font-weight:900">点 / ベスト <span id="finalBest">0</span>点</p><div id="ending" style="font-weight:900;color:#0b5571"></div><div class="review" id="review"></div><button class="startBtn next" id="again">▶ もう一度あそぶ</button><button class="action alt" style="width:100%;max-width:300px" id="home">タイトルへ</button></section>
+<div class="feedbackOverlay" id="overlay"><div class="feedbackCard"><div style="font-size:30px" id="overlayIcon">◎</div><h2 id="overlayTitle">クリア！</h2><p id="overlayText"></p><button class="action" id="continue">つぎへ ▶</button></div></div>
+</div>
+<script>
+(()=>{'use strict';
+const $=q=>document.querySelector(q);let stage=-1,step=0,score=0,time=45,timer=null,locked=false,sound=true,actx=null,clearAudio=null,clearAudioUrl=null,audioPrimed=false,errors=[],stageDone=[false,false,false,false,false,false],air=0,lit=false,gas=false,cock=false,match=false,slides=0,ignitionVisual='start',ignitionBusy=false,extinguishVisual='start',stepBusy=false,reasonIndex=0,reasonBusy=false,stage4State='ready',stage4WrongSeen=false;
+const STAGES=[
+{title:'点火しよう！',desc:'安全な手順を選んで、炎をつけよう。',why:'調節ねじが閉じていることを確認し、火を近づけてからガスを少しずつ出す。'},
+{title:'青い炎をつくろう！',desc:'空気調節ねじを動かして、適切な炎に。',why:'空気を取り込む量を増やすと、ガスに酸素を含む空気がよく混ざり、より完全に燃焼しやすくなる。'},
+{title:'安全に消火しよう！',desc:'閉める順番を守って、実験を終了。',why:'空気調節ねじ、ガス調節ねじ、コック・元栓の順で閉じる。実物では学校の器具と先生の指示を優先する。'},
+{title:'失敗から発見！消火編',desc:'消す順番を試して、炎の変化から理由を見つけよう。',why:'標準手順では空気調節ねじを先に閉じ、その後ガス調節ねじを閉じる。ガスを先に減らすと、空気側が開いたままなので空気の割合が相対的に多くなり、炎が不安定になりやすい。'},
+{title:'なぜこの順番？',desc:'操作の順番には、安全の理由がある。',why:'ガスを急に出さない、未燃焼のガスをためない、炎を安定して消すなど、安全のために操作順を守る。'},
+{title:'原因を見抜け！',desc:'炎やにおいの変化から、安全な判断をしよう。',why:'炎の色・大きさ・音・においは状態を判断する手がかり。異常時は無理に操作を続けず、ガスを止めて先生に知らせる。'}
+]
+function storageGet(){try{return +(localStorage.getItem('burner-v2-best')||0)}catch(e){return 0}}function storageSet(v){try{localStorage.setItem('burner-v2-best',String(v))}catch(e){}}
+function wakeSound(){
+ if(!actx)try{actx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}
+ if(actx?.state==='suspended')actx.resume().catch(()=>{});
+}
+function buildCelebrationAudio(){
+ if(clearAudio)return clearAudio;
+ try{
+  const sr=22050,dur=1.55,n=Math.floor(sr*dur),samples=new Float32Array(n);
+  const notes=[
+   {f:783.99,t:0.00,d:.24,a:.24},
+   {f:1046.50,t:.14,d:.26,a:.27},
+   {f:1318.51,t:.29,d:.28,a:.29},
+   {f:1567.98,t:.47,d:.34,a:.31},
+   {f:1318.51,t:.70,d:.24,a:.22},
+   {f:1760.00,t:.88,d:.42,a:.27}
+  ];
+  for(const note of notes){
+   const start=Math.floor(note.t*sr),len=Math.floor(note.d*sr);
+   for(let i=0;i<len&&start+i<n;i++){
+    const x=i/len,t=i/sr;
+    const attack=Math.min(1,x/.07),decay=Math.exp(-4.8*x),env=attack*decay;
+    const bell=
+      Math.sin(2*Math.PI*note.f*t)
+      +.42*Math.sin(2*Math.PI*note.f*2.01*t)
+      +.18*Math.sin(2*Math.PI*note.f*3.98*t);
+    samples[start+i]+=note.a*env*bell;
+   }
+  }
+  const twinkles=[
+   {f:2093.00,t:.56,d:.14,a:.12},
+   {f:2349.32,t:.76,d:.13,a:.10},
+   {f:2637.02,t:1.05,d:.17,a:.09}
+  ];
+  for(const note of twinkles){
+   const start=Math.floor(note.t*sr),len=Math.floor(note.d*sr);
+   for(let i=0;i<len&&start+i<n;i++){
+    const x=i/len,t=i/sr,env=Math.sin(Math.PI*Math.min(1,x/.16))*Math.exp(-6*x);
+    samples[start+i]+=note.a*env*(Math.sin(2*Math.PI*note.f*t)+.25*Math.sin(2*Math.PI*note.f*2*t));
+   }
+  }
+  for(let i=0;i<n;i++)samples[i]=Math.max(-.86,Math.min(.86,samples[i]));
+  const buf=new ArrayBuffer(44+n*2),v=new DataView(buf);
+  const w=(o,str)=>{for(let i=0;i<str.length;i++)v.setUint8(o+i,str.charCodeAt(i))};
+  w(0,'RIFF');v.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');
+  v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
+  v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);
+  w(36,'data');v.setUint32(40,n*2,true);
+  for(let i=0;i<n;i++)v.setInt16(44+i*2,Math.round(samples[i]*32767),true);
+  clearAudioUrl=URL.createObjectURL(new Blob([buf],{type:'audio/wav'}));
+  clearAudio=new Audio(clearAudioUrl);
+  clearAudio.preload='auto';clearAudio.playsInline=true;clearAudio.volume=.92;
+  return clearAudio;
+ }catch(e){return null}
+}
+function primeCelebrationAudio(){
+ if(!sound)return;
+ const a=buildCelebrationAudio();if(!a)return;
+ try{
+  a.pause();a.currentTime=0;a.volume=.001;
+  const p=a.play();
+  if(p&&p.then)p.then(()=>{a.pause();a.currentTime=0;a.volume=.95;audioPrimed=true}).catch(()=>{a.volume=.95});
+  else{a.pause();a.currentTime=0;a.volume=.95;audioPrimed=true}
+ }catch(e){}
+}
+
+function beep(good=true){if(!sound)return;wakeSound();if(!actx)return;try{let o=actx.createOscillator(),g=actx.createGain(),t=actx.currentTime;o.type='sine';o.frequency.setValueAtTime(good?570:220,t);o.frequency.exponentialRampToValueAtTime(good?800:170,t+.1);g.gain.setValueAtTime(.045,t);g.gain.exponentialRampToValueAtTime(.0001,t+.15);o.connect(g);g.connect(actx.destination);o.start(t);o.stop(t+.17)}catch(e){}}
+function clearSoundFallback(){
+ if(!sound)return;wakeSound();if(!actx)return;
+ try{
+  const now=actx.currentTime;
+  const notes=[
+   {f:783.99,t:0,d:.20,g:.075},
+   {f:1046.50,t:.13,d:.22,g:.08},
+   {f:1318.51,t:.27,d:.24,g:.085},
+   {f:1567.98,t:.44,d:.28,g:.09},
+   {f:1760.00,t:.72,d:.36,g:.08}
+  ];
+  notes.forEach(n=>{
+   const o=actx.createOscillator(),g=actx.createGain();
+   o.type='sine';o.frequency.setValueAtTime(n.f,now+n.t);
+   g.gain.setValueAtTime(.0001,now+n.t);
+   g.gain.exponentialRampToValueAtTime(n.g,now+n.t+.012);
+   g.gain.exponentialRampToValueAtTime(.0001,now+n.t+n.d);
+   o.connect(g);g.connect(actx.destination);o.start(now+n.t);o.stop(now+n.t+n.d+.03);
+  });
+ }catch(e){}
+}
+function clearSound(){
+ if(!sound)return;
+ const a=buildCelebrationAudio();
+ if(a){
+  try{
+   a.pause();a.currentTime=0;a.volume=.95;
+   const p=a.play();
+   if(p&&p.catch)p.catch(()=>clearSoundFallback());
+   return;
+  }catch(e){}
+ }
+ clearSoundFallback();
+}
+function ignitionSound(){
+ if(!sound)return;
+ wakeSound();if(!actx)return;
+ try{
+  const t=actx.currentTime,osc=actx.createOscillator(),gain=actx.createGain();
+  osc.type='triangle';osc.frequency.setValueAtTime(165,t);
+  osc.frequency.exponentialRampToValueAtTime(72,t+.42);
+  gain.gain.setValueAtTime(.0001,t);
+  gain.gain.exponentialRampToValueAtTime(.055,t+.07);
+  gain.gain.exponentialRampToValueAtTime(.0001,t+.48);
+  osc.connect(gain);gain.connect(actx.destination);osc.start(t);osc.stop(t+.5);
+  const len=Math.floor(actx.sampleRate*.65),buffer=actx.createBuffer(1,len,actx.sampleRate),data=buffer.getChannelData(0);
+  for(let i=0;i<len;i++)data[i]=Math.random()*2-1;
+  const noise=actx.createBufferSource(),filter=actx.createBiquadFilter(),ng=actx.createGain();
+  noise.buffer=buffer;filter.type='lowpass';filter.frequency.value=650;
+  ng.gain.setValueAtTime(.0001,t);
+  ng.gain.exponentialRampToValueAtTime(.12,t+.09);
+  ng.gain.exponentialRampToValueAtTime(.0001,t+.6);
+  noise.connect(filter);filter.connect(ng);ng.connect(actx.destination);
+  noise.start(t);noise.stop(t+.65);
+ }catch(e){}
+}
+function extinguishSound(kind){
+ if(!sound)return;wakeSound();if(!actx)return;
+ try{
+ const t=actx.currentTime;
+ const osc=actx.createOscillator(),gain=actx.createGain();
+ osc.type=kind==='gas'?'triangle':'sine';
+ const f=kind==='air'?340:kind==='gas'?200:540;
+ osc.frequency.setValueAtTime(f,t);
+ osc.frequency.exponentialRampToValueAtTime(kind==='gas'?75:kind==='cock'?260:200,t+.26);
+ gain.gain.setValueAtTime(.0001,t);
+ gain.gain.exponentialRampToValueAtTime(kind==='air'?.035:.065,t+.02);
+ gain.gain.exponentialRampToValueAtTime(.0001,t+.32);
+ osc.connect(gain);gain.connect(actx.destination);osc.start(t);osc.stop(t+.34);
+ if(kind==='gas'){
+  const duration=.38,n=Math.floor(actx.sampleRate*duration),buffer=actx.createBuffer(1,n,actx.sampleRate),d=buffer.getChannelData(0);
+  for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
+  const src=actx.createBufferSource(),lp=actx.createBiquadFilter(),g=actx.createGain();
+  src.buffer=buffer;lp.type='lowpass';lp.frequency.value=540;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.07,t+.02);
+  g.gain.exponentialRampToValueAtTime(.0001,t+duration);
+  src.connect(lp);lp.connect(g);g.connect(actx.destination);src.start(t);src.stop(t+duration);
+ }
+ }catch(e){}
+}
+function extinguishArt(){
+ const state=extinguishVisual;
+ return `<g aria-hidden="true">
+ <g transform="translate(108 193)"><g class="${state==='air'?'ext-air-turn':''}"><path d="M-9 0H9M0-9V9" stroke="#f9e76c" stroke-width="4" stroke-linecap="round"/></g></g>
+ <g transform="translate(208 239)"><g class="${state==='gas'?'ext-gas-turn':''}"><path d="M-9 0H9M0-9V9" stroke="#f9e76c" stroke-width="4" stroke-linecap="round"/></g></g>
+ <g transform="translate(260 268)"><circle r="9" fill="#fff" stroke="#114e68" stroke-width="3"/><g class="${state==='cock'?'ext-cock-turn':''}"><path d="M0 0 L24 -17" stroke="#f7dd62" stroke-width="7" stroke-linecap="round"/></g></g>
+ ${state==='air'?'<g class="ext-focus"><circle cx="108" cy="193" r="21" fill="none" stroke="#fff6a1" stroke-width="4"/><text x="78" y="163" font-size="17" font-weight="900" fill="#fff">空気</text></g>':''}
+ ${state==='gas'?'<g class="ext-focus"><circle cx="208" cy="239" r="22" fill="none" stroke="#fff6a1" stroke-width="4"/><text x="206" y="210" font-size="17" font-weight="900" fill="#fff">消火</text></g>':''}
+ ${state==='cock'?'<g class="ext-focus"><circle cx="260" cy="268" r="23" fill="none" stroke="#fff6a1" stroke-width="4"/></g>':''}
+ </g>`;
+}
+function svg(airVal=0,on=false){let blue=airVal>=48, color=blue?'#33aaff':'#ffbc42',inner=blue?'#8ce9ff':'#fff0a0',h=on?(blue?100:136):0;return `<svg class="labsvg" viewBox="0 0 320 310" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ガスバーナーの模式図"><ellipse cx="160" cy="284" rx="116" ry="15" fill="#08536b" opacity=".23"/><path d="M50 266h220l-27 20H77z" fill="#325f77" stroke="#19475e" stroke-width="5"/><path d="M134 262h52v-163h-52z" fill="#dfeff4" stroke="#225e80" stroke-width="5"/><rect x="129" y="175" width="62" height="45" rx="8" fill="#79abb9" stroke="#22637e" stroke-width="5"/><path d="M129 181h62m-62 25h62" stroke="#306b82" stroke-width="4"/><path d="M139 95h42v-12h-42z" fill="#255773"/><path d="M160 261v-46" stroke="#4e8799" stroke-width="7"/><path d="M191 234h44q10 0 10 10v9" fill="none" stroke="#f7cb55" stroke-width="10"/><path d="M245 252q25 0 44 18" stroke="#f5cd59" stroke-width="10" fill="none"/><rect x="111" y="229" width="94" height="20" rx="10" fill="#b3e3e8" stroke="#28627a" stroke-width="4"/><circle cx="208" cy="239" r="14" fill="#f7d96b" stroke="#145579" stroke-width="4"/><circle cx="108" cy="193" r="13" fill="#f7d96b" stroke="#145579" stroke-width="4"/><path d="M108 184v9m100 38v10" stroke="#1a6c88" stroke-width="4" stroke-linecap="round"/>${h?`<g class="ignite-rise ${stage===2&&extinguishVisual==='gas'?'ext-flame-out':''}"><g class="flameY" style="transform-origin:160px 85px"><path d="M160 86 C134 83 126 65 146 35 C145 57 158 57 160 13 C192 42 200 68 160 86 Z" fill="${color}"/><path d="M160 86 C147 82 146 70 155 52 C155 68 164 67 165 40 C179 63 181 78 160 86 Z" fill="${inner}" opacity=".95"/></g></g>`:'' }<g fill="#fff" stroke="#0b658a" stroke-width="3"><circle cx="66" cy="242" r="25"/><circle cx="262" cy="242" r="25"/></g><g fill="#08536b" font-size="10" text-anchor="middle" font-weight="bold"><text x="66" y="238">空気</text><text x="66" y="251">ねじ</text><text x="262" y="238">ガス</text><text x="262" y="251">ねじ</text></g>${stage===0?ignitionArt():stage===1?airAdjustmentArt(airVal):stage===2?extinguishArt():''}</svg>`}
+function airAdjustmentArt(v){
+ const rotation=(v/100)*270;
+ const opening=Math.max(1,Math.round(v/10));
+ const arrows=v>5?`<g class="air-flow" fill="none" stroke="#b9f8ff" stroke-width="4.5" stroke-linecap="round"><path d="M55 169 Q81 168 117 179"/><path d="M107 169l11 10-13 5"/><path d="M265 166 Q229 165 194 178"/><path d="M204 168l-11 10 13 5"/></g>`:'';
+ return `<g aria-hidden="true">
+ <g transform="translate(126 178)"><rect x="0" y="0" width="${opening}" height="11" rx="3" fill="#075c83" stroke="#fff" stroke-width="1.5"/></g>
+ <g transform="translate(182 178)"><rect x="-${opening}" y="0" width="${opening}" height="11" rx="3" fill="#075c83" stroke="#fff" stroke-width="1.5"/></g>
+ ${arrows}
+ <g transform="translate(108 193)">
+ <circle r="21" fill="none" stroke="#fff4a4" stroke-width="4" stroke-dasharray="6 4"/>
+ <g transform="rotate(${rotation})"><path d="M-10 0H10M0-10V10" stroke="#f36b36" stroke-width="5" stroke-linecap="round"/>
+ <circle cx="0" cy="-15" r="3" fill="#fff"/></g>
+ </g>
+ <g class="air-callout"><path d="M109 170 L78 133" stroke="#fff" stroke-width="3"/>
+ <rect x="10" y="105" width="127" height="29" rx="14" fill="#ffffffee"/>
+ <text x="74" y="125" font-size="13" font-weight="900" text-anchor="middle" fill="#075b85">空気ねじ ${v}%</text></g>
+ <g fill="#075b85"><text x="160" y="170" font-size="11" font-weight="900" text-anchor="middle">空気孔</text></g>
+ </g>`;
+}
+function ignitionArt(){const state=ignitionVisual;return `<g aria-hidden="true">${state==='check'?'<g class="check-pop" fill="none" stroke="#ffe66d" stroke-width="5"><circle cx="108" cy="193" r="21"/><circle cx="208" cy="239" r="22"/></g><g fill="#167d66" font-size="25" font-weight="900"><text x="86" y="163">✓</text><text x="222" y="220">✓</text></g>':''}
+<g transform="translate(260 266)"><circle r="10" fill="#fff" stroke="#124963" stroke-width="4"/><g class="${state==='cock'||state==='gas'?'cock-turn':''}"><path d="M0 0 L26 -19" stroke="#ffdf65" stroke-width="8" stroke-linecap="round"/></g></g>
+<g class="${state==='gas'?'gas-turn':''}" style="transform-origin:208px 239px"><path d="M208 227 V251 M196 239 H220" stroke="#db552f" stroke-width="3.5" stroke-linecap="round"/></g>
+${state==='match'||state==='cock'||state==='gas'?'<g class="match-enter"><path d="M250 120L177 87" stroke="#ab6239" stroke-width="8" stroke-linecap="round"/><path d="M176 85Q166 73 172 67Q183 70 184 83Q180 90 176 85Z" fill="#ffb52d"/><path d="M176 83Q173 77 178 72Q181 78 178 83Z" fill="#fff2a2"/></g>':''}
+${state==='gas'?'<g class="spark-pop" fill="#ffe66d"><circle cx="161" cy="83" r="5"/><path d="M139 73l-12 -8m56 6l12 -9m-35 -13v-13" stroke="#fff9cb" stroke-width="5" stroke-linecap="round"/></g>':''}</g>`}
+
+function show(name){$('#app').classList.toggle('title-mode',name==='title');for(const s of ['title','game','end'])$('#'+s).classList.toggle('active',s===name)}function setHud(){
+ $('#score').textContent=String(score).padStart(4,'0');
+ $('#best').textContent='ベスト '+String(Math.max(storageGet(),score)).padStart(4,'0');
+ const box=$('#pills');
+ if(stage<0){box.innerHTML='<span class="pill on">操作 1〜3</span><span class="pill">考える 4〜6</span>';return}
+ const first=stage<3;
+ const labels=first?['① 点火','② 調節','③ 消火']:['④ 消火のなぜ','⑤ 順番の理由','⑥ 原因診断'];
+ const offset=first?0:3;
+ box.innerHTML=labels.map((label,i)=>`<span class="pill ${stageDone[offset+i]?'done':offset+i===stage?'on':''}">${label}</span>`).join('');
+}
+function draw(){
+ const el=stage===-1?$('#hero'):$('#labImage');
+ if(stage>=3){
+  el.innerHTML=reasonScene(stage,reasonIndex);
+  $('#flameNote').textContent=stage===3?'炎の色を比べよう':stage===4?'手順の理由を考えよう':'原因と安全な対応を考えよう';
+  return;
+ }
+ el.innerHTML=svg(air,lit);
+ if(stage>=0)$('#flameNote').textContent=lit?(air>=48?'青い炎になった！':'黄色い炎だよ'):'火が消えているよ';
+}
+function say(text,kind=''){const el=$('#message');el.className='message '+kind;el.textContent=text}
+function addError(text){errors.push({stage,text});score=Math.max(0,score-10);setHud();beep(false);say('ちがうよ！ '+text,'bad')}
+function correct(text){score+=100+Math.ceil(time/3);beep(true);say(text,'good');setHud()}
+function begin(){wakeSound();primeCelebrationAudio();score=0;errors=[];stageDone=[false,false,false,false,false,false];stage=0;beginStage()}
+function beginStage(){
+ clearInterval(timer);step=0;reasonIndex=0;reasonBusy=false;
+ time=stage<3?45:(stage===5?75:60);
+ locked=false;show('game');
+ $('#app').classList.toggle('stage2-mode',stage===1);
+ $('#app').classList.toggle('reason-mode',stage>=3);
+ $('#app').classList.toggle('stage4-mode',stage===3);
+ $('#phase').textContent=`ステージ ${stage+1} / 6`;
+ $('#tasktitle').textContent=STAGES[stage].title;
+ $('#taskdesc').textContent=STAGES[stage].desc;
+ air=stage===0?0:stage===1?12:70;lit=stage!==0;gas=stage!==0;cock=stage!==0;
+ match=false;slides=0;ignitionVisual='start';ignitionBusy=false;extinguishVisual='start';stepBusy=false;stage4State='ready';stage4WrongSeen=false;
+ renderControls();draw();setHud();
+ say(stage===0?'まず、安全を確認しよう！':stage===1?'空気調節ねじを動かそう！':stage===2?'安全な順番で消火しよう！':stage===3?'予想して試そう。まちがえても「発見」になるよ！':'「なぜ？」を考えて答えよう！');
+ $('#timer').textContent=time+'秒';
+ timer=setInterval(()=>{
+  if(locked||ignitionBusy||stepBusy||reasonBusy)return;
+  time--;$('#timer').textContent=time+'秒';
+  if(time<=0){addError('時間切れ。理由を確認しよう。');finishStage(false)}
+ },1000);
+}
+const ignition=[{id:'check',label:'① ねじを確認',explain:'ガス・空気のねじが閉じているか確認。'},{id:'match',label:'② マッチを点火',explain:'マッチに火をつけ、バーナーの口へ近づける。'},{id:'cock',label:'③ コックを開く',explain:'マッチの火を近づけたまま、コックを開く。'},{id:'gas',label:'④ ガスを少し出す',explain:'ガス調節ねじを少し開き、点火する。'}];
+const extinguish=[{id:'air',label:'① 空気を閉じる',explain:'空気調節ねじを閉じる。'},{id:'gas',label:'② ガスを閉じる',explain:'ガス調節ねじを閉じて炎を消す。'},{id:'cock',label:'③ コックを閉じる',explain:'コックと元栓を閉じる。'}];
+
+const REASON_QUESTIONS=[
+[
+ {q:'空気調節ねじを開くと、炎が青くなった。いちばん大きな理由は？',correct:0,options:[
+  {t:'ガスに空気がよく混ざり、燃焼がより完全に近づく',why:'その通り。空気中の酸素がガスによく混ざることで、より完全に燃焼しやすくなる。'},
+  {t:'ガスの量だけが急に増える',why:'空気調節ねじが主に変えるのは空気の取り込み量。ガス量を調節するねじとは役割が違う。'},
+  {t:'バーナーの金属が冷える',why:'炎の色を変える中心的な原因は金属の温度ではなく、ガスと空気の混ざり方。'},
+  {t:'炎の中に水が増える',why:'空気調節ねじは水を加える器具ではない。注目するのは空気中の酸素。'}]},
+ {q:'空気が少ないと、炎が黄色っぽく明るく見えることがある。主な理由は？',correct:1,options:[
+  {t:'酸素そのものが黄色く光るから',why:'酸素そのものが黄色く光っているわけではない。'},
+  {t:'不完全燃焼で生じた炭素の微粒子が高温で光るから',why:'正解。空気が少ない炎では不完全燃焼になりやすく、炭素の微粒子が高温で光って黄色っぽく見える。'},
+  {t:'金属の筒が溶けて光るから',why:'通常の炎の色は、筒が溶けたためではない。'},
+  {t:'ガスが液体になって光るから',why:'燃えているガスが液体になったことが原因ではない。'}]},
+ {q:'空気の量だけが炎の色に与える影響を調べたい。そろえる条件として最も適切なのは？',correct:2,options:[
+  {t:'空気の量も毎回変える',why:'調べたい条件そのものを毎回ばらばらにすると比較できない。'},
+  {t:'炎を当てる位置だけ毎回変える',why:'位置まで変えると、空気量だけの影響を比べにくい。'},
+  {t:'ガスの量や観察する位置・時間を同じにする',why:'正解。空気量以外の条件をそろえると、空気量による違いを比べやすい。'},
+  {t:'毎回ちがうバーナーを使う',why:'器具まで変えると条件が増えてしまう。'}]}
+],
+[
+ {q:'点火前に、空気調節ねじとガス調節ねじを閉じて確認するのはなぜ？',correct:1,options:[
+  {t:'炎を青くするためだけ',why:'青い炎への調節は点火後に行う。点火前の確認は安全にガスを出し始めるため。'},
+  {t:'急にガスが多く出たり、予想外の状態で点火したりするのを防ぐため',why:'正解。閉じた状態を確認してから、必要な量を少しずつ調節する。'},
+  {t:'ねじを熱くするため',why:'点火前にねじを熱くする必要はない。'},
+  {t:'ガスの種類を変えるため',why:'調節ねじを閉じても、燃料の種類は変わらない。'}]},
+ {q:'マッチの火をバーナーの口に近づけてから、ガスを少しずつ出すのはなぜ？',correct:0,options:[
+  {t:'未燃焼のガスが周囲にたまるのを避けて点火するため',why:'正解。先に火を用意し、ガスを少しずつ出すことで、未燃焼のガスがたまるのを避けやすい。'},
+  {t:'炎を必ず緑色にするため',why:'この順番の目的は炎の色ではなく、安全に点火すること。'},
+  {t:'マッチを長持ちさせるためだけ',why:'マッチの寿命が主な理由ではない。'},
+  {t:'空気調節ねじを自動で開くため',why:'マッチを近づけても空気調節ねじは自動では開かない。'}]},
+ {q:'炎を小さくするとき、空気を先に減らしてからガスを減らすのはなぜ？',correct:3,options:[
+  {t:'バーナーを重くするため',why:'器具の重さは変わらない。'},
+  {t:'ガスを増やすため',why:'炎を小さくするので、ガスを増やす操作ではない。'},
+  {t:'炎を白くするため',why:'目的は色を白くすることではない。'},
+  {t:'逆の順だと途中で炎が消え、ガスだけが出る状態になるおそれを減らすため',why:'正解。標準手順では空気を先に減らし、その後ガスを減らす。途中で火が消えたらすぐガスを止める。'}]}
+],
+[
+ {q:'炎が黄色っぽい。最も考えやすい原因と対応は？',correct:2,icon:'🟡',options:[
+  {t:'空気が多すぎるので、さらに空気を増やす',why:'黄色っぽい炎は空気不足が考えやすい。さらに増やすのではなく、状態を見ながら空気を増やす。'},
+  {t:'ガスがないので、元栓を何度も開閉する',why:'黄色い炎が燃えているなら、少なくともガスは供給されている。'},
+  {t:'空気が少ない可能性。空気調節ねじを少しずつ開く',why:'正解。ガス調節ねじを押さえながら、空気を少しずつ増やして青い炎に調節する。'},
+  {t:'バーナーを手で持って振る',why:'加熱中の器具に触れるのは危険。'}]},
+ {q:'空気を開きすぎたら、炎が不安定になり筒の方で燃えるような異常が起きた。どうする？',correct:1,icon:'⚠️',options:[
+  {t:'手で筒を触って確かめる',why:'異常燃焼時は本体が非常に熱くなることがある。触らない。'},
+  {t:'ガスの元栓を閉じ、先生に知らせ、冷えるまで触らない',why:'正解。異常燃焼ではガスを止め、無理に再点火せず、先生に知らせる。'},
+  {t:'水をかけて急に冷やす',why:'急に水をかける対応は適切ではない。ガスを止めて冷えるのを待つ。'},
+  {t:'空気をもっと開いて続ける',why:'異常が起きているのに実験を続けない。'}]},
+ {q:'点火しようとしたとき、ガスのにおいに気づいた。どうする？',correct:0,icon:'👃',options:[
+  {t:'点火せず、火気を使わずに先生へ知らせる',why:'正解。ガス漏れが疑われるときは点火しない。火気を避け、先生に知らせる。'},
+  {t:'においを確かめるためにマッチをつける',why:'ガス漏れが疑われる場所で火気を使うのは危険。'},
+  {t:'そのまま実験を続ける',why:'異常を感じたら実験を止めて安全確認が必要。'},
+  {t:'電気のスイッチを何度も入切する',why:'ガス漏れ時は電気スイッチの火花も避ける。先生の指示に従う。'}]}
+]
+];
+function reasonScene(st,idx){
+ const q=REASON_QUESTIONS[st-3]?.[idx];
+ if(st===3){
+  const status=stage4State==='wrong'?'⚠ 炎が不安定になった':stage4State==='air'?'空気を閉じた → 黄色っぽい炎':stage4State==='gas'?'消火できた！':'青い炎が安定している';
+  return `<div class="stage4Lab ${stage4State}"><div class="stage4Burner">${svg(air,lit)}</div><div class="stage4Status">${status}</div></div>`;
+ }
+ if(st===4)return `<div class="reasonScene"><div class="whySequence"><span>🔍 確認</span><b>→</b><span>🔥 点火</span><b>→</b><span>🔧 調節</span><b>→</b><span>⏹ 消火</span></div><div class="reasonFormula">「順番」は暗記ではなく、安全のため</div></div>`;
+ return `<div class="reasonScene scenario"><div class="scenarioIcon">${q?.icon||'🔎'}</div><strong>状況から原因を見抜こう</strong><small>炎・音・においは大事な手がかり</small></div>`;
+}
+function stage4PopSound(){
+ if(!sound)return;wakeSound();if(!actx)return;
+ try{
+  const t=actx.currentTime;
+  [0,.18].forEach((d,k)=>{const o=actx.createOscillator(),g=actx.createGain();o.type='triangle';o.frequency.setValueAtTime(k?115:145,t+d);o.frequency.exponentialRampToValueAtTime(72,t+d+.13);g.gain.setValueAtTime(.0001,t+d);g.gain.exponentialRampToValueAtTime(.055,t+d+.018);g.gain.exponentialRampToValueAtTime(.0001,t+d+.15);o.connect(g);g.connect(actx.destination);o.start(t+d);o.stop(t+d+.16);});
+ }catch(e){}
+}
+function renderStage4Controls(box){
+ const discovery=stage4WrongSeen?'<div class="discoveryBadge">🔬 発見 1：ガスを先に減らすと炎が不安定になりやすい</div>':'';
+ box.innerHTML=`${discovery}<div class="reasonProgress">失敗しても減点なし</div><p class="reasonQuestion">青い炎を消すなら、どちらを先に閉じる？ 予想して試してみよう。</p><div class="stage4Choices"><button class="action stage4Try" data-stage4="gas">ガスを先に閉じる</button><button class="action stage4Try" data-stage4="air">空気を先に閉じる</button></div><p class="stage4Hint">※学習用シミュレーション。実物では先生の指示に従おう。</p>`;
+ box.querySelectorAll('.stage4Try').forEach(btn=>btn.addEventListener('pointerup',()=>runStage4(btn.dataset.stage4)));
+}
+function runStage4(choice){
+ if(locked||reasonBusy||stage!==3)return;
+ reasonBusy=true;
+ document.querySelectorAll('.stage4Try').forEach(b=>b.disabled=true);
+ if(choice==='gas'){
+  stage4WrongSeen=true;stage4State='wrong';air=95;lit=true;draw();stage4PopSound();
+  score+=40;setHud();
+  say('発見！ ガスを先に減らすと、空気側が開いたままなので、空気の割合が相対的に多くなり、炎が不安定になりやすい。','bad');
+  const box=$('#controls');
+  setTimeout(()=>{
+   if(stage!==3||locked)return;
+   box.innerHTML=`<div class="discoveryCard"><strong>🔬 失敗からわかった！</strong><p>ガスだけ先に減らすと、ガスに対して空気が多い状態になりやすい。だから標準手順では、まず空気調節ねじを閉じるんだ。</p><button class="action" id="stage4Retry">もう一度ためす ▶</button></div>`;
+   $('#stage4Retry').addEventListener('pointerup',()=>{stage4State='ready';air=70;lit=true;gas=true;reasonBusy=false;draw();renderStage4Controls($('#controls'));say('今度は炎の変化を予想して、もう一度試そう。');});
+  },900);
+  return;
+ }
+ stage4State='air';air=0;lit=true;draw();extinguishSound('air');
+ say('空気を先に閉じると、青い炎が黄色っぽい炎に変わった。次にガスを閉じるよ。','good');
+ setTimeout(()=>{
+  if(stage!==3||locked)return;
+  stage4State='gas';gas=false;lit=false;draw();extinguishSound('gas');
+  say('消火できた！ 空気を先に閉じてからガスを閉じると、炎を安定して消しやすい。','good');
+  score+=160+Math.ceil(time/4);setHud();
+  setTimeout(()=>{if(stage===3&&!locked){reasonBusy=false;finishStage(true)}},1200);
+ },1000);
+}
+function renderReasonControls(box){
+ const qs=REASON_QUESTIONS[stage-3],q=qs[reasonIndex];
+ box.innerHTML=`<div class="reasonProgress">Q ${reasonIndex+1} / ${qs.length}</div><p class="reasonQuestion">${q.q}</p><div class="reasonChoices">${q.options.map((o,i)=>`<button class="action reasonChoice" data-answer="${i}">${o.t}</button>`).join('')}</div>`;
+ box.querySelectorAll('.reasonChoice').forEach(btn=>btn.addEventListener('pointerup',()=>answerReason(+btn.dataset.answer)));
+}
+function answerReason(i){
+ if(locked||reasonBusy)return;
+ const qs=REASON_QUESTIONS[stage-3],q=qs[reasonIndex],buttons=[...document.querySelectorAll('.reasonChoice')];
+ if(i!==q.correct){
+  buttons[i]?.classList.add('wrongPick');
+  addError(q.options[i].why);reasonBusy=true;
+  setTimeout(()=>{reasonBusy=false;buttons[i]?.classList.remove('wrongPick')},650);
+  return;
+ }
+ reasonBusy=true;buttons[i]?.classList.add('rightPick');
+ score+=120+Math.ceil(time/4);setHud();beep(true);say('正解！ '+q.options[i].why,'good');
+ setTimeout(()=>{
+  if(stage<3||locked)return;
+  reasonIndex++;
+  if(reasonIndex>=qs.length){reasonBusy=false;finishStage(true);return}
+  reasonBusy=false;renderControls();draw();say('次の「なぜ？」も考えてみよう。');
+ },900);
+}
+function renderControls(){let box=$('#controls');if(stage===3){renderStage4Controls(box);return}if(stage>=4){renderReasonControls(box);return}if(stage===1){
+ box.innerHTML=`<p class="question">🌀 空気調節ねじを回して、炎の色を変えよう！</p>
+ <div class="airControl">
+ <div class="airHelp"><span>🔧 ねじを操作</span><strong id="airState">空気：少ない</strong></div>
+ <div class="airAdjust"><button type="button" class="airNudge" id="airMinus" aria-label="空気を減らす">−</button>
+ <input id="airRange" class="airRange" type="range" min="0" max="100" step="5" value="${air}" aria-label="空気調節ねじを開く量">
+ <button type="button" class="airNudge" id="airPlus" aria-label="空気を増やす">＋</button></div>
+ <div class="airScale"><span>← 閉じる・黄色</span><strong><span id="airLabel">${air}</span>%</strong><span>開く・青色 →</span></div>
+ <div class="airHelpSmall">上のバーナーの空気ねじと空気孔も一緒に動くよ！</div></div>
+ <div class="miniActions"><button class="action" id="judge">この炎で決定！</button><button class="action alt" id="hint">ヒント</button></div>`;
+ const range=$('#airRange');
+ range.addEventListener('input',e=>{if(!locked)adjust(+e.target.value)});
+ $('#airMinus').addEventListener('click',()=>{if(!locked)adjust(Math.max(0,air-5))});
+ $('#airPlus').addEventListener('click',()=>{if(!locked)adjust(Math.min(100,air+5))});
+ $('#judge').addEventListener('click',()=>{if(locked)return;if(air>=60&&air<=85){correct('正解！ 空気ねじを開き、空気孔から空気を取り込んで青い炎にできたね。');finishStage(true)}else addError(air<60?'空気が少なく、黄色い炎が残っているよ。空気ねじを少し開いてみよう。':'空気を取り込みすぎだよ。ねじを少し閉じてみよう。')});
+ $('#hint').addEventListener('click',()=>say('空気ねじを少しずつ開こう。バーナー本体のねじ・空気孔・炎の色をよく見てね。'));
+ updateAirControls();return}
+let list=stage===0?ignition:extinguish;box.innerHTML=`<p class="question">${stage===0?'次にする操作を選ぼう！':'次に閉じるものを選ぼう！'}</p><div class="steptext">進み具合：<span id="steplabel">${step}</span> / ${list.length}</div><div class="choices">${[...list].sort((a,b)=>({check:2,match:4,cock:1,gas:3,air:2}[a.id]||0)-({check:2,match:4,cock:1,gas:3,air:2}[b.id]||0)).map(x=>`<button class="action" data-action="${x.id}">${x.label.replace(/^\S+ /,'')}</button>`).join('')}</div>`;box.querySelectorAll('button').forEach(b=>b.addEventListener('pointerup',()=>choose(b.dataset.action)))}
+function updateAirControls(){
+ if(stage!==1)return;
+ const range=$('#airRange'),label=$('#airLabel'),state=$('#airState');
+ if(!range||!label||!state)return;
+ range.value=String(air);range.style.setProperty('--air-progress',air+'%');
+ label.textContent=String(air);
+ state.textContent=air<48?'空気：少ない':air<=85?'空気：増えている':'空気：多すぎ';
+}
+function adjust(v){if(locked)return;air=Math.max(0,Math.min(100,Math.round(v/5)*5));updateAirControls();draw();
+ if(stage===1){$('#flameNote').textContent=air<48?'空気孔が小さい → 黄色い炎':air<=85?'空気孔が開いた → 青い炎':'空気が入りすぎているよ';}
+}
+function choose(id){if(locked||ignitionBusy||stepBusy)return;let list=stage===0?ignition:extinguish,need=list[step];if(!need)return;if(id!==need.id){addError(stage===0?'順番が違うよ。'+need.explain:need.explain+' が先だよ。');return}step++;$('#steplabel').textContent=step;if(stage!==2)beep(true);if(stage===0){
+ ignitionVisual=id;
+ if(id==='match')match=true;
+ if(id==='cock')cock=true;
+ if(id==='gas'){
+  ignitionBusy=true;
+  gas=true;lit=false;air=0;
+  score+=35+Math.ceil(time/2);setHud();
+  say('ガス調節ねじを少し回すよ。火のついたマッチに注目！','good');
+  draw();
+  setTimeout(()=>{
+   if(stage!==0||!ignitionBusy)return;
+   lit=true;draw();ignitionSound();
+   $('#flameNote').textContent='🔥 点火成功！ 炎がついたよ';
+   say('シュッ！ ガスに火がついた！ 黄色い炎をよく見てね。','good');
+   setTimeout(()=>{if(stage===0&&ignitionBusy){ignitionBusy=false;finishStage(true)}},2100);
+  },720);
+  return;
+ }
+}else{
+ stepBusy=true;extinguishVisual=id;
+ const activeStage=stage;
+ score+=35;setHud();
+ extinguishSound(id);
+ if(id==='air'){
+  say('空気調節ねじを閉じるよ。青い炎が黄色に変わるのを見てね。','good');
+  draw();
+  setTimeout(()=>{if(stage!==activeStage||locked)return;air=0;draw();say('空気ねじを閉じた！ 炎の色が変わったね。','good');stepBusy=false},650);
+ }else if(id==='gas'){
+  say('ガス調節ねじを閉じて、炎を消すよ。','good');
+  draw();
+  setTimeout(()=>{if(stage!==activeStage||locked)return;gas=false;lit=false;draw();say('フッ。ガスを止めたので炎が消えたよ。','good');stepBusy=false},750);
+ }else if(id==='cock'){
+  cock=false;draw();say('カチッ。コックを閉じたよ。元栓も確認して実験終了！','good');
+  setTimeout(()=>{if(stage!==activeStage||locked)return;stepBusy=false;score+=Math.ceil(time/2);setHud();finishStage(true)},1450);
+ }
+ return;
+}
+draw();score+=35;setHud();say(need.explain,'good');
+if(step===list.length){score+=Math.ceil(time/2);setHud();finishStage(true)}}
+function finishStage(success){if(locked)return;locked=true;clearInterval(timer);stageDone[stage]=success;$('#overlayIcon').textContent=success?'✨':'📖';$('#overlayTitle').textContent=success?'ステージクリア！':'ここで復習！';$('#overlayTitle').style.color=success?'#167d66':'#b94737';$('#overlayText').textContent=STAGES[stage].why;$('#continue').textContent=stage===5?'結果を見る ▶':'つぎへ ▶';$('#overlay').classList.add('show');if(success)clearSound()}
+function next(){if(!locked)return;$('#overlay').classList.remove('show');if(stage<5){stage++;beginStage()}else finishGame()}
+function finishGame(){clearInterval(timer);$('#app').classList.remove('stage2-mode','reason-mode','stage4-mode');show('end');let best=storageGet();if(score>best){best=score;storageSet(score)}$('#finalScore').textContent=score;$('#finalBest').textContent=best;$('#ending').textContent=errors.length?'間違えた理由を確認して、もう一度挑戦！':'全6ステージ完了！ 操作も理由も説明できるね！';$('#review').innerHTML='<strong>📘 きょうの復習</strong>'+STAGES.map((x,i)=>`<p><b>${i+1}. ${x.title}</b>　${stageDone[i]?'✓':'要復習'}<br>${x.why}</p>`).join('')+(errors.length?`<strong>見直しポイント（${errors.length}件）</strong>`+errors.slice(0,8).map(x=>`<p>・${x.text}</p>`).join(''):'<p>ノーミス！ 手順の理由も言葉で説明できるかな？</p>');setHud()}
+$('#start').addEventListener('pointerup',begin);$('#again').addEventListener('pointerup',begin);$('#home').addEventListener('pointerup',()=>{clearInterval(timer);stage=-1;$('#app').classList.remove('stage2-mode','reason-mode','stage4-mode');ignitionVisual='start';lit=true;air=70;draw();show('title');setHud()});$('#continue').addEventListener('pointerup',next);$('#sound').addEventListener('pointerup',()=>{sound=!sound;$('#sound').textContent=sound?'♪ おと ON':'♪ おと OFF';if(sound){wakeSound();primeCelebrationAudio();beep(true)}else if(clearAudio){clearAudio.pause();clearAudio.currentTime=0}});document.addEventListener('visibilitychange',()=>{if(document.hidden&&stage>=0&&!locked&&$('#game').classList.contains('active')){clearInterval(timer);say('画面を戻したら、操作を続けよう。');}else if(!document.hidden&&stage>=0&&!locked&&$('#game').classList.contains('active')){clearInterval(timer);timer=setInterval(()=>{if(locked||ignitionBusy||stepBusy||reasonBusy)return;time--;$('#timer').textContent=time+'秒';if(time<=0){addError('時間切れ。理由を確認しよう。');finishStage(false)}},1000)}});
+lit=true;air=70;draw();setHud();
+})();
+</script></body></html>
