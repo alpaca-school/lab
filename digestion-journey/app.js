@@ -39,7 +39,7 @@ function act(){
  count++;
  const host=document.getElementById("threeHost");if(host)host.dataset.count=String(count);
  if(count>=s.need){
-   setTimeout(()=>{locked=false;if(stage===stages.length-1){renderQuiz()}else{stage++;count=0;renderStage()}},420);
+   const moveDelay=stage===1?850:stage===3?720:620;setTimeout(()=>{locked=false;if(stage===stages.length-1){renderQuiz()}else{stage++;count=0;renderStage()}},moveDelay);
  }else{document.getElementById("act").textContent=s.action+"（"+count+"/"+s.need+"）";locked=false}
 }
 function burst(symbol){const host=document.querySelector(".organ");for(let i=0;i<5;i++){const p=document.createElement("span");p.className="particle";p.textContent=symbol;p.style.left=(25+Math.random()*50)+"%";p.style.top=(50+Math.random()*25)+"%";host.appendChild(p);setTimeout(()=>p.remove(),1400)}}
