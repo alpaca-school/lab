@@ -26,7 +26,7 @@ function renderStart(){
 function chips(){return '<div class="topbar">'+stages.map((s,i)=>'<div class="chip '+(i<stage?'ok':i===stage?'on':'')+'"><b>'+s.icon+'</b>'+s.name+'</div>').join("")+'</div>'}
 function renderStage(){
  const s=stages[stage], pct=Math.round((stage/(stages.length-1))*100);
- root.innerHTML='<section class="stage"><div class="card">'+chips()+'<div class="progress" aria-label="旅の進み具合"><i style="width:'+pct+'%"></i></div><div class="scene"><div class="organ"><div id="organ" class="organ-emoji">'+s.organ+'</div><div id="particles"></div></div><div class="info"><h2>'+s.title+'</h2><p class="lead">'+s.lead+'</p><div class="task">'+s.task+'</div><div class="fact">🔎 <b>観察ポイント</b><br>'+s.fact+'</div><div class="actions"><button id="act" class="primary">'+s.action+'（'+count+'/'+s.need+'）</button><button id="restart" class="secondary">最初から</button></div></div></div></div></section>';
+ root.innerHTML='<section class="stage"><div class="card">'+chips()+'<div class="progress" aria-label="旅の進み具合"><i style="width:'+pct+'%"></i></div><div class="scene"><div class="organ"><div id="threeHost" class="three-host" aria-hidden="true"></div><div id="organ" class="organ-emoji">'+s.organ+'</div><div id="particles"></div></div><div class="info"><h2>'+s.title+'</h2><p class="lead">'+s.lead+'</p><div class="task">'+s.task+'</div><div class="fact">🔎 <b>観察ポイント</b><br>'+s.fact+'</div><div class="actions"><button id="act" class="primary">'+s.action+'（'+count+'/'+s.need+'）</button><button id="restart" class="secondary">最初から</button></div></div></div></div></section>';
  document.getElementById("restart").addEventListener("click",()=>{food=null;stage=0;count=0;renderStart();});
  document.getElementById("act").addEventListener("click",act);
 }
