@@ -209,7 +209,7 @@ function finishJourney(){
    }catch(e){console.error("final exit visual failed",e)}
  },900);
 }
-function renderQuiz(){const ctx=ensureAudio();if(ctx&&!soundMuted){const n=ctx.currentTime+.02;[523.25,659.25,783.99,1046.5].forEach((f,i)=>tone(f,n+i*.10,.24,"triangle",.035))}q=0;score=0;renderQuestion()}
+function renderQuiz(){stopBgm();clearSound();q=0;score=0;renderQuestion()}
 function renderQuestion(){
  const x=quizzes[q];
  root.innerHTML='<section class="stage"><div class="card quizbox"><div class="topbar"><div class="chip on"><b>🧠</b>クイズ '+(q+1)+' / '+quizzes.length+'</div></div><p class="question">'+x.q+'</p><div class="choices">'+x.choices.map((c,i)=>'<button class="choice" data-i="'+i+'">'+c+'</button>').join("")+'</div><div id="fb" class="feedback">答えを選んでね。</div></div></section>';
