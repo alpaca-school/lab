@@ -26,16 +26,18 @@ function renderStart(){
 function chips(){return '<div class="topbar">'+stages.map((s,i)=>'<div class="chip '+(i<stage?'ok':i===stage?'on':'')+'"><b>'+s.icon+'</b>'+s.name+'</div>').join("")+'</div>'}
 function renderStage(){
  const s=stages[stage], pct=Math.round((stage/(stages.length-1))*100);
- root.innerHTML='<section class="stage"><div class="card">'+chips()+'<div class="progress" aria-label="旅の進み具合"><i style="width:'+pct+'%"></i></div><div class="scene"><div class="organ"><div id="threeHost" class="three-host" aria-hidden="true"></div><div id="organ" class="organ-emoji">'+s.organ+'</div><div id="particles"></div></div><div class="info"><h2>'+s.title+'</h2><p class="lead">'+s.lead+'</p><div class="task">'+s.task+'</div><div class="fact">🔎 <b>観察ポイント</b><br>'+s.fact+'</div><div class="actions"><button id="act" class="primary">'+s.action+'（'+count+'/'+s.need+'）</button><button id="restart" class="secondary">最初から</button></div></div></div></div></section>';
+ root.innerHTML='<section class="stage"><div class="card">'+chips()+'<div class="progress" aria-label="旅の進み具合"><i style="width:'+pct+'%"></i></div><div class="scene"><div class="organ"><div id="threeHost" class="three-host" aria-hidden="true" data-food="'+food+'" data-stage="'+stage+'" data-count="'+count+'"></div><div id="organ" class="organ-emoji">'+s.organ+'</div><div id="particles"></div></div><div class="info"><h2>'+s.title+'</h2><p class="lead">'+s.lead+'</p><div class="task">'+s.task+'</div><div class="fact">🔎 <b>観察ポイント</b><br>'+s.fact+'</div><div class="actions"><button id="act" class="primary">'+s.action+'（'+count+'/'+s.need+'）</button><button id="restart" class="secondary">最初から</button></div></div></div></div></section>';
  document.getElementById("restart").addEventListener("click",()=>{food=null;stage=0;count=0;renderStart();});
  document.getElementById("act").addEventListener("click",act);
 }
 function act(){
  if(locked)return;locked=true;
  const s=stages[stage], organ=document.getElementById("organ");
+ window.dispatchEvent(new CustomEvent("digestion-action",{detail:{stage,count,nextCount:count+1,food}}));
  organ.classList.remove("pulse");void organ.offsetWidth;organ.classList.add("pulse");
  burst(stage===3?"✨":stage===4?"💧":"✦");
  count++;
+ const host=document.getElementById("threeHost");if(host)host.dataset.count=String(count);
  if(count>=s.need){
    setTimeout(()=>{locked=false;if(stage===stages.length-1){renderQuiz()}else{stage++;count=0;renderStage()}},420);
  }else{document.getElementById("act").textContent=s.action+"（"+count+"/"+s.need+"）";locked=false}
