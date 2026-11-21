@@ -13,7 +13,7 @@ const quizzes=[
  {q:"栄養の多くを吸収する場所は？",choices:["食道","小腸","直腸"],a:1,why:"消化された栄養の多くは小腸から吸収されます。"},
  {q:"残ったものから水分などを吸収する場所は？",choices:["大腸","口","食道"],a:0,why:"大腸では内容物から水分や電解質が吸収されます。"}
 ];
-let food=null,stage=0,count=0,q=0,score=0,locked=false;
+let food=null,stage=0,count=0,q=0,score=0,locked=false,introLockUntil=0;
 const root=document.getElementById("app");
 function safe(fn){try{fn()}catch(e){console.error(e);const box=document.getElementById("error");box.style.display="block";box.textContent="画面の表示でエラーが起きました。ページを再読み込みしてください。";}}
 window.addEventListener("error",e=>{console.error(e.error||e.message)});
@@ -26,9 +26,19 @@ function renderStart(){
 function chips(){return '<div class="topbar">'+stages.map((s,i)=>'<div class="chip '+(i<stage?'ok':i===stage?'on':'')+'"><b>'+s.icon+'</b>'+s.name+'</div>').join("")+'</div>'}
 function renderStage(){
  const s=stages[stage], pct=Math.round((stage/(stages.length-1))*100);
- root.innerHTML='<section class="stage"><div class="card">'+chips()+'<div class="progress" aria-label="旅の進み具合"><i style="width:'+pct+'%"></i></div><div class="scene"><div class="organ"><div id="threeHost" class="three-host" aria-hidden="true" data-food="'+food+'" data-stage="'+stage+'" data-count="'+count+'"></div><div id="organ" class="organ-emoji">'+s.organ+'</div><div id="particles"></div></div><div class="info"><h2>'+s.title+'</h2><p class="lead">'+s.lead+'</p><div class="task">'+s.task+'</div><div class="fact">🔎 <b>観察ポイント</b><br>'+s.fact+'</div><div class="actions"><button id="act" class="primary">'+s.action+'（'+count+'/'+s.need+'）</button><button id="restart" class="secondary">最初から</button></div></div></div></div></section>';
- document.getElementById("restart").addEventListener("click",()=>{food=null;stage=0;count=0;renderStart();});
- document.getElementById("act").addEventListener("click",act);
+ const autoGoal=stage===stages.length-1;
+ const introLocked=!autoGoal&&Date.now()<introLockUntil;
+ const actionLabel=autoGoal?"ゴール！":introLocked?"胃に到着…":s.action+"（"+count+"/"+s.need+"）";
+ root.innerHTML='<section class="stage"><div class="card">'+chips()+'<div class="progress" aria-label="旅の進み具合"><i style="width:'+pct+'%"></i></div><div class="scene"><div class="organ"><div id="threeHost" class="three-host" aria-hidden="true" data-food="'+food+'" data-stage="'+stage+'" data-count="'+count+'"></div><div id="organ" class="organ-emoji">'+s.organ+'</div><div id="particles"></div></div><div class="info"><h2>'+s.title+'</h2><p class="lead">'+s.lead+'</p><div class="task">'+s.task+'</div><div class="fact">🔎 <b>観察ポイント</b><br>'+s.fact+'</div><div class="actions"><button id="act" class="primary" '+(autoGoal||introLocked?'disabled':'')+'>'+actionLabel+'</button><button id="restart" class="secondary">最初から</button></div></div></div></div></section>';
+ document.getElementById("restart").addEventListener("click",()=>{food=null;stage=0;count=0;introLockUntil=0;renderStart();});
+ if(!autoGoal){
+   const actBtn=document.getElementById("act");
+   actBtn.addEventListener("click",act);
+   if(introLocked){
+     const wait=Math.max(0,introLockUntil-Date.now());
+     setTimeout(()=>{if(stage===2&&document.getElementById("act")===actBtn){actBtn.disabled=false;actBtn.textContent=s.action+"（"+count+"/"+s.need+"）"}},wait);
+   }
+ }
 }
 function act(){
  if(locked)return;locked=true;
@@ -39,7 +49,20 @@ function act(){
  count++;
  const host=document.getElementById("threeHost");if(host)host.dataset.count=String(count);
  if(count>=s.need){
-   const moveDelay=stage===1?850:stage===3?720:620;setTimeout(()=>{locked=false;if(stage===stages.length-1){renderQuiz()}else{stage++;count=0;renderStage()}},moveDelay);
+   const finishedStage=stage;
+   const moveDelay=finishedStage===1?1200:finishedStage===5?1350:finishedStage===3?760:650;
+   setTimeout(()=>{
+     locked=false;
+     if(finishedStage===5){
+       stage=6;count=0;introLockUntil=0;renderStage();
+       setTimeout(()=>{if(stage===6)renderQuiz()},1600);
+       return;
+     }
+     if(finishedStage===stages.length-1){renderQuiz();return}
+     stage++;count=0;
+     introLockUntil=stage===2?Date.now()+650:0;
+     renderStage();
+   },moveDelay);
  }else{document.getElementById("act").textContent=s.action+"（"+count+"/"+s.need+"）";locked=false}
 }
 function burst(symbol){const host=document.querySelector(".organ");for(let i=0;i<5;i++){const p=document.createElement("span");p.className="particle";p.textContent=symbol;p.style.left=(25+Math.random()*50)+"%";p.style.top=(50+Math.random()*25)+"%";host.appendChild(p);setTimeout(()=>p.remove(),1400)}}
