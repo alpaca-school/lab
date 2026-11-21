@@ -159,7 +159,7 @@ function drawFoodJourney(ctx,w,h,stage,time,host,boost){
       sphere(ctx,w*.5+Math.cos(a)*dist,h*.5+Math.sin(a)*dist*.72,4,0x59c8ff,true,.82);
     }
   }else if(stage===5){
-    const path=transformedPoints(stage,time,w,h),u=actionActive?.28+phase*.58:.7,p=samplePath(path,u);
+    const path=transformedPoints(stage,time,w,h),u=actionActive ? (0.28+phase*0.58) : 0.7,p=samplePath(path,u);
     for(let i=0;i<5;i++){const a=i/5*Math.PI*2;sphere(ctx,p.x+Math.cos(a)*9,p.y+Math.sin(a)*6,7,0x8c5a3c,true,.95)}
   }else if(stage===6){
     const burst=actionActive?phase:((Math.sin(time*.001)+1)/2);
