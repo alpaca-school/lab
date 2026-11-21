@@ -52,10 +52,10 @@ function act(){
    const finishedStage=stage;
    const moveDelay=finishedStage===1?1200:finishedStage===5?1350:finishedStage===3?760:650;
    setTimeout(()=>{
-     locked=false;
+     if(finishedStage!==5)locked=false;
      if(finishedStage===5){
-       stage=6;count=0;introLockUntil=0;renderStage();
-       setTimeout(()=>{if(stage===6)renderQuiz()},1600);
+       introLockUntil=0;
+       finishJourney();
        return;
      }
      if(finishedStage===stages.length-1){renderQuiz();return}
@@ -66,6 +66,25 @@ function act(){
  }else{document.getElementById("act").textContent=s.action+"（"+count+"/"+s.need+"）";locked=false}
 }
 function burst(symbol){const host=document.querySelector(".organ");for(let i=0;i<5;i++){const p=document.createElement("span");p.className="particle";p.textContent=symbol;p.style.left=(25+Math.random()*50)+"%";p.style.top=(50+Math.random()*25)+"%";host.appendChild(p);setTimeout(()=>p.remove(),1400)}}
+function finishJourney(){
+ const actBtn=document.getElementById("act");
+ if(actBtn){actBtn.disabled=true;actBtn.textContent="体の外へ出ています…"}
+ setTimeout(()=>{
+   const organ=document.querySelector(".organ");
+   if(organ){
+     const poop=document.createElement("div");
+     poop.textContent="💩";
+     poop.setAttribute("aria-label","体の外へ出た便");
+     poop.style.cssText="position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);font-size:86px;z-index:12;filter:drop-shadow(0 8px 12px #0008);animation:exitPoop 900ms ease-out both";
+     organ.appendChild(poop);
+     const msg=document.createElement("div");
+     msg.textContent="🎉 体の外へ出た！";
+     msg.style.cssText="position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:13;background:#ffd966;color:#5a2a00;padding:9px 14px;border-radius:999px;font-weight:900;white-space:nowrap;box-shadow:0 5px 16px #0005";
+     organ.appendChild(msg);
+   }
+ },900);
+ setTimeout(()=>{locked=false;stage=6;count=0;renderQuiz()},2100);
+}
 function renderQuiz(){q=0;score=0;renderQuestion()}
 function renderQuestion(){
  const x=quizzes[q];
