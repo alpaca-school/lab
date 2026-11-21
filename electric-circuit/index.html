@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0a76bd">
+<title>11円電池でLEDを光らせよう！｜子どものMIKATA</title>
+<style>
+:root{
+ --blue:#2eb4ec;--deep:#0d4f9c;--red:#e93536;--yellow:#ffe45c;--ink:#123f61;
+ --green:#4fbe78;--paper:#f7fbfb;--safeT:env(safe-area-inset-top,0px);--safeB:env(safe-area-inset-bottom,0px)
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:#0a2d52}
+body{font-family:"Hiragino Maru Gothic ProN","Yu Gothic",system-ui,sans-serif;color:#fff}
+button{font:inherit;border:0}
+#app{position:relative;width:min(100vw,480px);height:100dvh;margin:auto;overflow:hidden;background:linear-gradient(#36b9ef 0 64%,#0e7cc0 64% 100%);touch-action:none;user-select:none}
+.skyDots{position:absolute;inset:0;background-image:radial-gradient(#ffffff55 1.5px,transparent 1.5px);background-size:28px 28px;opacity:.3;pointer-events:none}
+.topbar{position:absolute;z-index:20;left:0;right:0;top:0;padding:calc(9px + var(--safeT)) 12px 7px;background:var(--red);box-shadow:0 5px 0 #b51f25}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.brand{font-size:10px;font-weight:1000;letter-spacing:.05em}.stage{font-size:13px;font-weight:1000}.discover{background:#fff;color:var(--deep);font-size:11px;font-weight:1000;border-radius:20px;padding:7px 10px}
+.progress{margin-top:7px;height:7px;background:#9d1720;border-radius:99px;overflow:hidden}.progress>i{display:block;height:100%;width:33%;background:var(--yellow);transition:.35s}
+.screen{position:absolute;inset:0;display:none}.screen.active{display:block}
+.title{z-index:10;background:linear-gradient(#2eb4ec,#158bc8 68%,#0b5795)}
+.titleTop{text-align:center;padding:calc(105px + var(--safeT)) 15px 0}
+.chip{display:inline-block;background:#fff;color:var(--red);padding:6px 14px;border-radius:18px;font-weight:1000;font-size:12px;box-shadow:0 3px 0 #c7e7f3}
+.title h1{margin:14px 0 5px;font-size:clamp(36px,10vw,52px);line-height:1.04;font-weight:1000;color:var(--yellow);text-shadow:0 5px 0 var(--deep)}
+.title h1 small{display:block;color:#fff;font-size:.55em;margin-bottom:3px}
+.titleSub{font-weight:900;font-size:14px}
+.titleScene{position:absolute;left:0;right:0;top:42%;height:32%;display:flex;justify-content:center;align-items:center}
+.miniStack{position:relative;width:125px;height:150px}
+.miniCoin{position:absolute;left:50%;transform:translateX(-50%);border-radius:50%;box-shadow:0 4px 0 #0002}
+.miniCoin.ten{width:102px;height:26px;background:#b96b2e;bottom:28px}.miniCoin.paper{width:92px;height:20px;background:#eef7f4;bottom:51px;border:3px dashed #7eb4b9}.miniCoin.one{width:98px;height:24px;background:#d6e0e4;bottom:69px}
+.miniLed{font-size:72px;filter:drop-shadow(0 0 14px #fff17a);animation:bob 1.3s ease-in-out infinite}
+.playWrap{position:absolute;left:18px;right:18px;bottom:calc(26px + var(--safeB));text-align:center}
+.play{width:86%;max-width:340px;height:66px;border-radius:35px;background:var(--red);color:#fff;font-size:24px;font-weight:1000;box-shadow:0 6px 0 #a81620,0 0 0 5px var(--yellow);animation:pulse 1.5s ease-in-out infinite}
+.playNote{margin-top:12px;font-size:11px;font-weight:800}
+.game{padding-top:calc(83px + var(--safeT))}
+.mission{position:absolute;z-index:12;left:12px;right:12px;top:calc(88px + var(--safeT));display:flex;justify-content:center;pointer-events:none}
+.speech{background:#fff;color:var(--deep);font-weight:1000;font-size:13px;line-height:1.35;padding:9px 15px;border-radius:20px;box-shadow:0 4px 0 #0b5c9d44;text-align:center;max-width:95%}.speech b{color:var(--red)}
+.lab{position:absolute;left:0;right:0;top:calc(133px + var(--safeT));bottom:calc(54px + var(--safeB));overflow:hidden}
+.table{position:absolute;left:0;right:0;bottom:0;height:34%;background:#f3dfae;border-top:8px solid #d5b476}
+.workarea{position:absolute;inset:0 0 25%;0}
+.tool{position:absolute;display:grid;place-items:center;font-weight:1000;touch-action:none}
+.drag{cursor:grab}.drag:active{cursor:grabbing}
+.coin10{width:92px;height:92px;border-radius:50%;background:radial-gradient(circle at 38% 30%,#e2a160,#b66428 67%);border:6px solid #8e461d;color:#7b3517;font-size:25px;box-shadow:0 7px 0 #7e3d1c}
+.coin1{width:88px;height:88px;border-radius:50%;background:radial-gradient(circle at 38% 30%,#fff,#c5d0d5 70%);border:6px solid #8d9aa0;color:#6e7a7f;font-size:25px;box-shadow:0 7px 0 #77858b}
+.paperDisk{width:84px;height:84px;border-radius:50%;background:#f8fcfb;border:5px dashed #76b5bb;color:#4f858a;font-size:12px;box-shadow:0 6px 0 #b5d9dc}
+.slot{position:absolute;left:50%;transform:translateX(-50%);width:128px;height:44px;border:4px dashed #ffffffbb;border-radius:50%;bottom:72px;display:grid;place-items:center;color:#fff;font-size:10px;font-weight:1000}
+.stack{position:absolute;left:50%;transform:translateX(-50%);bottom:57px;width:150px;height:255px;display:flex;flex-direction:column-reverse;align-items:center;justify-content:flex-start;pointer-events:none}
+.cell{width:118px;height:36px;position:relative;margin-top:-5px;animation:drop .34s cubic-bezier(.2,1.4,.4,1)}
+.cell i{position:absolute;left:50%;transform:translateX(-50%);border-radius:50%;display:block}
+.cell .ten{bottom:0;width:106px;height:22px;background:#b96b2e;border:4px solid #8e461d}.cell .paper{bottom:13px;width:96px;height:16px;background:#f3faf8;border:3px dashed #75abb1}.cell .one{bottom:25px;width:100px;height:20px;background:#d8e0e3;border:4px solid #8b999f}
+.cell.missing .paper{opacity:.08}.cell.loose{transform:translateX(11px)}
+.stackCount{position:absolute;left:50%;transform:translateX(-50%);bottom:22px;background:#fff;color:var(--deep);padding:5px 10px;border-radius:15px;font-size:11px;font-weight:1000}
+.meter{position:absolute;right:14px;top:20px;width:126px;background:#263f4d;border-radius:18px;padding:8px;color:#d9f5d0;text-align:center;box-shadow:0 6px 0 #17303d}.meter small{font-size:9px}.display{margin-top:4px;background:#cde5b8;color:#203a28;border-radius:8px;padding:8px 3px;font-size:22px;font-weight:1000;font-variant-numeric:tabular-nums}
+.probe{position:absolute;width:18px;height:92px;border-radius:9px;background:#d74641;box-shadow:0 4px 0 #9d2d2a;touch-action:none;z-index:8}.probe:after{content:"";position:absolute;left:7px;bottom:-20px;width:4px;height:23px;background:#777}.probe.black{background:#30383e;box-shadow:0 4px 0 #171d20}.probe.good{box-shadow:0 0 0 4px #fff,0 0 18px #fff58a}.probeHint{position:absolute;font-size:9px;font-weight:1000;background:#fff;color:var(--deep);border-radius:10px;padding:3px 6px;pointer-events:none}.terminalMark{position:absolute;width:34px;height:34px;border-radius:50%;border:4px dashed #ffffffcc;display:grid;place-items:center;font-size:12px;font-weight:1000;color:#fff}.cellPack{position:absolute;width:126px;height:72px;touch-action:none;z-index:8;filter:drop-shadow(0 5px 0 #0002)}.cellPack .cell{position:absolute;left:4px;bottom:8px}.cellPackLabel{position:absolute;left:0;right:0;bottom:-18px;text-align:center;font-size:10px;font-weight:1000;background:#fff;color:var(--deep);border-radius:12px;padding:3px}.dropZone{position:absolute;left:50%;transform:translateX(-50%);bottom:55px;width:160px;height:260px;border:4px dashed #ffffff66;border-radius:40px;pointer-events:none}.dropZone.hot{border-color:#fff58a;background:#fff58a22}.directNote{position:absolute;left:50%;transform:translateX(-50%);bottom:12px;background:#fff;color:var(--deep);border-radius:18px;padding:6px 10px;font-size:10px;font-weight:1000}.tapPulse{animation:tapPulse .9s ease-in-out infinite alternate}@keyframes tapPulse{to{transform:scale(1.08)}}
+.ledBox{position:absolute;left:16px;top:20px;width:120px;height:180px;text-align:center}
+.ledStage{position:relative;width:100%;height:135px;transition:transform .5s cubic-bezier(.2,1.4,.4,1)}
+.ledStage.flip{transform:rotate(180deg)}.ledHead{position:absolute;left:35px;top:2px;width:52px;height:64px;border-radius:50% 50% 42% 42%;background:#dde4e1;border:6px solid #405964;transition:.25s}.ledStage.on .ledHead{background:#ff6060;box-shadow:0 0 32px 12px #ff6a6aaa}
+.leg{position:absolute;top:62px;width:5px;background:#8d9a9f}.leg.long{left:45px;height:66px}.leg.short{left:76px;height:47px}.leg em{position:absolute;top:36px;font-style:normal;font-size:9px;background:#fff;color:var(--deep);border-radius:8px;padding:2px 4px;white-space:nowrap}.leg.long em{right:7px}.leg.short em{left:7px}
+.turn{position:absolute;left:84px;top:68px;font-size:36px;color:var(--yellow);animation:spinCue 1s ease-in-out infinite alternate}
+.wire{position:absolute;height:6px;border-radius:6px;transform-origin:left center;opacity:.95}.wire.red{background:#e23d39;left:126px;bottom:109px;width:132px;transform:rotate(-12deg)}.wire.black{background:#27343a;left:125px;bottom:76px;width:138px;transform:rotate(11deg)}
+.spark{position:absolute;width:13px;height:13px;border-radius:50%;background:#fff58a;box-shadow:0 0 14px #fff58a;opacity:0;pointer-events:none}.spark.go{animation:flow .8s linear 1}
+.finger{position:absolute;left:calc(50% - 55px);bottom:157px;font-size:60px;opacity:.3;transform:rotate(-16deg);transition:.14s}.finger.down{opacity:1;transform:translateY(27px) rotate(-16deg)}
+.bottom{position:absolute;z-index:18;left:0;right:0;bottom:0;height:calc(46px + var(--safeB));padding:5px 11px calc(7px + var(--safeB));display:flex;gap:8px;align-items:center;justify-content:center;background:#0a6fb6}
+.bigBtn{flex:0 0 auto;height:38px;border-radius:30px;background:#fff;color:var(--red);font-weight:1000;font-size:15px;box-shadow:0 4px 0 #07548d,0 0 0 3px var(--yellow) inset;transition:.08s;min-width:0}.bigBtn:active{transform:translateY(3px);box-shadow:0 1px 0 #07548d,0 0 0 3px var(--yellow) inset}.bigBtn.active{background:var(--yellow)}.bigBtn:disabled{opacity:.45}
+.toast{position:absolute;z-index:25;left:50%;transform:translateX(-50%);bottom:calc(105px + var(--safeB));background:#fff;color:var(--deep);border-radius:20px;padding:9px 14px;font-size:11px;font-weight:1000;box-shadow:0 4px 0 #084d7f44;max-width:90%;text-align:center;opacity:0;pointer-events:none}.toast.show{animation:toast 1.7s ease both}
+.modal{position:absolute;z-index:60;inset:0;display:none;place-items:center;padding:20px;background:#063b6dbb}.modal.show{display:grid}.card{width:100%;max-width:350px;background:#fff;color:var(--deep);border-radius:30px;padding:22px;text-align:center;box-shadow:0 8px 0 #042c50,0 0 0 6px var(--red);animation:pop .4s cubic-bezier(.2,1.4,.4,1)}.card h2{margin:4px 0 6px;color:var(--red);font-size:25px}.card p{font-size:12px;line-height:1.55;font-weight:800}.next{width:100%;height:54px;border-radius:28px;background:var(--yellow);color:#934516;font-weight:1000;font-size:17px;box-shadow:0 4px 0 #d2a631}
+.disc{list-style:none;padding:0;text-align:left;max-height:45dvh;overflow:auto}.disc li{margin:6px 0;padding:8px 10px;border-radius:12px;background:#eaf7ee;font-size:11px;font-weight:800}.disc li.lock{background:#edf0f1;color:#9aa4a8}
+@keyframes bob{50%{transform:translateY(-8px) rotate(5deg)}}@keyframes pulse{50%{transform:scale(1.04)}}@keyframes drop{from{transform:translateY(-100px) scale(.6);opacity:0}to{transform:none;opacity:1}}@keyframes spinCue{to{transform:rotate(38deg)}}@keyframes flow{0%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(135px,-30px)}}@keyframes pop{from{transform:scale(.6);opacity:0}}@keyframes toast{0%{opacity:0;transform:translate(-50%,8px)}15%,75%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+@media(max-height:650px){.mission{top:calc(82px + var(--safeT))}.lab{top:calc(122px + var(--safeT))}.speech{font-size:11px;padding:7px 12px}.meter{transform:scale(.88);transform-origin:right top}.ledBox{transform:scale(.88);transform-origin:left top}.stack{transform:translateX(-50%) scale(.88);transform-origin:center bottom}}
+@media(max-height:570px){.brand{display:none}.mission{top:calc(72px + var(--safeT))}.lab{top:calc(110px + var(--safeT));bottom:calc(88px + var(--safeB))}.bottom{height:calc(82px + var(--safeB))}.bigBtn{height:50px;font-size:13px}}
+</style>
+<style id="lab-home-link-style">
+.lab-home-link{position:fixed;top:max(8px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));z-index:2147483647;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;border:2px solid rgba(255,255,255,.78);border-radius:999px;background:rgba(20,72,61,.94);color:#fff!important;text-decoration:none!important;font:800 13px/1.2 system-ui,-apple-system,"Yu Gothic",sans-serif;box-shadow:0 3px 12px rgba(0,0,0,.22);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.lab-home-link:focus-visible{outline:3px solid #ffd76a;outline-offset:2px}
+@media(max-width:380px){.lab-home-link{padding:7px 10px;font-size:12px}}
+</style>
+</head>
+<body>
+<a class="lab-home-link" href="https://lab.alpaca-school.okinawa/" aria-label="アルパカすく〜るラボ作品一覧に戻る">← 🔬 ラボ一覧</a>
+<div id="app">
+<div class="skyDots"></div>
+<header class="topbar">
+ <div class="toprow"><div><div class="brand">子どものMIKATA｜那覇工業高校 課題研究から</div><div id="stage" class="stage">STAGE 1 / 3</div></div><button id="discBtn" class="discover">🔬 発見 0</button></div>
+ <div class="progress"><i id="prog"></i></div>
+</header>
+
+<section id="title" class="screen title active">
+ <div class="titleTop"><div class="chip">10円＋1円＝11円電池</div><h1><small>11円電池で</small>LEDを光らせよう！</h1><div class="titleSub">触ると動く、小さな電気実験室</div></div>
+ <div class="titleScene"><div class="miniStack"><div class="miniCoin ten"></div><div class="miniCoin paper"></div><div class="miniCoin one"></div></div><div class="miniLed">💡</div></div>
+ <div class="playWrap"><button id="play" class="play">実験スタート</button><div class="playNote">コインを重ねて、測って、LEDを光らせよう</div></div>
+</section>
+
+<section id="game" class="screen game">
+ <div class="mission"><div id="speech" class="speech"></div></div>
+ <div id="lab" class="lab"></div>
+ <div id="toast" class="toast"></div>
+ <div id="bottom" class="bottom"></div>
+</section>
+
+<div id="clearModal" class="modal"><div class="card"><div style="font-size:50px" id="clearEmoji">✨</div><h2 id="clearTitle">できた！</h2><p id="clearText"></p><button id="next" class="next">次へ</button></div></div>
+<div id="discModal" class="modal"><div class="card"><div style="font-size:42px">🔬</div><h2>今日の発見</h2><ul id="discList" class="disc"></ul><button id="discClose" class="next">戻る</button></div></div>
+<div id="finishModal" class="modal"><div class="card"><div style="font-size:50px">🪙💡</div><h2>11円電池研究員！</h2><p>作る→測る→光らない原因を直す、まで自分の指で実験できた。</p><button id="again" class="next">もう一度</button></div></div>
+</div>
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+let stage=0,audio=null,muted=false;
+let discoveries=new Set();
+const all=[
+ ['layer','10円玉と1円玉の間に食塩水ペーパーをはさむ'],
+ ['polarity','10円側が＋、1円側が−'],
+ ['v05','1組で約0.5Vを実測した記録がある'],
+ ['v15','3組で約1.5VでもLEDは点灯しなかった'],
+ ['v24','6組で2.4Vを測定し、LED1個の点灯を確認した'],
+ ['led','LEDは長い足を＋側、短い足を−側へ'],
+ ['contact','コインの接触を安定させることが大切'],
+ ['paper','食塩水を含んだ紙がないと電池として働きにくい'],
+ ['research','光らない原因を1つずつ変えて確かめる']
+];
+let s1={placed:[]},s2={count:1,measured:false},s3={count:6,reverse:true,paper:true,contact:false,scenario:0};
+
+function tone(f=440,d=.06,g=.02){if(muted)return;const C=window.AudioContext||window.webkitAudioContext;if(!C)return;if(!audio)audio=new C();if(audio.state==='suspended')audio.resume();const o=audio.createOscillator(),a=audio.createGain(),t=audio.currentTime;o.type='triangle';o.frequency.value=f;a.gain.setValueAtTime(.0001,t);a.gain.exponentialRampToValueAtTime(g,t+.01);a.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(a).connect(audio.destination);o.start();o.stop(t+d+.03)}
+function add(id){if(!discoveries.has(id)){discoveries.add(id);$('#discBtn').textContent='🔬 発見 '+discoveries.size;tone(760,.05,.018)}}
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.remove('show');void el.offsetWidth;el.classList.add('show')}
+function speech(t){$('#speech').innerHTML=t}
+function clear(title,text,emoji='✨'){$('#clearTitle').textContent=title;$('#clearText').textContent=text;$('#clearEmoji').textContent=emoji;setTimeout(()=>$('#clearModal').classList.add('show'),420);tone(660,.1,.025)}
+function voltage(n){return n===1?.5:n===2?1:n===3?1.5:n===6?2.4:null}
+function cellHTML(cls=''){return '<div class="cell '+cls+'"><i class="ten"></i><i class="paper"></i><i class="one"></i></div>'}
+function stackHTML(n,opt={}){let h='';for(let i=0;i<n;i++)h+=cellHTML(opt.missing&&i===n-1?'missing':opt.loose&&i===n-1?'loose':'');return h}
+
+function render(){
+ $('#stage').textContent='STAGE '+(stage+1)+' / 3';
+ $('#prog').style.width=((stage+1)/3*100)+'%';
+ [render1,render2,render3][stage]()
+}
+
+function makeDrag(el,type){
+ let dragging=false,dx=0,dy=0;
+ el.addEventListener('pointerdown',e=>{dragging=true;el.setPointerCapture?.(e.pointerId);const r=el.getBoundingClientRect();dx=e.clientX-r.left;dy=e.clientY-r.top;el.style.zIndex=9;tone(320,.03,.012)});
+ el.addEventListener('pointermove',e=>{if(!dragging)return;const lab=$('#lab').getBoundingClientRect();el.style.left=(e.clientX-lab.left-dx)+'px';el.style.top=(e.clientY-lab.top-dy)+'px'});
+ el.addEventListener('pointerup',e=>{if(!dragging)return;dragging=false;dropPiece(el,type)});
+}
+function dropPiece(el,type){
+ const slot=$('#slot').getBoundingClientRect(),r=el.getBoundingClientRect();
+ const hit=!(r.right<slot.left||r.left>slot.right||r.bottom<slot.top||r.top>slot.bottom);
+ if(!hit){el.animate([{transform:'translateX(0)'},{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}],{duration:240});toast('点線の場所へ運んでみよう');return}
+ const expected=['10','paper','1'][s1.placed.length];
+ if(type!==expected){tone(170,.09,.03);toast(type==='1'&&expected==='paper'?'10円玉と1円玉の間には何が必要？':'順番をもう一度見てみよう');el.animate([{transform:'scale(1)'},{transform:'scale(.8)'},{transform:'scale(1)'}],{duration:260});return}
+ s1.placed.push(type);tone(480+s1.placed.length*80,.05,.02);el.remove();
+ $('#built').innerHTML=stackHTML(s1.placed.length===3?1:0);
+ if(s1.placed.length===1)toast('10円玉を置いた！');
+ if(s1.placed.length===2){add('layer');toast('食塩水ペーパーをはさんだ！')}
+ if(s1.placed.length===3){add('polarity');speech('<b>完成！</b> 10円側が＋、1円側が−。');setTimeout(()=>clear('11円電池ができた！','3つの材料を自分で重ねて、11円電池1組を作った。','🪙'),550)}
+}
+
+function render1(){
+ s1={placed:[]};
+ speech('3つを<b>指で運んで</b>、11円電池を1組つくろう');
+ $('#lab').innerHTML='<div class="workarea">'+
+ '<div id="p10" class="tool drag coin10" style="left:22px;top:48px">10</div>'+
+ '<div id="pp" class="tool drag paperDisk" style="left:calc(50% - 42px);top:25px">塩水<br>ペーパー</div>'+
+ '<div id="p1" class="tool drag coin1" style="right:22px;top:48px">1</div>'+
+ '<div id="slot" class="slot">ここに重ねる</div><div id="built" class="stack"></div></div><div class="table"></div>';
+ $('#bottom').innerHTML='<button id="hint1" class="bigBtn">💡 ヒント</button><button id="reset1" class="bigBtn">↺ やり直す</button>';
+ makeDrag($('#p10'),'10');makeDrag($('#pp'),'paper');makeDrag($('#p1'),'1');
+ $('#hint1').onclick=()=>toast('10円 → 食塩水ペーパー → 1円 の順に重ねよう');
+ $('#reset1').onclick=render1
+}
+
+function render2(){
+ s2={count:1,measured:false,red:false,black:false};
+ speech('11円電池セットを<b>塔の上へ運ぶ</b>。そのあと赤黒プローブを自分で当てて測ろう');
+ $('#lab').innerHTML='<div class="workarea">'+
+ '<div class="meter"><small>テスター</small><div id="display" class="display">-- V</div></div>'+
+ '<div id="redProbe" class="probe" style="right:88px;top:120px"></div><div class="probeHint" style="right:72px;top:214px">赤</div>'+
+ '<div id="blackProbe" class="probe black" style="right:48px;top:120px"></div><div class="probeHint" style="right:30px;top:214px">黒</div>'+
+ '<div id="plusMark" class="terminalMark" style="left:calc(50% - 76px);bottom:82px">＋</div>'+
+ '<div id="minusMark" class="terminalMark" style="left:calc(50% + 42px);bottom:195px">−</div>'+
+ '<div id="dropZone" class="dropZone"></div><div id="stack" class="stack">'+stackHTML(1)+'</div><div id="count" class="stackCount">1組</div>'+
+ '<div id="pack" class="cellPack tapPulse" style="left:18px;top:92px">'+cellHTML('')+'<div class="cellPackLabel">11円電池セット</div></div>'+
+ '<div class="directNote">セットを塔へドラッグ → プローブを＋/−へ</div>'+
+ '</div><div class="table"></div>';
+ $('#bottom').innerHTML='<button id="hint2" class="bigBtn">💡 ヒント</button>';
+ $('#hint2').onclick=()=>toast('左の11円電池セットを塔の上へ運ぶ。6組になったら赤を＋、黒を−へ当てよう');
+
+ const pack=$('#pack'),zone=$('#dropZone');
+ let pd=null;
+ pack.addEventListener('pointerdown',e=>{pd={x:e.clientX,y:e.clientY,left:pack.offsetLeft,top:pack.offsetTop};pack.setPointerCapture?.(e.pointerId);pack.classList.remove('tapPulse');tone(320,.03,.014)});
+ pack.addEventListener('pointermove',e=>{if(!pd)return;pack.style.left=(pd.left+e.clientX-pd.x)+'px';pack.style.top=(pd.top+e.clientY-pd.y)+'px';const a=pack.getBoundingClientRect(),z=zone.getBoundingClientRect();zone.classList.toggle('hot',!(a.right<z.left||a.left>z.right||a.bottom<z.top||a.top>z.bottom))});
+ pack.addEventListener('pointerup',()=>{if(!pd)return;pd=null;const a=pack.getBoundingClientRect(),z=zone.getBoundingClientRect();const hit=!(a.right<z.left||a.left>z.right||a.bottom<z.top||a.top>z.bottom);zone.classList.remove('hot');if(hit){if(s2.count<3)s2.count++;else if(s2.count===3)s2.count=6;else{toast('6組まで積んだよ');resetPack();return}$('#stack').innerHTML=stackHTML(s2.count);$('#count').textContent=s2.count+'組';$('#display').textContent='-- V';s2.measured=false;s2.red=false;s2.black=false;tone(430+s2.count*35,.04,.02);toast(s2.count+'組！ 塔が高くなった');if(s2.count===6)pack.style.display='none';else resetPack()}else resetPack()});
+ function resetPack(){pack.style.left='18px';pack.style.top='92px';pack.classList.add('tapPulse')}
+
+ function dragProbe(el,key,targetId){
+   let d=null;
+   el.addEventListener('pointerdown',e=>{d={x:e.clientX,y:e.clientY,left:el.offsetLeft,top:el.offsetTop};el.setPointerCapture?.(e.pointerId);tone(300,.03,.012)});
+   el.addEventListener('pointermove',e=>{if(!d)return;el.style.left=(d.left+e.clientX-d.x)+'px';el.style.top=(d.top+e.clientY-d.y)+'px'});
+   el.addEventListener('pointerup',()=>{if(!d)return;d=null;const a=el.getBoundingClientRect(),t=$('#'+targetId).getBoundingClientRect();const hit=!(a.right<t.left||a.left>t.right||a.bottom<t.top||a.top>t.bottom);if(hit){s2[key]=true;el.classList.add('good');el.style.left=(t.left-$('#lab').getBoundingClientRect().left+8)+'px';el.style.top=(t.top-$('#lab').getBoundingClientRect().top-55)+'px';tone(520,.04,.018);checkMeasure()}else{el.classList.remove('good');s2[key]=false;toast(key==='red'?'赤プローブは＋へ':'黒プローブは−へ')}})
+ }
+ dragProbe($('#redProbe'),'red','plusMark');dragProbe($('#blackProbe'),'black','minusMark');
+
+ function checkMeasure(){
+   if(!(s2.red&&s2.black))return;
+   const v=voltage(s2.count);if(v==null)return;
+   $('#display').textContent=v.toFixed(1)+' V';s2.measured=true;
+   tone(620,.06,.02);
+   if(s2.count===1){add('v05');toast('1組で約0.5V')}
+   if(s2.count===3){add('v15');toast('3組で約1.5V。まだLEDは光らなかった')}
+   if(s2.count===6){add('v24');speech('<b>2.4V！</b> 6組でLED1個の点灯を確認した実測結果。');setTimeout(()=>clear('自分で測れた！','電池を積み、プローブを自分で当てて6組2.4Vを確認した。','📟'),900)}
+ }
+}
+function render3(){
+ s3={count:6,reverse:true,paper:false,contact:false,scenario:0};
+ speech('LEDが光らない。<b>LED・ペーパー・電池タワーを直接触って</b>直そう');
+ $('#lab').innerHTML='<div class="workarea">'+
+ '<div class="ledBox"><div id="ledStage" class="ledStage flip tapPulse"><div class="ledHead"></div><div class="leg long"><em>長い足</em></div><div class="leg short"><em>短い足</em></div></div><div class="turn">↻</div></div>'+
+ '<div class="wire red"></div><div class="wire black"></div><div id="spark" class="spark" style="left:132px;bottom:106px"></div>'+
+ '<div id="stack3" class="stack">'+stackHTML(6,{missing:true})+'</div><div class="stackCount">6組</div>'+
+ '<div id="paperPiece" class="tool paperDisk tapPulse" style="left:18px;top:185px;width:68px;height:68px;font-size:10px">塩水<br>ペーパー</div>'+
+ '<div id="finger" class="finger">☝️</div><div class="directNote">LEDをタップで回す／ペーパーを塔へドラッグ／塔を長押し</div>'+
+ '</div><div class="table"></div>';
+ $('#bottom').innerHTML='<button id="hint3" class="bigBtn">💡 ヒント</button>';
+ $('#hint3').onclick=()=>toast('LEDの長い足を＋側へ。ペーパーを戻し、電池タワーをぎゅっと長押し');
+
+ $('#ledStage').onclick=()=>{
+   s3.reverse=!s3.reverse;
+   $('#ledStage').classList.toggle('flip',s3.reverse);
+   $('#ledStage').classList.remove('tapPulse');
+   tone(420,.05,.02);
+   toast(s3.reverse?'長い足が−側。まだ逆向き':'長い足が＋側になった！');
+   add('led');update3()
+ };
+
+ const pp=$('#paperPiece');let pd=null;
+ pp.addEventListener('pointerdown',e=>{pd={x:e.clientX,y:e.clientY,left:pp.offsetLeft,top:pp.offsetTop};pp.setPointerCapture?.(e.pointerId);pp.classList.remove('tapPulse')});
+ pp.addEventListener('pointermove',e=>{if(!pd)return;pp.style.left=(pd.left+e.clientX-pd.x)+'px';pp.style.top=(pd.top+e.clientY-pd.y)+'px'});
+ pp.addEventListener('pointerup',()=>{if(!pd)return;pd=null;const a=pp.getBoundingClientRect(),z=$('#stack3').getBoundingClientRect();const hit=!(a.right<z.left||a.left>z.right||a.bottom<z.top||a.top>z.bottom);if(hit){s3.paper=true;pp.style.display='none';$('#stack3').innerHTML=stackHTML(6);add('paper');tone(500,.05,.02);toast('食塩水ペーパーを戻した！');update3()}else{pp.style.left='18px';pp.style.top='185px';pp.classList.add('tapPulse');toast('ペーパーを電池タワーへ運ぼう')}});
+
+ const st=$('#stack3'),finger=$('#finger');let holdTimer=null;
+ st.style.pointerEvents='auto';
+ st.addEventListener('pointerdown',e=>{e.preventDefault();finger.classList.add('down');toast('そのまま押さえて…');holdTimer=setTimeout(()=>{s3.contact=true;add('contact');tone(560,.06,.02);toast('接触が安定した！');update3()},700)});
+ const endHold=()=>{clearTimeout(holdTimer);finger.classList.remove('down')};
+ ['pointerup','pointercancel','pointerleave'].forEach(ev=>st.addEventListener(ev,endHold));
+ update3()
+}
+function isReady(){return !s3.reverse&&s3.paper&&s3.contact}
+function update3(){
+ const led=$('#ledStage');
+ led.classList.toggle('on',isReady());
+ if(isReady()&&!s3.done){
+   s3.done=true;
+   $('#spark').classList.remove('go');void $('#spark').offsetWidth;$('#spark').classList.add('go');
+   add('research');tone(760,.13,.03);
+   speech('<b>光った！</b> 極性・ペーパー・接触、3つを直せた。');
+   setTimeout(()=>clear('原因を自分で直した！','LED本体、食塩水ペーパー、電池タワーを直接触って原因を直した。','💡'),900)
+ }
+}
+
+function showDisc(){
+ $('#discList').innerHTML=all.map(([id,t])=>'<li class="'+(discoveries.has(id)?'':'lock')+'">'+(discoveries.has(id)?'✅ ':'🔒 ')+t+'</li>').join('');
+ $('#discModal').classList.add('show')
+}
+$('#play').onclick=()=>{$('#title').classList.remove('active');$('#game').classList.add('active');stage=0;render()};
+$('#next').onclick=()=>{$('#clearModal').classList.remove('show');if(stage<2){stage++;render()}else $('#finishModal').classList.add('show')};
+$('#again').onclick=()=>{$('#finishModal').classList.remove('show');discoveries.clear();$('#discBtn').textContent='🔬 発見 0';stage=0;render()};
+$('#discBtn').onclick=showDisc;$('#discClose').onclick=()=>$('#discModal').classList.remove('show');
+})();
+</script>
+</body>
+</html>
