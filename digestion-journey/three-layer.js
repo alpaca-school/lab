@@ -113,9 +113,9 @@ function stagePart(si){
 
 function drawBody(ctx,w,h){
   ctx.save();
-  ctx.strokeStyle="rgba(116,69,86,.16)";
+  ctx.strokeStyle="rgba(255,210,224,.18)";
   ctx.lineWidth=Math.max(2,w*.008);
-  ctx.fillStyle="rgba(255,255,255,.32)";
+  ctx.fillStyle="rgba(255,231,239,.075)";
   ctx.beginPath();
   ctx.ellipse(w*.50,h*.105,w*.105,h*.085,0,0,Math.PI*2);
   ctx.moveTo(w*.455,h*.19);
@@ -128,6 +128,20 @@ function drawBody(ctx,w,h){
   ctx.fill();ctx.stroke();
   ctx.restore();
 }
+function drawCavityBubbles(ctx,w,h,time,si){
+  ctx.save();
+  for(let i=0;i<13;i++){
+    const a=i*2.399+time*.00014*(i%2?1:-1);
+    const x=w*(.12+.76*((Math.sin(a*1.7+i)+1)/2));
+    const y=h*(.10+.80*((Math.cos(a*1.23+i*.7)+1)/2));
+    const r=2.5+(i%4)*1.8;
+    ctx.globalAlpha=.08+(i%3)*.035;
+    ctx.fillStyle=i%3===0?"#ffd966":i%3===1?"#ff7a9c":"#59c8ff";
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+  }
+  ctx.restore();
+}
+
 function drawTube(ctx,path,activePart){
   // dark back tube gives pseudo depth
   ctx.save();
@@ -136,23 +150,40 @@ function drawTube(ctx,path,activePart){
     const a=path[i-1],b=path[i];
     const c=partColor(b.part);
     const active=b.part===activePart || (activePart==="rectum"&&b.part==="anus");
-    ctx.strokeStyle=active?c:"rgba(141,91,106,.28)";
-    ctx.lineWidth=active?14:9;
-    ctx.shadowColor=active?c:"transparent";
-    ctx.shadowBlur=active?10:0;
+    const pulse=1+Math.sin((i*.58)+performance.now()*.004)*.07;
+    ctx.strokeStyle=active?c:"rgba(181,96,126,.30)";
+    ctx.lineWidth=(active?18:11)*pulse;
+    ctx.shadowColor=active?c:"rgba(66,15,35,.24)";
+    ctx.shadowBlur=active?15:4;
     ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
 
-    ctx.strokeStyle=active?"rgba(255,255,255,.45)":"rgba(255,255,255,.14)";
-    ctx.lineWidth=active?3:2;
+    ctx.strokeStyle=active?"rgba(255,238,243,.60)":"rgba(255,225,235,.16)";
+    ctx.lineWidth=active?3.5:2;
     ctx.shadowBlur=0;
     ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
   }
   ctx.restore();
 }
+
+function drawTubeRings(ctx,path,activePart){
+  ctx.save();
+  for(let i=6;i<path.length;i+=9){
+    const p=path[i], prev=path[i-1];
+    if(p.part!==activePart && !(activePart==="rectum"&&p.part==="anus")) continue;
+    const ang=Math.atan2(p.y-prev.y,p.x-prev.x);
+    ctx.translate(p.x,p.y);ctx.rotate(ang);
+    ctx.strokeStyle="rgba(92,25,52,.34)";
+    ctx.lineWidth=2;
+    ctx.beginPath();ctx.ellipse(0,0,7,3.2,0,0,Math.PI*2);ctx.stroke();
+    ctx.rotate(-ang);ctx.translate(-p.x,-p.y);
+  }
+  ctx.restore();
+}
+
 function drawOrganLandmarks(ctx,w,h,si){
   ctx.save();
   // mouth
-  ctx.fillStyle=si===0?"#d93e68":"rgba(217,62,104,.25)";
+  ctx.fillStyle=si===0?"#ff6f9a":"rgba(255,111,154,.22)";
   ctx.beginPath();ctx.ellipse(w*.5,h*.105,w*.045,h*.018,0,0,Math.PI*2);ctx.fill();
 
   // stomach silhouette
@@ -171,7 +202,7 @@ function drawOrganLandmarks(ctx,w,h,si){
   ctx.strokeRect(w*.345,h*.45,w*.34,h*.34);
 
   // anus marker
-  ctx.fillStyle=si===5?"#ffd966":"rgba(255,217,102,.45)";
+  ctx.fillStyle=si===5?"#ffd966":"rgba(255,217,102,.30)";
   ctx.beginPath();ctx.arc(w*.535,h*.93,si===5?7:4,0,Math.PI*2);ctx.fill();
   ctx.restore();
 }
@@ -255,8 +286,38 @@ function drawFood(ctx,path,t,kind,si,time){
   }
   ctx.restore();
 
+  // wet glossy highlight + tiny face on the travelling bite
+  if(si<5){
+    ctx.save();
+    ctx.globalAlpha=.8;
+    ctx.fillStyle="rgba(255,255,255,.72)";
+    ctx.beginPath();ctx.arc(p.x-size*.28,p.y-size*.30,Math.max(1.8,size*.18),0,Math.PI*2);ctx.fill();
+    if(size>=9){
+      ctx.fillStyle="#3d2030";
+      ctx.beginPath();ctx.arc(p.x-size*.22,p.y+size*.05,1.4,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.arc(p.x+size*.22,p.y+size*.05,1.4,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle="#3d2030";ctx.lineWidth=1.2;
+      ctx.beginPath();ctx.arc(p.x,p.y+size*.12,size*.18,0,Math.PI);ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  if(si===6){
+    const anim=current?.actionAnim;
+    let drop=.05;
+    if(anim) drop=ease(clamp((performance.now()-anim.start)/anim.duration,0,1));
+    const y=p.y+drop*46;
+    ctx.save();
+    ctx.font=Math.round(Math.max(42,Math.min(82,w*.18)))+"px serif";
+    ctx.textAlign="center";ctx.textBaseline="middle";
+    ctx.shadowColor="rgba(0,0,0,.35)";ctx.shadowBlur=12;
+    ctx.fillText("💩",p.x,y);
+    ctx.restore();
+  }
+
   // current position halo
-  ctx.save();ctx.strokeStyle="rgba(255,217,102,.9)";ctx.lineWidth=2;
+  ctx.save();ctx.strokeStyle="rgba(255,217,102,.92)";ctx.lineWidth=2;
+  ctx.shadowColor="#ffd966";ctx.shadowBlur=9;
   ctx.beginPath();ctx.arc(p.x,p.y,size+8+Math.sin(time*.006)*2,0,Math.PI*2);ctx.stroke();ctx.restore();
 }
 
@@ -266,11 +327,11 @@ function drawLabels(ctx,w,h,si){
     ["小腸","栄養を吸収"],["大腸","水分を吸収"],["直腸→肛門","体外へ"],["体の外","ゴール"]
   ];
   ctx.save();
-  ctx.fillStyle="rgba(70,37,50,.88)";
+  ctx.fillStyle="rgba(255,238,244,.95)";
   ctx.font="900 14px system-ui,sans-serif";
   ctx.textAlign="left";ctx.fillText("一本の消化管を旅しているよ",12,22);
   ctx.font="700 11px system-ui,sans-serif";
-  ctx.fillStyle="rgba(70,37,50,.62)";
+  ctx.fillStyle="rgba(255,216,229,.74)";
   ctx.fillText(labels[si][0]+"： "+labels[si][1],12,39);
 
   ctx.textAlign="center";ctx.font="800 10px system-ui,sans-serif";
@@ -278,24 +339,26 @@ function drawLabels(ctx,w,h,si){
     [.50,.07,"口"],[.44,.27,"食道"],[.67,.39,"胃"],[.28,.61,"小腸"],[.78,.61,"大腸"],[.64,.91,"肛門"]
   ];
   for(const [x,y,t] of marks){
-    ctx.fillStyle=t===labels[si][0]||labels[si][0].includes(t)?"#7d3149":"rgba(90,59,70,.46)";
+    ctx.fillStyle=t===labels[si][0]||labels[si][0].includes(t)?"#ffd966":"rgba(255,224,233,.42)";
     ctx.fillText(t,w*x,h*y);
   }
-  ctx.textAlign="right";ctx.fillStyle="rgba(70,37,50,.58)";
+  ctx.textAlign="right";ctx.fillStyle="rgba(255,224,233,.50)";
   ctx.fillText("連続消化管 3/3",w-10,h-10);
   ctx.restore();
 }
 
 function drawFrame(ctx,w,h,si,time,host){
   ctx.clearRect(0,0,w,h);
-  const bg=ctx.createRadialGradient(w*.5,h*.35,8,w*.5,h*.5,Math.max(w,h)*.72);
-  bg.addColorStop(0,"#fff5f7");bg.addColorStop(1,"#ecd3dc");
+  const bg=ctx.createRadialGradient(w*.5,h*.36,8,w*.5,h*.5,Math.max(w,h)*.78);
+  bg.addColorStop(0,"#6b2847");bg.addColorStop(.48,"#381226");bg.addColorStop(1,"#1b0812");
   ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+  drawCavityBubbles(ctx,w,h,time,si);
 
   drawBody(ctx,w,h);
   const path=buildPath(w,h);
   drawOrganLandmarks(ctx,w,h,si);
   drawTube(ctx,path,stagePart(si));
+  drawTubeRings(ctx,path,stagePart(si));
   const t=stageProgress(host,si);
   drawFood(ctx,path,t,foodKind(host),si,time);
   drawLabels(ctx,w,h,si);
@@ -311,7 +374,7 @@ function mount(host){
 
   const badge=document.createElement("div");
   badge.className="three-badge";
-  badge.textContent="一本の消化管 ✓";
+  badge.textContent="キモ可愛い消化管 ✓";
   organ.appendChild(badge);
 
   const ctx=canvas.getContext("2d",{alpha:false});
