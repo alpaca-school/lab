@@ -5,8 +5,8 @@ const stages=[
  {name:"胃",icon:"🫙",organ:"🫙",title:"胃で まぜる",lead:"胃では食べものが胃液とまざり、どろどろになります。",task:"「まぜる」を3回押して、胃の動きを観察しよう。",fact:"胃液には強い酸がふくまれますが、胃の内側は粘液などで守られています。",need:3,action:"まぜる"},
  {name:"小腸",icon:"🌀",organ:"🌀",title:"小腸で 栄養を吸収",lead:"消化された栄養の多くは、小腸から体の中へ吸収されます。",task:"「吸収する」を3回押して、栄養を体へ届けよう。",fact:"小腸の内側には、栄養を吸収しやすくするための細かなひだがあります。",need:3,action:"吸収する"},
  {name:"大腸",icon:"💧",organ:"〰️",title:"大腸で 水分を吸収",lead:"残ったものから水分などが吸収され、便が形づくられていきます。",task:"「水分を吸収」を2回押して変化を見よう。",fact:"大腸は、内容物から水分や電解質を吸収する働きをします。",need:2,action:"水分を吸収"},
- {name:"直腸",icon:"📦",organ:"📦",title:"便を ためる",lead:"便は直腸に送られ、体の外へ出す準備をします。",task:"「すすむ」を押して最後の出口へ。",fact:"消化されなかったものなどが便として体の外へ出されます。",need:1,action:"すすむ"},
- {name:"出口",icon:"✨",organ:"💩",title:"しょうかの旅 ゴール！",lead:"食べものは長い旅をして、必要な栄養や水分が体に取りこまれました。",task:"旅をふり返ってクイズに挑戦しよう。",fact:"消化は、食べものを体が利用しやすい形に変え、必要なものを吸収するしくみです。",need:1,action:"クイズへ"}
+ {name:"直腸・肛門",icon:"🚻",organ:"🚻",title:"直腸から 肛門へ",lead:"便は直腸にたまり、最後に肛門から体の外へ出ます。",task:"「外へ出す」を押して、消化の旅を最後まで見届けよう。",fact:"直腸は便を一時的にため、肛門から体の外へ出す準備をする場所です。",need:1,action:"外へ出す"},
+ {name:"ゴール",icon:"✨",organ:"💩",title:"しょうかの旅 ゴール！",lead:"食べものは口から肛門まで一本の消化管を通り、必要な栄養や水分が体に取りこまれました。",task:"旅をふり返ってクイズに挑戦しよう。",fact:"消化管は、口から食道・胃・小腸・大腸・直腸を通って肛門まで続く一本の道です。",need:1,action:"クイズへ"}
 ];
 const quizzes=[
  {q:"食べものを最初に細かくする場所は？",choices:["口","胃","大腸"],a:0,why:"口では歯でかみ、だ液とまぜるところから消化が始まります。"},
@@ -56,7 +56,7 @@ function answer(i){
  setTimeout(()=>{q++;q<quizzes.length?renderQuestion():renderEnd()},1200);
 }
 function renderEnd(){
- root.innerHTML='<section class="stage"><div class="card result"><div class="bigemoji">🎉</div><h2>しょうかの たび 完走！</h2><p><b>'+food+'</b> といっしょに体の中を旅したよ。</p><div class="stamps">'+stages.map(s=>'<div class="stamp">'+s.icon+'</div>').join("")+'</div><div class="route"><b>今回のルート</b><br>口 → 食道 → 胃 → 小腸 → 大腸 → 直腸 → 体の外<br><br><b>クイズ：</b>'+score+' / '+quizzes.length+' 問正解</div><button id="again" class="primary" style="margin-top:16px">もう一度 旅する</button><p class="note">学習用の簡略モデルです。実際の消化には、肝臓・すい臓・胆のうなども関わります。</p></div></section>';
+ root.innerHTML='<section class="stage"><div class="card result"><div class="bigemoji">🎉</div><h2>しょうかの たび 完走！</h2><p><b>'+food+'</b> といっしょに体の中を旅したよ。</p><div class="stamps">'+stages.map(s=>'<div class="stamp">'+s.icon+'</div>').join("")+'</div><div class="route"><b>今回のルート</b><br>口 → 食道 → 胃 → 小腸 → 大腸 → 直腸 → 肛門 → 体の外<br><br><b>クイズ：</b>'+score+' / '+quizzes.length+' 問正解</div><button id="again" class="primary" style="margin-top:16px">もう一度 旅する</button><p class="note">学習用の簡略モデルです。実際の消化には、肝臓・すい臓・胆のうなども関わります。</p></div></section>';
  document.getElementById("again").addEventListener("click",()=>{food=null;stage=0;count=0;renderStart();});
 }
 safe(renderStart);
