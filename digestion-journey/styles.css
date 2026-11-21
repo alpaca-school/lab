@@ -513,3 +513,28 @@ a{color:inherit}.app{min-height:100dvh;display:flex;flex-direction:column;overfl
   .game-card .three-badge{top:118px!important;font-size:9px!important}
   .lab-back{top:6px;left:6px;padding:6px 9px;font-size:11px}
 }
+
+/* v3d16: beniimo方式の音UI */
+.sound-toggle{
+ position:fixed;
+ top:max(8px,env(safe-area-inset-top));
+ right:max(8px,env(safe-area-inset-right));
+ z-index:2147483646;
+ width:46px;height:46px;
+ border:2px solid rgba(255,255,255,.88);
+ border-radius:50%;
+ background:rgba(30,8,18,.88);
+ color:#ffe35c;
+ font-size:22px;
+ line-height:1;
+ display:grid;
+ place-items:center;
+ box-shadow:0 3px 12px rgba(0,0,0,.28);
+ backdrop-filter:blur(6px);
+ -webkit-backdrop-filter:blur(6px);
+}
+.sound-toggle:active{transform:translateY(2px)}
+.sound-toggle:focus-visible{outline:3px solid #ffe35c;outline-offset:2px}
+@media(max-width:420px){
+ .sound-toggle{width:40px;height:40px;font-size:19px}
+}
