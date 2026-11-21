@@ -303,10 +303,9 @@ function drawFood(ctx,path,t,kind,si,time){
   }
 
   if(si===6){
-    const anim=current?.actionAnim;
-    let drop=.05;
-    if(anim) drop=ease(clamp((performance.now()-anim.start)/anim.duration,0,1));
-    const y=p.y+drop*46;
+    const elapsed=performance.now()-(current?.enteredAt||performance.now());
+    const drop=ease(clamp(elapsed/1100,0,1));
+    const y=p.y+drop*62;
     ctx.save();
     ctx.font=Math.round(Math.max(42,Math.min(82,w*.18)))+"px serif";
     ctx.textAlign="center";ctx.textBaseline="middle";
@@ -735,7 +734,7 @@ function mount(host){
   ro.observe(host);
 
   const si=stageIndex(host),reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
-  current={host,organ,canvas,ctx,ro,si,actionAnim:null,raf:0,camera:null};
+  current={host,organ,canvas,ctx,ro,si,actionAnim:null,raf:0,camera:null,enteredAt:performance.now()};
 
   const loop=t=>{
     if(!current||current.host!==host)return;
@@ -763,7 +762,7 @@ window.addEventListener("digestion-action",e=>{
   if(si!==current.si)return;
   current.actionAnim={
     stage:si,start:performance.now(),
-    duration:si===1?820:si===5?1100:700,
+    duration:si===1?1100:si===5?1250:700,
     fromCount:Number(d.count)||0,
     toCount:Number(d.nextCount)||1
   };
