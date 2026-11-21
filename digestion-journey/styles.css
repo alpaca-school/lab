@@ -19,3 +19,9 @@ a{color:inherit}.app{min-height:100dvh;display:flex;flex-direction:column;overfl
 .error{position:fixed;inset:auto 10px 10px;z-index:50;background:#651d2b;color:white;border-radius:16px;padding:12px;display:none}
 @media(max-width:640px){.card{padding:16px;border-radius:22px}.scene{grid-template-columns:1fr}.organ{min-height:225px}.info h2{font-size:25px}.info .lead{font-size:16px}.topbar{margin-top:2px}.chip{min-width:60px}.actions{flex-direction:column}.lab-back{font-size:12px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.three-host{position:absolute;inset:0;z-index:1;opacity:0;transition:opacity .3s ease;pointer-events:none}
+.three-host canvas{display:block;width:100%;height:100%}
+.organ.three-active .three-host{opacity:1}
+.organ.three-active .organ-emoji{opacity:.08;transform:scale(.78);filter:blur(1px)}
+.organ-emoji{position:relative;z-index:2}
+.three-badge{position:absolute;right:10px;bottom:9px;z-index:3;background:#ffffffd9;color:#754050;border:1px solid #e7c8d2;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800;pointer-events:none}
