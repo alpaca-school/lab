@@ -431,7 +431,7 @@ function drawMiniMap(ctx,w,h,path,t,si){
     const ax=px+(a.x/w)*pw, ay=py+(a.y/h)*ph;
     const bx=px+(b.x/w)*pw, by=py+(b.y/h)*ph;
     ctx.strokeStyle=partColor(b.part);
-    ctx.globalAlpha=b.part===stagePart(si)|| (si===5&&b.part==="anus")?.95:.34;
+    ctx.globalAlpha=(b.part===stagePart(si)||(si===5&&b.part==="anus")) ? .95 : .34;
     ctx.lineWidth=b.part===stagePart(si)?3:1.8;
     ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.stroke();
   }
