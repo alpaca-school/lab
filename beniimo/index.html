@@ -426,7 +426,9 @@ function finishGuide(){
  $('#guideSkip').textContent='ゲームへ進む';
 }
 async function start(){
- stopBgm();clearTimeout(S.guideTimer);clearTimeout(S.countdownTimer);$('#countdown').classList.remove('show');const audioOk=await unlockAudio(true);if(audioOk)sfx('start');
+ stopBgm();clearTimeout(S.guideTimer);clearTimeout(S.countdownTimer);$('#countdown').classList.remove('show');
+ // 音声の起動が保留・失敗しても、ゲーム開始を妨げない。
+ void unlockAudio(true).then(ok=>{if(ok)sfx('start')}).catch(()=>{});
  S.light=0;S.water=0;S.co2=0;S.score=0;S.level=1;S.maxReached=false;S.time=60;
  $('#lesson').classList.remove('show');$('#quizFeedback').textContent='';$('#wildlife').innerHTML='';$('#title').style.display='none';$('#finish').classList.remove('show');
  updateHUD();updateNeed();beginGuide();
@@ -436,8 +438,9 @@ function finish(){S.running=false;cancelAnimationFrame(S.raf);stopBgm();sfx('cle
 
 
 
-document.querySelectorAll('.btn').forEach(btn=>{const act=async e=>{
- await unlockAudio(S.needsAudioReset);
+document.querySelectorAll('.btn').forEach(btn=>{const act=e=>{
+ // 音声処理とは独立して操作を受け付ける。
+ void unlockAudio(S.needsAudioReset).catch(()=>{});
  if(S.guideActive){
   if(S.guideStep>=guideSteps.length){feed(btn.dataset.k,btn);return}
   const step=guideSteps[S.guideStep];if(!step||btn.dataset.k!==step.k)return;
