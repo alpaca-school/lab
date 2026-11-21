@@ -451,26 +451,260 @@ function roundRect(ctx,x,y,w,h,r){
   ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
   ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
 }
+
+function tunnelPalette(si){
+  return [
+    {wall:"#d84e76",dark:"#5b1532",hi:"#ff9fba",glow:"#ffd966"},
+    {wall:"#d86c73",dark:"#4a1427",hi:"#ffb2ad",glow:"#ffd966"},
+    {wall:"#b94c67",dark:"#451224",hi:"#ff9eb4",glow:"#ffcf5b"},
+    {wall:"#d88757",dark:"#4c2418",hi:"#ffc07e",glow:"#ffd966"},
+    {wall:"#b96a5d",dark:"#3e1d1c",hi:"#ecaa95",glow:"#59c8ff"},
+    {wall:"#965264",dark:"#32131d",hi:"#d58ca0",glow:"#ffd966"},
+    {wall:"#5d2d38",dark:"#1b0c10",hi:"#9e6570",glow:"#ffd966"}
+  ][si]||{wall:"#d86c73",dark:"#4a1427",hi:"#ffb2ad",glow:"#ffd966"};
+}
+function tunnelPhase(host,si){
+  const count=actionCount(host),needs=[3,1,3,3,2,1,1],n=needs[si]||1;
+  let local=clamp(count/n,0,1);
+  const anim=current?.actionAnim;
+  if(anim&&anim.stage===si){
+    const ph=ease(clamp((performance.now()-anim.start)/anim.duration,0,1));
+    local=clamp((anim.fromCount+ph)/n,0,1);
+  }
+  return local;
+}
+function tunnelCenter(w,h,time,si){
+  const bend=si===2?22:si===3?28:si===4?18:12;
+  return {
+    x:w*.50+Math.sin(time*.00055+si)*bend,
+    y:h*.47+Math.cos(time*.00043+si*.7)*(si===2?14:8)
+  };
+}
+function drawWetWall(ctx,w,h,si,time,phase){
+  const pal=tunnelPalette(si),c=tunnelCenter(w,h,time,si);
+  const maxR=Math.hypot(w,h)*.78;
+  const travel=(time*.00024+phase*.24)%1;
+
+  ctx.fillStyle=pal.dark;ctx.fillRect(0,0,w,h);
+
+  // perspective mucosal rings: far rings small, near rings sweep past the viewer
+  for(let i=0;i<13;i++){
+    const d=(i/13+travel)%1;
+    const z=Math.pow(d,1.7);
+    const rx=18+z*maxR*.72;
+    const ry=12+z*maxR*.48;
+    const wobble=1+Math.sin(time*.0023+i*1.41)*.055;
+    ctx.save();
+    ctx.globalAlpha=.24+.60*z;
+    ctx.strokeStyle=i%2?pal.wall:pal.hi;
+    ctx.lineWidth=Math.max(3,3+z*15);
+    ctx.shadowColor=pal.wall;ctx.shadowBlur=6+z*16;
+    ctx.beginPath();
+    const pts=46;
+    for(let j=0;j<=pts;j++){
+      const a=j/pts*Math.PI*2;
+      const rough=1+Math.sin(a*5+i*1.2+time*.0015)*(.035+.035*z);
+      const x=c.x+Math.cos(a)*rx*rough*wobble;
+      const y=c.y+Math.sin(a)*ry*rough/wobble;
+      j?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    }
+    ctx.closePath();ctx.stroke();ctx.restore();
+  }
+
+  // dark lumen in the distance
+  const hole=ctx.createRadialGradient(c.x,c.y,3,c.x,c.y,Math.min(w,h)*.27);
+  hole.addColorStop(0,"rgba(8,2,6,.96)");
+  hole.addColorStop(.45,"rgba(28,5,15,.78)");
+  hole.addColorStop(1,"rgba(70,14,36,0)");
+  ctx.fillStyle=hole;ctx.fillRect(0,0,w,h);
+
+  // glistening mucus
+  ctx.save();
+  for(let i=0;i<18;i++){
+    const a=i*2.399+time*.00035;
+    const rr=Math.min(w,h)*(.26+.31*((i%6)/5));
+    const x=c.x+Math.cos(a)*rr*(1.15+.12*Math.sin(i));
+    const y=c.y+Math.sin(a)*rr*.72;
+    const r=1.5+(i%4)*1.2;
+    ctx.globalAlpha=.18+(i%3)*.06;
+    ctx.fillStyle=i%5===0?"#ffd966":"#ffe6ee";
+    ctx.beginPath();ctx.ellipse(x,y,r*1.6,r,.3,0,Math.PI*2);ctx.fill();
+  }
+  ctx.restore();
+
+  return c;
+}
+function drawFoodAhead(ctx,w,h,si,time,host,c){
+  const kind=foodKind(host),base=foodColor(kind),phase=tunnelPhase(host,si);
+  const active=current?.actionAnim&&current.actionAnim.stage===si;
+  const bob=Math.sin(time*.004)*5;
+  let x=c.x+Math.sin(time*.0011+si)*12;
+  let y=c.y+20+bob;
+  let size=si===0?24:si===1?20:si===2?15:si===3?10:si===4?14:si===5?18:14;
+
+  if(si===0){
+    const pieces=1+Math.min(6,Math.round(phase*6));
+    for(let i=0;i<pieces;i++){
+      const a=i/Math.max(1,pieces)*Math.PI*2+time*.0012;
+      const spread=pieces===1?0:10+phase*18;
+      ctx.fillStyle=base;
+      ctx.beginPath();ctx.arc(x+Math.cos(a)*spread,y+Math.sin(a)*spread*.55,Math.max(5,size-phase*8),0,Math.PI*2);ctx.fill();
+    }
+  }else if(si===2){
+    // stomach churn: food bits orbit in acid
+    for(let i=0;i<10;i++){
+      const a=i/10*Math.PI*2+time*.0015*(i%2?1:-1);
+      ctx.fillStyle=base;ctx.beginPath();
+      ctx.arc(x+Math.cos(a)*30,y+Math.sin(a*1.25)*18,5,0,Math.PI*2);ctx.fill();
+    }
+  }else if(si===3){
+    // small intestine: nutrient specks split off toward walls
+    for(let i=0;i<8;i++){
+      const a=i/8*Math.PI*2+time*.001;
+      ctx.fillStyle=base;ctx.beginPath();ctx.arc(x+Math.cos(a)*10,y+Math.sin(a)*7,3.5,0,Math.PI*2);ctx.fill();
+    }
+    const n=Math.min(18,Math.round(phase*18)+(active?4:0));
+    for(let i=0;i<n;i++){
+      const a=i/Math.max(1,n)*Math.PI*2+time*.0007;
+      const dist=28+(i%5)*13+(active?10:0);
+      ctx.fillStyle=["#ffd966","#59c8ff","#70d27d"][i%3];
+      ctx.beginPath();ctx.arc(x+Math.cos(a)*dist,y+Math.sin(a)*dist*.65,4,0,Math.PI*2);ctx.fill();
+    }
+  }else if(si===4){
+    ctx.fillStyle="#875a3b";ctx.beginPath();ctx.arc(x,y,size,0,Math.PI*2);ctx.fill();
+    const water=Math.max(0,10-Math.round(phase*9));
+    for(let i=0;i<water;i++){
+      const a=i/Math.max(1,water)*Math.PI*2-time*.001;
+      const dist=28+(i%3)*12+(active?10:0);
+      ctx.fillStyle="#59c8ff";ctx.beginPath();ctx.arc(x+Math.cos(a)*dist,y+Math.sin(a)*dist*.7,4,0,Math.PI*2);ctx.fill();
+    }
+  }else if(si===5){
+    ctx.fillStyle="#795037";
+    ctx.beginPath();ctx.arc(x-7,y,size*.75,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(x+7,y-4,size*.62,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle="#9d6e4d";ctx.beginPath();ctx.arc(x,y-10,size*.52,0,Math.PI*2);ctx.fill();
+  }else{
+    ctx.fillStyle=base;ctx.beginPath();ctx.arc(x,y,size,0,Math.PI*2);ctx.fill();
+  }
+
+  // glossy face: keeps the creepy-cute tone
+  if(si<5){
+    ctx.save();
+    ctx.fillStyle="rgba(255,255,255,.76)";
+    ctx.beginPath();ctx.arc(x-size*.28,y-size*.32,Math.max(2,size*.16),0,Math.PI*2);ctx.fill();
+    if(size>=13){
+      ctx.fillStyle="#321622";
+      ctx.beginPath();ctx.arc(x-size*.22,y+1,1.7,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.arc(x+size*.22,y+1,1.7,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle="#321622";ctx.lineWidth=1.4;
+      ctx.beginPath();ctx.arc(x,y+size*.15,size*.18,0,Math.PI);ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // halo and forward-motion streaks
+  ctx.save();ctx.strokeStyle="rgba(255,217,102,.92)";ctx.lineWidth=2;
+  ctx.shadowColor="#ffd966";ctx.shadowBlur=12;
+  ctx.beginPath();ctx.arc(x,y,size+10+Math.sin(time*.007)*2,0,Math.PI*2);ctx.stroke();
+  ctx.restore();
+}
+function drawPeristalsis(ctx,w,h,si,time,phase,c){
+  if(si===6)return;
+  ctx.save();
+  const pal=tunnelPalette(si);
+  if(si===1||si===4||si===5){
+    const wave=(time*.00055+phase*.45)%1;
+    const r=Math.min(w,h)*(.12+wave*.55);
+    ctx.strokeStyle=pal.glow;ctx.globalAlpha=.16+.35*(1-wave);
+    ctx.lineWidth=5+12*(1-wave);
+    ctx.beginPath();ctx.ellipse(c.x,c.y,r,r*.68,0,0,Math.PI*2);ctx.stroke();
+  }
+  if(si===2){
+    ctx.globalAlpha=.15;ctx.fillStyle="#ffb7c7";
+    for(let i=0;i<5;i++){
+      const a=time*.001+i*1.25;
+      ctx.beginPath();ctx.arc(c.x+Math.cos(a)*55,c.y+Math.sin(a*1.3)*35,8+(i%3)*4,0,Math.PI*2);ctx.fill();
+    }
+  }
+  if(si===3){
+    // villi-like fingers from screen edges
+    ctx.strokeStyle="#ffc07e";ctx.globalAlpha=.28;ctx.lineWidth=4;ctx.lineCap="round";
+    for(let i=0;i<14;i++){
+      const y=(i+.5)/14*h;
+      const len=18+12*Math.sin(time*.002+i);
+      ctx.beginPath();ctx.moveTo(0,y);ctx.quadraticCurveTo(len*.45,y-5,len,y);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(w,y+7);ctx.quadraticCurveTo(w-len*.45,y+2,w-len,y+7);ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+function drawSpeedParticles(ctx,w,h,time,si,phase,c){
+  if(si===0||si===6)return;
+  ctx.save();ctx.lineCap="round";
+  const speed=current?.actionAnim?1.6:.65;
+  for(let i=0;i<22;i++){
+    const u=(i/22+time*.00015*speed)%1;
+    const a=i*2.399;
+    const rr=20+u*Math.hypot(w,h)*.48;
+    const x=c.x+Math.cos(a)*rr;
+    const y=c.y+Math.sin(a)*rr*.68;
+    ctx.strokeStyle=i%4===0?"rgba(255,217,102,.45)":"rgba(255,235,242,.20)";
+    ctx.lineWidth=1.2+u*2;
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.lineTo(x+Math.cos(a)*8*u,y+Math.sin(a)*6*u);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+function drawExitTunnel(ctx,w,h,time,host){
+  const phase=tunnelPhase(host,5);
+  const c={x:w*.5,y:h*.47};
+  drawWetWall(ctx,w,h,5,time,phase);
+  const opening=20+phase*Math.min(w,h)*.34;
+  ctx.save();
+  ctx.fillStyle="#16070c";ctx.shadowColor="#ffd966";ctx.shadowBlur=phase*24;
+  ctx.beginPath();ctx.ellipse(c.x,c.y,opening,opening*.65,0,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle="rgba(255,217,102,"+(.18+phase*.62)+")";ctx.lineWidth=3+phase*6;ctx.stroke();
+  ctx.restore();
+  drawFoodAhead(ctx,w,h,5,time,host,c);
+  return c;
+}
+function drawImmersiveTunnel(ctx,w,h,si,time,host){
+  const phase=tunnelPhase(host,si);
+  const c=si===5?drawExitTunnel(ctx,w,h,time,host):drawWetWall(ctx,w,h,si,time,phase);
+  drawPeristalsis(ctx,w,h,si,time,phase,c);
+  drawSpeedParticles(ctx,w,h,time,si,phase,c);
+  if(si!==5)drawFoodAhead(ctx,w,h,si,time,host,c);
+
+  ctx.save();
+  ctx.fillStyle="rgba(10,3,8,.52)";
+  ctx.font="900 13px system-ui,sans-serif";
+  ctx.textAlign="center";
+  const names=["口の中","食道の中","胃の中","小腸の中","大腸の中","直腸→肛門","体の外"];
+  ctx.fillText("🔎 "+names[si]+"を進んでいる",w*.5,h-14);
+  ctx.restore();
+}
 function drawFrame(ctx,w,h,si,time,host){
   ctx.clearRect(0,0,w,h);
-  const bg=ctx.createRadialGradient(w*.5,h*.36,8,w*.5,h*.5,Math.max(w,h)*.78);
-  bg.addColorStop(0,"#6b2847");bg.addColorStop(.48,"#381226");bg.addColorStop(1,"#1b0812");
-  ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
-  drawCavityBubbles(ctx,w,h,time,si);
-
   const path=buildPath(w,h);
   const t=stageProgress(host,si);
-  const cam=updateCamera(cameraTarget(path,t,si,w,h));
 
-  beginCamera(ctx,w,h,cam);
-  drawBody(ctx,w,h);
-  drawOrganLandmarks(ctx,w,h,si);
-  drawTube(ctx,path,stagePart(si));
-  drawTubeRings(ctx,path,stagePart(si));
-  drawFood(ctx,path,t,foodKind(host),si,time);
-  endCamera(ctx);
+  if(si<=5){
+    drawImmersiveTunnel(ctx,w,h,si,time,host);
+  }else{
+    const bg=ctx.createRadialGradient(w*.5,h*.35,8,w*.5,h*.5,Math.max(w,h)*.76);
+    bg.addColorStop(0,"#6b2847");bg.addColorStop(.50,"#381226");bg.addColorStop(1,"#1b0812");
+    ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+    drawCavityBubbles(ctx,w,h,time,si);
+    const cam=updateCamera(cameraTarget(path,t,si,w,h));
+    beginCamera(ctx,w,h,cam);
+    drawBody(ctx,w,h);
+    drawTube(ctx,path,stagePart(si));
+    drawFood(ctx,path,t,foodKind(host),si,time);
+    endCamera(ctx);
+  }
 
-  drawTunnelEdges(ctx,w,h,time,si);
   drawMiniMap(ctx,w,h,path,t,si);
   drawLabels(ctx,w,h,si);
 }
@@ -485,7 +719,7 @@ function mount(host){
 
   const badge=document.createElement("div");
   badge.className="three-badge";
-  badge.textContent="食べもの追尾中 ✓";
+  badge.textContent="消化管の中を進行中 ✓";
   organ.appendChild(badge);
 
   const ctx=canvas.getContext("2d",{alpha:false});
