@@ -25,3 +25,26 @@ a{color:inherit}.app{min-height:100dvh;display:flex;flex-direction:column;overfl
 .organ.three-active .organ-emoji{opacity:.08;transform:scale(.78);filter:blur(1px)}
 .organ-emoji{position:relative;z-index:2}
 .three-badge{position:absolute;right:10px;bottom:9px;z-index:3;background:#ffffffd9;color:#754050;border:1px solid #e7c8d2;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800;pointer-events:none}
+
+/* v3d6: original Claude版の「キモ可愛い」空気感を戻す */
+.organ{
+  background:
+    radial-gradient(circle at 35% 25%,rgba(255,124,157,.18),transparent 28%),
+    radial-gradient(circle at 70% 70%,rgba(255,217,102,.10),transparent 30%),
+    linear-gradient(160deg,#4b1830,#210b17)!important;
+  border-color:#7f3552!important;
+  box-shadow:inset 0 0 34px #12050dcc,0 10px 24px #0005;
+}
+.organ::before,.organ::after{
+  content:"";position:absolute;border-radius:50%;pointer-events:none;z-index:0;
+  background:radial-gradient(circle at 35% 30%,#ffffff88 0 8%,#ff9ab855 16%,#ff6f9a22 45%,transparent 70%);
+  animation:organFloat 4.4s ease-in-out infinite;
+}
+.organ::before{width:70px;height:70px;left:8%;top:13%}
+.organ::after{width:44px;height:44px;right:10%;bottom:17%;animation-delay:-2.1s}
+@keyframes organFloat{50%{transform:translateY(-12px) scale(1.08);opacity:.72}}
+.three-badge{
+  background:#2a0f1ccc!important;color:#ffd966!important;border-color:#ffd96688!important;
+  box-shadow:0 0 16px #ffd96622;
+}
+.organ.three-active .organ-emoji{opacity:.035}
