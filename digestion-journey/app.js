@@ -13,7 +13,7 @@ const quizzes=[
  {q:"栄養の多くを吸収する場所は？",choices:["食道","小腸","直腸"],a:1,why:"消化された栄養の多くは小腸から吸収されます。"},
  {q:"残ったものから水分などを吸収する場所は？",choices:["大腸","口","食道"],a:0,why:"大腸では内容物から水分や電解質が吸収されます。"}
 ];
-let food=null,stage=0,count=0,q=0,score=0,locked=false,introLockUntil=0;
+let food=null,stage=0,count=0,q=0,score=0,locked=false,introLockUntil=0,finalExitTimer=null;
 const root=document.getElementById("app");
 function safe(fn){try{fn()}catch(e){console.error(e);const box=document.getElementById("error");box.style.display="block";box.textContent="画面の表示でエラーが起きました。ページを再読み込みしてください。";}}
 window.addEventListener("error",e=>{console.error(e.error||e.message)});
@@ -30,7 +30,7 @@ function renderStage(){
  const introLocked=!autoGoal&&Date.now()<introLockUntil;
  const actionLabel=autoGoal?"ゴール！":introLocked?"胃に到着…":s.action+"（"+count+"/"+s.need+"）";
  root.innerHTML='<section class="stage"><div class="card">'+chips()+'<div class="progress" aria-label="旅の進み具合"><i style="width:'+pct+'%"></i></div><div class="scene"><div class="organ"><div id="threeHost" class="three-host" aria-hidden="true" data-food="'+food+'" data-stage="'+stage+'" data-count="'+count+'"></div><div id="organ" class="organ-emoji">'+s.organ+'</div><div id="particles"></div></div><div class="info"><h2>'+s.title+'</h2><p class="lead">'+s.lead+'</p><div class="task">'+s.task+'</div><div class="fact">🔎 <b>観察ポイント</b><br>'+s.fact+'</div><div class="actions"><button id="act" class="primary" '+(autoGoal||introLocked?'disabled':'')+'>'+actionLabel+'</button><button id="restart" class="secondary">最初から</button></div></div></div></div></section>';
- document.getElementById("restart").addEventListener("click",()=>{food=null;stage=0;count=0;introLockUntil=0;renderStart();});
+ document.getElementById("restart").addEventListener("click",()=>{if(finalExitTimer){clearTimeout(finalExitTimer);finalExitTimer=null}food=null;stage=0;count=0;introLockUntil=0;renderStart();});
  if(!autoGoal){
    const actBtn=document.getElementById("act");
    actBtn.addEventListener("click",act);
@@ -43,6 +43,10 @@ function renderStage(){
 function act(){
  if(locked)return;locked=true;
  const s=stages[stage], organ=document.getElementById("organ");
+ if(stage===5){
+   if(finalExitTimer)clearTimeout(finalExitTimer);
+   finalExitTimer=setTimeout(()=>{finalExitTimer=null;locked=false;stage=6;count=0;renderQuiz()},2600);
+ }
  window.dispatchEvent(new CustomEvent("digestion-action",{detail:{stage,count,nextCount:count+1,food}}));
  organ.classList.remove("pulse");void organ.offsetWidth;organ.classList.add("pulse");
  burst(stage===3?"✨":stage===4?"💧":"✦");
@@ -70,8 +74,9 @@ function finishJourney(){
  const actBtn=document.getElementById("act");
  if(actBtn){actBtn.disabled=true;actBtn.textContent="体の外へ出ています…"}
  setTimeout(()=>{
-   const organ=document.querySelector(".organ");
-   if(organ){
+   try{
+     const organ=document.querySelector(".organ");
+     if(!organ)return;
      const poop=document.createElement("div");
      poop.textContent="💩";
      poop.setAttribute("aria-label","体の外へ出た便");
@@ -79,11 +84,16 @@ function finishJourney(){
      organ.appendChild(poop);
      const msg=document.createElement("div");
      msg.textContent="🎉 体の外へ出た！";
-     msg.style.cssText="position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:13;background:#ffd966;color:#5a2a00;padding:9px 14px;border-radius:999px;font-weight:900;white-space:nowrap;box-shadow:0 5px 16px #0005";
+     msg.style.cssText="position:absolute;left:50%;bottom:58px;transform:translateX(-50%);z-index:13;background:#ffd966;color:#5a2a00;padding:9px 14px;border-radius:999px;font-weight:900;white-space:nowrap;box-shadow:0 5px 16px #0005";
      organ.appendChild(msg);
-   }
+     const next=document.createElement("button");
+     next.type="button";
+     next.textContent="クイズへ進む";
+     next.style.cssText="position:absolute;left:50%;bottom:12px;transform:translateX(-50%);z-index:14;background:#fff;color:#7a2e48;border:0;border-radius:999px;padding:9px 16px;font-weight:900;cursor:pointer";
+     next.addEventListener("click",()=>{if(finalExitTimer){clearTimeout(finalExitTimer);finalExitTimer=null}locked=false;stage=6;count=0;renderQuiz()},{once:true});
+     organ.appendChild(next);
+   }catch(e){console.error("final exit visual failed",e)}
  },900);
- setTimeout(()=>{locked=false;stage=6;count=0;renderQuiz()},2100);
 }
 function renderQuiz(){q=0;score=0;renderQuestion()}
 function renderQuestion(){
@@ -99,6 +109,6 @@ function answer(i){
 }
 function renderEnd(){
  root.innerHTML='<section class="stage"><div class="card result"><div class="bigemoji">🎉</div><h2>しょうかの たび 完走！</h2><p><b>'+food+'</b> といっしょに体の中を旅したよ。</p><div class="stamps">'+stages.map(s=>'<div class="stamp">'+s.icon+'</div>').join("")+'</div><div class="route"><b>今回のルート</b><br>口 → 食道 → 胃 → 小腸 → 大腸 → 直腸 → 肛門 → 体の外<br><br><b>クイズ：</b>'+score+' / '+quizzes.length+' 問正解</div><button id="again" class="primary" style="margin-top:16px">もう一度 旅する</button><p class="note">学習用の簡略モデルです。実際の消化には、肝臓・すい臓・胆のうなども関わります。</p></div></section>';
- document.getElementById("again").addEventListener("click",()=>{food=null;stage=0;count=0;renderStart();});
+ document.getElementById("again").addEventListener("click",()=>{if(finalExitTimer){clearTimeout(finalExitTimer);finalExitTimer=null}food=null;stage=0;count=0;renderStart();});
 }
 safe(renderStart);
