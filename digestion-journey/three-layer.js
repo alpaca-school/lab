@@ -347,6 +347,110 @@ function drawLabels(ctx,w,h,si){
   ctx.restore();
 }
 
+
+function cameraTarget(path,t,si,w,h){
+  const p=posAt(path,Math.min(t,1));
+  const zooms=[1.48,1.78,1.62,1.48,1.50,1.72,1.28];
+  let z=zooms[si]||1.45;
+  if(w<300)z*=.90;
+  let x=p.x,y=p.y;
+  if(si===0)y+=h*.035;
+  if(si===2)y+=h*.025;
+  if(si===3)y+=h*.015;
+  if(si===5)y-=h*.025;
+  if(si===6){x=w*.535;y=h*.90}
+  return{x,y,z};
+}
+function updateCamera(target){
+  if(!current)return target;
+  if(!current.camera)current.camera={x:target.x,y:target.y,z:1};
+  const k=.10;
+  current.camera.x=lerp(current.camera.x,target.x,k);
+  current.camera.y=lerp(current.camera.y,target.y,k);
+  current.camera.z=lerp(current.camera.z,target.z,.075);
+  return current.camera;
+}
+function beginCamera(ctx,w,h,cam){
+  ctx.save();
+  ctx.translate(w*.50,h*.56);
+  ctx.scale(cam.z,cam.z);
+  ctx.translate(-cam.x,-cam.y);
+}
+function endCamera(ctx){ctx.restore()}
+
+function drawTunnelEdges(ctx,w,h,time,si){
+  if(si===6)return;
+  ctx.save();
+  const wob=Math.sin(time*.0018)*6;
+  const left=ctx.createLinearGradient(0,0,w*.22,0);
+  left.addColorStop(0,"rgba(65,9,31,.92)");
+  left.addColorStop(.55,"rgba(128,36,72,.45)");
+  left.addColorStop(1,"rgba(128,36,72,0)");
+  ctx.fillStyle=left;
+  ctx.beginPath();
+  ctx.moveTo(0,0);ctx.lineTo(w*.22+wob,0);
+  ctx.bezierCurveTo(w*.15,h*.28,w*.19,h*.70,w*.24-wob,h);
+  ctx.lineTo(0,h);ctx.closePath();ctx.fill();
+
+  const right=ctx.createLinearGradient(w,0,w*.78,0);
+  right.addColorStop(0,"rgba(65,9,31,.92)");
+  right.addColorStop(.55,"rgba(128,36,72,.45)");
+  right.addColorStop(1,"rgba(128,36,72,0)");
+  ctx.fillStyle=right;
+  ctx.beginPath();
+  ctx.moveTo(w,0);ctx.lineTo(w*.78-wob,0);
+  ctx.bezierCurveTo(w*.85,h*.28,w*.81,h*.70,w*.76+wob,h);
+  ctx.lineTo(w,h);ctx.closePath();ctx.fill();
+
+  ctx.globalAlpha=.28;
+  ctx.fillStyle="#ff9ab8";
+  for(let i=0;i<8;i++){
+    const a=time*.001+i*1.7;
+    const x=i%2===0?18+Math.sin(a)*10:w-18+Math.cos(a)*10;
+    const y=h*(.12+(i/8)*.78);
+    ctx.beginPath();ctx.arc(x,y,3+(i%3)*1.4,0,Math.PI*2);ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawMiniMap(ctx,w,h,path,t,si){
+  const mw=Math.min(92,Math.max(70,w*.27));
+  const mh=Math.min(128,Math.max(96,h*.38));
+  const x=w-mw-8,y=49;
+  ctx.save();
+  ctx.fillStyle="rgba(12,4,10,.76)";
+  ctx.strokeStyle="rgba(255,217,102,.52)";
+  ctx.lineWidth=1.5;
+  roundRect(ctx,x,y,mw,mh,14);
+  ctx.fill();ctx.stroke();
+
+  const pad=10,px=x+pad,py=y+18,pw=mw-pad*2,ph=mh-34;
+  ctx.lineCap="round";ctx.lineJoin="round";
+  for(let i=1;i<path.length;i++){
+    const a=path[i-1],b=path[i];
+    const ax=px+(a.x/w)*pw, ay=py+(a.y/h)*ph;
+    const bx=px+(b.x/w)*pw, by=py+(b.y/h)*ph;
+    ctx.strokeStyle=partColor(b.part);
+    ctx.globalAlpha=b.part===stagePart(si)|| (si===5&&b.part==="anus")?.95:.34;
+    ctx.lineWidth=b.part===stagePart(si)?3:1.8;
+    ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.stroke();
+  }
+  ctx.globalAlpha=1;
+  const p=posAt(path,Math.min(t,1));
+  const mx=px+(p.x/w)*pw,my=py+(p.y/h)*ph;
+  ctx.fillStyle="#ffd966";ctx.shadowColor="#ffd966";ctx.shadowBlur=9;
+  ctx.beginPath();ctx.arc(mx,my,4.5+Math.sin(performance.now()*.006),0,Math.PI*2);ctx.fill();
+  ctx.shadowBlur=0;
+  ctx.fillStyle="#ffd966";ctx.textAlign="center";ctx.font="900 10px system-ui,sans-serif";
+  ctx.fillText("いま ここ",x+mw/2,y+12);
+  ctx.restore();
+}
+function roundRect(ctx,x,y,w,h,r){
+  r=Math.min(r,w/2,h/2);
+  ctx.beginPath();ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+}
 function drawFrame(ctx,w,h,si,time,host){
   ctx.clearRect(0,0,w,h);
   const bg=ctx.createRadialGradient(w*.5,h*.36,8,w*.5,h*.5,Math.max(w,h)*.78);
@@ -354,13 +458,20 @@ function drawFrame(ctx,w,h,si,time,host){
   ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
   drawCavityBubbles(ctx,w,h,time,si);
 
-  drawBody(ctx,w,h);
   const path=buildPath(w,h);
+  const t=stageProgress(host,si);
+  const cam=updateCamera(cameraTarget(path,t,si,w,h));
+
+  beginCamera(ctx,w,h,cam);
+  drawBody(ctx,w,h);
   drawOrganLandmarks(ctx,w,h,si);
   drawTube(ctx,path,stagePart(si));
   drawTubeRings(ctx,path,stagePart(si));
-  const t=stageProgress(host,si);
   drawFood(ctx,path,t,foodKind(host),si,time);
+  endCamera(ctx);
+
+  drawTunnelEdges(ctx,w,h,time,si);
+  drawMiniMap(ctx,w,h,path,t,si);
   drawLabels(ctx,w,h,si);
 }
 
@@ -374,7 +485,7 @@ function mount(host){
 
   const badge=document.createElement("div");
   badge.className="three-badge";
-  badge.textContent="キモ可愛い消化管 ✓";
+  badge.textContent="食べもの追尾中 ✓";
   organ.appendChild(badge);
 
   const ctx=canvas.getContext("2d",{alpha:false});
@@ -390,7 +501,7 @@ function mount(host){
   ro.observe(host);
 
   const si=stageIndex(host),reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
-  current={host,organ,canvas,ctx,ro,si,actionAnim:null,raf:0};
+  current={host,organ,canvas,ctx,ro,si,actionAnim:null,raf:0,camera:null};
 
   const loop=t=>{
     if(!current||current.host!==host)return;
