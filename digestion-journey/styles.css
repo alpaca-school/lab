@@ -48,3 +48,7 @@ a{color:inherit}.app{min-height:100dvh;display:flex;flex-direction:column;overfl
   box-shadow:0 0 16px #ffd96622;
 }
 .organ.three-active .organ-emoji{opacity:.035}
+
+/* v3d7: 食べもの追尾カメラ + ミニマップ */
+.organ{min-height:340px}
+@media(max-width:640px){.organ{min-height:285px}}
