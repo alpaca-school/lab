@@ -46,7 +46,7 @@ button{font:inherit;border:0;cursor:pointer}
 @keyframes co2air{0%{transform:translateX(0) scale(.7);opacity:.25}30%{opacity:1}100%{transform:translateX(105px) translateY(-10px) scale(1.15);opacity:0}}
 .bubbles{position:absolute;z-index:8;inset:0;overflow:hidden}.bubble{position:absolute;bottom:48%;width:var(--s,11px);height:var(--s,11px);border:2px solid #fff;border-radius:50%;background:#ffffff44;box-shadow:inset 2px 2px 3px #fff9,0 0 8px #fff7;animation:rise var(--dur,1.8s) linear forwards}.bubble.gold{border-color:var(--yellow);background:#fff2a477;box-shadow:0 0 13px #ffe35c;cursor:pointer}
 @keyframes rise{0%{transform:translate(0,0) scale(.7);opacity:.4}20%{opacity:1}100%{transform:translate(var(--drift,8px),-210px) scale(1.2);opacity:0}}
-.statusPill{position:absolute;z-index:40;left:10px;right:10px;bottom:calc(var(--bar-h) + 4px + var(--safe));top:auto;max-width:none;text-align:center;background:#fffffff5;color:var(--deep);font-size:11px;font-weight:1000;padding:8px 12px;border-radius:15px;box-shadow:0 3px #0d4f9c22,0 6px 14px rgba(13,79,156,.14);pointer-events:none}.statusPill:after{content:"";position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);border:8px solid transparent;border-top-color:#fffffff5;border-bottom:0}.statusPill b{color:var(--red)}
+.statusPill{position:absolute;z-index:40;left:10px;right:10px;bottom:calc(var(--bar-h) + 4px + var(--safe));top:auto;max-width:none;text-align:center;background:#fffffff5;color:var(--deep);font-size:11px;font-weight:1000;padding:8px 12px;border-radius:15px;box-shadow:0 3px #0d4f9c22,0 6px 14px rgba(13,79,156,.14);pointer-events:none;display:flex;align-items:center;justify-content:center;line-height:1.25;transition:font-size .18s,height .18s,top .18s}.statusPill:after{content:"";position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);border:8px solid transparent;border-top-color:#fffffff5;border-bottom:0}.statusPill b{color:var(--red)}
 .rush{position:absolute;z-index:15;left:50%;top:27%;transform:translate(-50%,-50%) scale(.6);font-size:21px;font-weight:1000;color:#fff;text-shadow:0 3px var(--deep),0 0 12px #fff;opacity:0;white-space:nowrap}.rush.show{animation:rush .8s ease-out}@keyframes rush{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.18)}100%{opacity:0;transform:translate(-50%,-68%) scale(1)}}
 .wildlife{position:absolute;z-index:14;inset:0;overflow:hidden;pointer-events:none}.butterfly{position:absolute;will-change:transform,opacity;filter:drop-shadow(0 2px 2px #ffffffaa);left:-12%;font-size:22px;animation:butterflyFlight var(--dur,2.6s) ease-in-out forwards;animation-delay:var(--delay,0s);opacity:0}.butterfly.b2{font-size:19px}.butterfly.b3{font-size:24px}
 @keyframes butterflyFlight{0%{transform:translate(0,30px) rotate(-10deg) scale(.7);opacity:0}12%{opacity:1}28%{transform:translate(28vw,-8px) rotate(8deg) scale(1)}48%{transform:translate(50vw,24px) rotate(-7deg) scale(.92)}70%{transform:translate(72vw,-12px) rotate(9deg) scale(1.05)}100%{transform:translate(118vw,12px) rotate(-6deg) scale(.8);opacity:0}}
@@ -343,6 +343,20 @@ function syncLayoutAnchors(){
   hud.style.height=hudHeight+'px';
   hud.style.setProperty('--hud-h',hudHeight+'px');
   document.documentElement.style.setProperty('--hud-h',hudHeight+'px');
+ }
+ const app=$('#app'),bar=$('.bar'),status=$('#statusPill');
+ if(app&&tank&&bar&&status){
+  const ar=app.getBoundingClientRect(),tr=tank.getBoundingClientRect(),br=bar.getBoundingClientRect();
+  const gap=6;
+  const top=Math.round(tr.bottom-ar.top+gap);
+  const bottomLimit=Math.round(br.top-ar.top-gap);
+  const available=Math.max(34,bottomLimit-top);
+  status.style.top=top+'px';
+  status.style.bottom='auto';
+  status.style.height=available+'px';
+  status.style.padding=Math.max(6,Math.min(12,available*.16)).toFixed(1)+'px 14px';
+  status.style.fontSize=Math.max(11,Math.min(17,available*.29)).toFixed(1)+'px';
+  status.style.borderRadius=Math.max(14,Math.min(22,available*.34)).toFixed(1)+'px';
  }
 }
 function setPlaybackSession(cycle=false){
