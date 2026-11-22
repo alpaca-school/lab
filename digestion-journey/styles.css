@@ -538,3 +538,85 @@ a{color:inherit}.app{min-height:100dvh;display:flex;flex-direction:column;overfl
 @media(max-width:420px){
  .sound-toggle{width:40px;height:40px;font-size:19px}
 }
+
+/* v3d18: PC大画面向けUIスケール調整 */
+@media(min-width:1000px){
+  .game-title{
+    top:9px;
+    padding:9px 24px;
+    font-size:17px;
+  }
+  .game-card .topbar{
+    height:126px;
+    padding:50px 14px 13px;
+    gap:7px;
+  }
+  .game-card .progress{top:126px;height:10px!important}
+  .game-scene{inset:136px 0 104px 0}
+  .game-card .chip{
+    font-size:13px;
+    padding:6px 4px;
+    border-radius:16px;
+  }
+  .game-card .chip b{font-size:24px;margin-bottom:2px}
+  .game-info{
+    left:20px;
+    right:20px;
+    bottom:116px;
+  }
+  .game-info h2{
+    font-size:27px!important;
+    padding:9px 18px;
+    margin-bottom:10px!important;
+  }
+  .game-info .task{
+    width:min(520px,48%);
+    padding:14px 20px!important;
+    border-radius:28px!important;
+    font-size:18px!important;
+    line-height:1.45;
+  }
+  .game-info .task::after{
+    left:42px;
+    bottom:-16px;
+    border-width:15px;
+  }
+  .game-info .fact{
+    width:min(360px,32%);
+    padding:13px 16px!important;
+    border-radius:22px!important;
+    font-size:14px!important;
+    line-height:1.45;
+  }
+  .game-info .actions{
+    height:104px;
+    padding:9px 18px 13px;
+  }
+  .game-info .actions .primary{
+    height:68px;
+    border-radius:34px!important;
+    font-size:22px!important;
+    letter-spacing:.03em;
+  }
+  .game-info .actions .secondary{
+    flex-basis:132px;
+    height:68px;
+    border-radius:34px!important;
+    font-size:14px!important;
+  }
+  .game-card .three-badge{
+    top:146px!important;
+    right:16px!important;
+    padding:6px 11px!important;
+    font-size:13px!important;
+  }
+  .sound-toggle{
+    width:52px;height:52px;
+    font-size:24px;
+  }
+}
+@media(min-width:1400px){
+  .game-card{width:min(100vw,1480px)!important}
+  .game-info .task{font-size:19px!important}
+  .game-info .fact{font-size:15px!important}
+}
