@@ -66,8 +66,14 @@
   #boot-fallback button{margin-top:18px;padding:.7em 1.2em;border:2px solid #fff4d0;background:#c8553d;color:#fff4d0;font:inherit;cursor:pointer}
   .webgl-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:#24182f;color:#fff4d0;text-align:center;line-height:1.7}
 </style>
+<style id="lab-home-global-style">
+.lab-home-global{position:fixed;top:max(8px,env(safe-area-inset-top));right:max(8px,env(safe-area-inset-right));z-index:2147483647;display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:6px 10px;border:2px solid rgba(255,255,255,.92);border-radius:999px;background:#fff;color:#17405f!important;text-decoration:none!important;font:900 12px/1.2 system-ui,-apple-system,"Yu Gothic",sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.20)}
+.lab-home-global:focus-visible{outline:3px solid #ffd76a;outline-offset:2px}
+@media(max-width:380px){.lab-home-global{min-height:32px;padding:5px 8px;font-size:11px}}
+</style>
 </head>
 <body>
+<a class="lab-home-global" href="https://lab.alpaca-school.okinawa/" aria-label="アルパカすく〜るラボ作品一覧に戻る">← ラボ一覧</a>
 <div id="boot-fallback" role="alert"><div class="boot-panel"><strong>画面を起動できませんでした</strong><span id="boot-error-message">ブラウザの3D表示設定を確認して、もう一度読み込んでください。</span><br><button type="button" onclick="location.reload()">もう一度読み込む</button></div></div>
 <noscript><style>#boot-fallback{display:flex}</style></noscript>
 <div id="root"></div>
