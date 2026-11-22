@@ -46,7 +46,7 @@ button{font:inherit;border:0;cursor:pointer}
 @keyframes co2air{0%{transform:translateX(0) scale(.7);opacity:.25}30%{opacity:1}100%{transform:translateX(105px) translateY(-10px) scale(1.15);opacity:0}}
 .bubbles{position:absolute;z-index:8;inset:0;overflow:hidden}.bubble{position:absolute;bottom:48%;width:var(--s,11px);height:var(--s,11px);border:2px solid #fff;border-radius:50%;background:#ffffff44;box-shadow:inset 2px 2px 3px #fff9,0 0 8px #fff7;animation:rise var(--dur,1.8s) linear forwards}.bubble.gold{border-color:var(--yellow);background:#fff2a477;box-shadow:0 0 13px #ffe35c;cursor:pointer}
 @keyframes rise{0%{transform:translate(0,0) scale(.7);opacity:.4}20%{opacity:1}100%{transform:translate(var(--drift,8px),-210px) scale(1.2);opacity:0}}
-.statusPill{position:absolute;z-index:40;left:10px;right:10px;bottom:calc(var(--bar-h) + 4px + var(--safe));top:auto;max-width:none;text-align:center;background:#fffffff5;color:var(--deep);font-size:11px;font-weight:1000;padding:8px 12px;border-radius:15px;box-shadow:0 3px #0d4f9c22,0 6px 14px rgba(13,79,156,.14);pointer-events:none;display:flex;align-items:center;justify-content:center;line-height:1.25;transition:font-size .18s,height .18s,top .18s}.statusPill:after{content:"";position:absolute;left:50%;bottom:-8px;transform:translateX(-50%);border:8px solid transparent;border-top-color:#fffffff5;border-bottom:0}.statusPill b{color:var(--red)}
+.statusPill{position:absolute;z-index:40;left:10px;right:10px;bottom:calc(var(--bar-h) + 4px + var(--safe));top:auto;max-width:none;text-align:center;background:#fffffff5;color:var(--deep);font-size:11px;font-weight:1000;padding:8px 12px;border-radius:15px;box-shadow:0 3px #0d4f9c22,0 6px 14px rgba(13,79,156,.14);pointer-events:none;display:flex;align-items:center;justify-content:center;line-height:1.25;--status-arrow-x:50%;transition:font-size .18s,height .18s,top .18s}.statusPill:after{content:"";position:absolute;left:var(--status-arrow-x);bottom:-8px;transform:translateX(-50%);border:8px solid transparent;border-top-color:#fffffff5;border-bottom:0;transition:left .22s ease}.statusPill b{color:var(--red)}
 .rush{position:absolute;z-index:15;left:50%;top:27%;transform:translate(-50%,-50%) scale(.6);font-size:21px;font-weight:1000;color:#fff;text-shadow:0 3px var(--deep),0 0 12px #fff;opacity:0;white-space:nowrap}.rush.show{animation:rush .8s ease-out}@keyframes rush{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.18)}100%{opacity:0;transform:translate(-50%,-68%) scale(1)}}
 .wildlife{position:absolute;z-index:14;inset:0;overflow:hidden;pointer-events:none}.butterfly{position:absolute;will-change:transform,opacity;filter:drop-shadow(0 2px 2px #ffffffaa);left:-12%;font-size:22px;animation:butterflyFlight var(--dur,2.6s) ease-in-out forwards;animation-delay:var(--delay,0s);opacity:0}.butterfly.b2{font-size:19px}.butterfly.b3{font-size:24px}
 @keyframes butterflyFlight{0%{transform:translate(0,30px) rotate(-10deg) scale(.7);opacity:0}12%{opacity:1}28%{transform:translate(28vw,-8px) rotate(8deg) scale(1)}48%{transform:translate(50vw,24px) rotate(-7deg) scale(.92)}70%{transform:translate(72vw,-12px) rotate(9deg) scale(1.05)}100%{transform:translate(118vw,12px) rotate(-6deg) scale(.8);opacity:0}}
@@ -467,12 +467,24 @@ function updateHUD(){
  requestAnimationFrame(syncLayoutAnchors);
 }
 function levelUp(){sfx('level');const r=$('#rush');r.textContent=S.level===5?'🍠 地下も成長！':'LEVEL UP！';r.classList.remove('show');void r.offsetWidth;r.classList.add('show')}
-function maxAchieved(){sfx('clear');const r=$('#rush');r.textContent='👑 ラボMAX！';r.classList.remove('show');void r.offsetWidth;r.classList.add('show');const st=$('#statusPill');st.innerHTML='👑 <b>ラボMAX！</b> 光合成で養分をつくり、酸素が出る流れをつかめた！'}
+function maxAchieved(){sfx('clear');const r=$('#rush');r.textContent='👑 ラボMAX！';r.classList.remove('show');void r.offsetWidth;r.classList.add('show');const st=$('#statusPill');st.innerHTML='👑 <b>ラボMAX！</b> 光合成で養分をつくり、酸素が出る流れをつかめた！';setStatusArrow(null)}
 function addScore(n,x=58,y=38){S.score+=n;if(S.score>S.best){S.best=Math.floor(S.score);try{localStorage.setItem('photosynthesis_best',S.best)}catch(e){}}updateHUD();const p=document.createElement('div');p.className='fly';p.textContent='+'+n+' pt';p.style.left=x+'%';p.style.top=y+'%';$('.stage').appendChild(p);setTimeout(()=>p.remove(),700)}
 function spawnBubble(){
  const p=power(),gold=Math.random()<(.05+p*.08),b=document.createElement('div');b.className='bubble'+(gold?' gold':'');b.style.setProperty('--s',(gold?14:8)+Math.random()*(gold?8:9)+'px');b.style.left=(44+Math.random()*16)+'%';b.style.setProperty('--dur',(1.15+Math.random()*.8)+'s');b.style.setProperty('--drift',(-12+Math.random()*24)+'px');$('#bubbles').appendChild(b);
  if(gold)b.addEventListener('pointerdown',async e=>{e.preventDefault();await unlockAudio();if(b.dataset.hit)return;b.dataset.hit='1';addScore(5);sfx('bonus');b.classList.add('pop');setTimeout(()=>b.remove(),160)});
  b.addEventListener('animationend',()=>{if(!b.dataset.hit){addScore(gold?2:1);if(Math.random()<.2)sfx('bubble')}b.remove()})
+}
+function setStatusArrow(targetKey){
+ const st=$('#statusPill');
+ if(!st)return;
+ if(!targetKey){st.style.setProperty('--status-arrow-x','50%');return}
+ const btn=document.querySelector('.btn[data-k="'+targetKey+'"]');
+ if(!btn)return;
+ const sr=st.getBoundingClientRect(),br=btn.getBoundingClientRect();
+ if(!sr.width)return;
+ const x=br.left+br.width/2-sr.left;
+ const pct=Math.max(6,Math.min(94,x/sr.width*100));
+ st.style.setProperty('--status-arrow-x',pct.toFixed(1)+'%');
 }
 function updateNeed(){
  const vals=[['light',S.light,'☀️ ひかり'],['water',S.water,'💧 みず'],['co2',S.co2,'☁️ CO₂']];
@@ -495,8 +507,13 @@ function updateNeed(){
  $('#co2Stream').style.opacity=S.co2<=.001?'0':(.18+S.co2*.72).toFixed(2);
 
  const p=power(),st=$('#statusPill');
- if(p>.83)st.innerHTML='🌿 <b>3つそろった！</b> 葉で養分をつくり、酸素も出ているよ！';
- else st.innerHTML='いま少ない：<b>'+weakest[2]+'</b>';
+ if(p>.83){
+  st.innerHTML='🌿 <b>3つそろった！</b> 葉で養分をつくり、酸素も出ているよ！';
+  setStatusArrow(null);
+ }else{
+  st.innerHTML='いま少ない：<b>'+weakest[2]+'</b>';
+  setStatusArrow(weakest[0]);
+ }
 }
 function animateSupply(k){
  if(k==='light'){
