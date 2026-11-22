@@ -3929,7 +3929,7 @@ No matching component was found for:
 body{position:fixed;inset:0;}
 
 .ship-controls{
-  bottom:calc(env(safe-area-inset-bottom) + 58px)!important;
+  bottom:calc(env(safe-area-inset-bottom) + 10px)!important;
   padding-left:18px!important;
   padding-right:18px!important;
 }
@@ -4023,6 +4023,25 @@ body{position:fixed;inset:0;}
   color:#1b5a99;
   font-weight:900;
   text-decoration:underline;
+}
+@media (min-width:768px){
+  .ship-controls{
+    width:min(calc(100% - 24px),520px);
+    left:50%;
+    right:auto;
+    transform:translateX(-50%);
+    padding-left:18px!important;
+    padding-right:18px!important;
+  }
+  .ship-controls .lanebtns .btn{
+    min-width:64px;
+    width:64px;
+    flex-basis:64px;
+    height:64px;
+    min-height:64px;
+    border-radius:22px;
+    font-size:30px;
+  }
 }
 @media (max-width:380px){
   .ship-controls .lanebtns .btn{
