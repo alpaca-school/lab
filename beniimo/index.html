@@ -109,7 +109,11 @@ button{font:inherit;border:0;cursor:pointer}
 .hudActions{display:flex;align-items:center;gap:6px;flex:0 0 auto}
 .labTopBtn,.timePill{min-height:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:18px;background:#fff;color:#9a2219;padding:5px 8px;font-size:12px;line-height:1.1;font-weight:1000;box-shadow:0 2px #a8000f;white-space:nowrap;text-decoration:none}
 .labTopBtn{min-width:92px}
-.timePill{position:static;flex:0 0 auto;min-width:100px;text-align:center;font-variant-numeric:tabular-nums}
+.timePill{position:static;flex:0 0 auto;min-width:100px;text-align:center;font-variant-numeric:tabular-nums;transition:background .2s,color .2s,transform .2s,box-shadow .2s}
+.timePill.warning{background:#ffe35c;color:#7b4a12;box-shadow:0 2px #c38d00}
+.timePill.danger{background:#d93025;color:#fff;box-shadow:0 2px #8f1710;animation:timerUrgent .72s ease-in-out infinite alternate}
+@keyframes timerUrgent{from{transform:scale(1);filter:brightness(1)}to{transform:scale(1.07);filter:brightness(1.12)}}
+@media(prefers-reduced-motion:reduce){.timePill.danger{animation:none}}
 .hud{--hud-h:184px}
 @media(max-height:700px){.hud{--hud-h:172px}.hudTop{height:23px;margin-bottom:3px}}
 @media(max-height:600px){.hud{--hud-h:164px}.hudTop{height:21px;margin-bottom:2px}}
@@ -305,7 +309,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 (()=>{
 const $=s=>document.querySelector(s);
 const thresholds=[0,30,80,150,260],maxTarget=330,roadScores=[0,30,80,150,260,330],roadIcons=['🌱','🌿','🍃','🍠','🍠🍠','👑'];
-const S={light:0,water:0,co2:0,score:0,best:0,level:1,maxReached:false,running:false,time:60,last:0,lastBubble:0,lastTick:0,lastRush:0,highSince:null,muted:false,audio:null,master:null,bgmGain:null,bgmTimer:null,bgmStep:0,soundReady:false,needsAudioReset:false,raf:0,guideActive:false,guideStep:0,guideTimer:0,countdownTimer:0};
+const S={light:0,water:0,co2:0,score:0,best:0,level:1,maxReached:false,running:false,time:60,last:0,lastBubble:0,lastTick:0,lastRush:0,highSince:null,muted:false,audio:null,master:null,bgmGain:null,bgmTimer:null,bgmStep:0,soundReady:false,needsAudioReset:false,raf:0,guideActive:false,guideStep:0,guideTimer:0,countdownTimer:0,lastWarnSecond:null};
 const guideSteps=[
  {k:'light',title:'☀️ ひかり！を押そう',text:'太陽を見てね！'},
  {k:'water',title:'💧 みず！を押そう',text:'土を見てね！'},
@@ -388,6 +392,8 @@ function sfx(k){
  if(k==='start'){tone(660,.12,.075,'triangle');tone(990,.18,.06,'sine',.09)}
  if(k==='countdown'){tone(520,.11,.06,'triangle');tone(260,.11,.018,'sine')}
  if(k==='countdownGo'){tone(880,.14,.075,'triangle');tone(1320,.22,.055,'sine',.07)}
+ if(k==='timeWarn'){tone(760,.075,.045,'triangle');tone(1140,.07,.022,'sine',.025)}
+ if(k==='timeDanger'){tone(920,.08,.06,'square');tone(1380,.075,.028,'triangle',.03)}
  if(k==='clear'){[659,784,988,1175,1568].forEach((f,i)=>tone(f,.38,.06,'triangle',i*.085));[523,659,784,1047].forEach((f,i)=>tone(f,.75,.032,'sine',.48+i*.025))}
 }
 function fmt(n){return String(Math.floor(n)).padStart(4,'0')}
@@ -508,7 +514,16 @@ function triggerRush(){
 function feed(k,btn){S[k]=clamp(S[k]+.115);sfx(k);animateSupply(k);btn.style.transform='translateY(3px) scale(1.03)';setTimeout(()=>btn.style.transform='',90);updateNeed();if(power()>.85&&Math.random()<.25)triggerRush()}
 function decay(dt){S.light=clamp(S.light-dt*.021);S.water=clamp(S.water-dt*.018);S.co2=clamp(S.co2-dt*.023)}
 function loop(ts){
- if(!S.running)return;const dt=Math.min(.05,(ts-S.last)/1000||0);S.last=ts;S.time-=dt;$('#timer').textContent='⏱ あと '+Math.max(0,Math.ceil(S.time))+' 秒';decay(dt);updateNeed();
+ if(!S.running)return;const dt=Math.min(.05,(ts-S.last)/1000||0);S.last=ts;S.time-=dt;
+ const timer=$('#timer'),sec=Math.max(0,Math.ceil(S.time));
+ timer.textContent='⏱ あと '+sec+' 秒';
+ timer.classList.toggle('warning',sec<=10&&sec>5);
+ timer.classList.toggle('danger',sec<=5&&sec>0);
+ if(sec<=10&&sec>0&&sec!==S.lastWarnSecond){
+  S.lastWarnSecond=sec;
+  sfx(sec<=5?'timeDanger':'timeWarn');
+ }
+ decay(dt);updateNeed();
  const p=power(),interval=1250-p*1030;if(ts-S.lastBubble>interval){spawnBubble();S.lastBubble=ts}
  if(ts-S.lastTick>1000){const gain=Math.max(0,Math.round(p*(S.level*.65+1)));if(gain)addScore(gain,77,18);S.lastTick=ts}
  if(S.time<=0){finish();return}S.raf=requestAnimationFrame(loop)
@@ -531,13 +546,13 @@ function beginGuide(){
  clearTimeout(S.guideTimer);S.running=false;S.guideActive=true;S.guideStep=0;
  S.light=0;S.water=0;S.co2=0;S.score=0;S.level=1;S.maxReached=false;
  updateHUD();updateNeed();
- $('#timer').textContent='🧪 まずは練習';$('#statusPill').style.visibility='hidden';
+ $('#timer').textContent='🧪 まずは練習';$('#timer').classList.remove('warning','danger');S.lastWarnSecond=null;$('#statusPill').style.visibility='hidden';
  $('#guideSkip').textContent='ガイドをとばす';
  $('#guide').classList.add('show');showGuideStep();
 }
 function startRun(){
  clearTimeout(S.guideTimer);clearTimeout(S.countdownTimer);S.guideActive=false;clearGuideTarget();$('#guide').classList.remove('show');$('#countdown').classList.remove('show');$('#app').classList.remove('co2TutorialMode');$('#statusPill').style.visibility='';
- S.light=0;S.water=0;S.co2=0;S.score=0;S.level=1;S.maxReached=false;S.time=60;$('#timer').textContent='⏱ あと 60 秒';
+ S.light=0;S.water=0;S.co2=0;S.score=0;S.level=1;S.maxReached=false;S.time=60;S.lastWarnSecond=null;$('#timer').textContent='⏱ あと 60 秒';$('#timer').classList.remove('warning','danger');
  S.running=true;S.last=performance.now();S.lastBubble=S.last;S.lastTick=S.last;S.lastRush=0;$('#wildlife').innerHTML='';
  updateHUD();updateNeed();startBgm();S.raf=requestAnimationFrame(loop);
 }
@@ -546,7 +561,7 @@ function showCountdownValue(value,isStart=false){
 }
 function beginCountdown(){
  clearTimeout(S.guideTimer);clearTimeout(S.countdownTimer);S.running=false;S.guideActive=false;clearGuideTarget();$('#guide').classList.remove('show');$('#app').classList.remove('co2TutorialMode');
- $('#statusPill').style.visibility='hidden';$('#timer').textContent='⏳ もうすぐスタート';$('#countdown').classList.add('show');
+ $('#statusPill').style.visibility='hidden';$('#timer').textContent='⏳ もうすぐスタート';$('#timer').classList.remove('warning','danger');S.lastWarnSecond=null;$('#countdown').classList.add('show');
  const seq=[['3',false],['2',false],['1',false],['START!',true]];let i=0;
  const step=()=>{const [value,isStart]=seq[i];showCountdownValue(value,isStart);i++;if(i<seq.length)S.countdownTimer=setTimeout(step,800);else S.countdownTimer=setTimeout(startRun,700)};
  step();
