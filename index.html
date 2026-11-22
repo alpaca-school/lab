@@ -596,7 +596,58 @@ const cartTitle=document.getElementById("labCartridgeTitle");
 const cartStatus=document.getElementById("labCartridgeStatus");
 const skip=document.getElementById("labConsoleSkip");
 let destination="";
-function go(){if(destination)location.href=destination;}
+let audioCtx=null;
+let soundTimers=[];
+function getAudioCtx(){
+  if(audioCtx)return audioCtx;
+  const Ctx=window.AudioContext||window.webkitAudioContext;
+  if(!Ctx)return null;
+  audioCtx=new Ctx();
+  return audioCtx;
+}
+function tone(freq,duration,volume,type="sine",startDelay=0){
+  const ctx=getAudioCtx();
+  if(!ctx)return;
+  const now=ctx.currentTime+startDelay;
+  const osc=ctx.createOscillator();
+  const gain=ctx.createGain();
+  osc.type=type;
+  osc.frequency.setValueAtTime(freq,now);
+  gain.gain.setValueAtTime(0.0001,now);
+  gain.gain.exponentialRampToValueAtTime(Math.max(0.0002,volume),now+0.01);
+  gain.gain.exponentialRampToValueAtTime(0.0001,now+duration);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(now);osc.stop(now+duration+0.03);
+}
+function noise(duration,volume,startDelay=0){
+  const ctx=getAudioCtx();
+  if(!ctx)return;
+  const frames=Math.max(1,Math.floor(ctx.sampleRate*duration));
+  const buffer=ctx.createBuffer(1,frames,ctx.sampleRate);
+  const data=buffer.getChannelData(0);
+  for(let i=0;i<frames;i++)data[i]=(Math.random()*2-1)*(1-i/frames);
+  const src=ctx.createBufferSource();
+  const gain=ctx.createGain();
+  const filter=ctx.createBiquadFilter();
+  filter.type="bandpass";filter.frequency.value=1400;filter.Q.value=0.7;
+  gain.gain.value=volume;
+  src.buffer=buffer;src.connect(filter).connect(gain).connect(ctx.destination);
+  src.start(ctx.currentTime+startDelay);
+}
+function clearSoundTimers(){for(const t of soundTimers)clearTimeout(t);soundTimers=[];}
+function playCassetteSounds(){
+  clearSoundTimers();
+  const ctx=getAudioCtx();
+  if(ctx&&ctx.state==="suspended")ctx.resume().catch(()=>{});
+  soundTimers.push(setTimeout(()=>{tone(170,0.06,0.045,"square");noise(0.05,0.025);},1850)); // cassette seats
+  soundTimers.push(setTimeout(()=>{tone(95,0.08,0.05,"triangle");noise(0.09,0.035);},2520)); // lid closes
+  soundTimers.push(setTimeout(()=>{
+    tone(105,0.82,0.018,"sawtooth");
+    tone(132,0.82,0.012,"sine",0.02);
+    noise(0.7,0.009);
+  },2710)); // reels start spinning
+}
+function go(){clearSoundTimers();if(destination)location.href=destination;}
 document.addEventListener("click",e=>{
  const link=e.target.closest("a.play");
  if(!link||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
@@ -606,11 +657,11 @@ document.addEventListener("click",e=>{
  cartTitle.textContent=card?.querySelector("h3")?.textContent.trim()||"DIGITAL EXPERIMENT";
  cartStatus.textContent=card?.dataset.status==="dev"?"DEVELOPMENT CARTRIDGE":"RELEASE CARTRIDGE";
  overlay.classList.remove("booting","show");void overlay.offsetWidth;
- overlay.classList.add("show","booting");setTimeout(go,3500);
+ overlay.classList.add("show","booting");playCassetteSounds();setTimeout(go,3500);
 });
 skip.addEventListener("click",go);
-overlay.addEventListener("click",e=>{if(e.target===overlay)overlay.classList.remove("show","booting");});
-document.addEventListener("keydown",e=>{if(e.key==="Escape")overlay.classList.remove("show","booting");});
+overlay.addEventListener("click",e=>{if(e.target===overlay){clearSoundTimers();overlay.classList.remove("show","booting");}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){clearSoundTimers();overlay.classList.remove("show","booting");}});
 apply("all");
 })();
 </script>
