@@ -391,14 +391,15 @@ header{position:absolute;z-index:5;top:7px;left:0;right:0;height:122px;backgroun
 @media(max-height:600px){#app.stage4-mode .labArea{min-height:145px}.stage4Try{min-height:47px!important}}
 @media(prefers-reduced-motion:reduce){.stage4Lab.wrong .flameY{animation:none!important}}
 </style>
-<style id="lab-home-link-style">
-.lab-home-link{position:fixed;top:max(8px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));z-index:2147483647;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;border:2px solid rgba(255,255,255,.78);border-radius:999px;background:rgba(20,72,61,.94);color:#fff!important;text-decoration:none!important;font:800 13px/1.2 system-ui,-apple-system,"Yu Gothic",sans-serif;box-shadow:0 3px 12px rgba(0,0,0,.22);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-.lab-home-link:focus-visible{outline:3px solid #ffd76a;outline-offset:2px}
-@media(max-width:380px){.lab-home-link{padding:7px 10px;font-size:12px}}
+<style id="lab-home-global-style">
+.lab-home-global{position:fixed;top:max(8px,env(safe-area-inset-top));right:max(8px,env(safe-area-inset-right));z-index:2147483647;display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:6px 10px;border:2px solid rgba(255,255,255,.92);border-radius:999px;background:#fff;color:#17405f!important;text-decoration:none!important;font:900 12px/1.2 system-ui,-apple-system,"Yu Gothic",sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.20)}
+.lab-home-global:focus-visible{outline:3px solid #ffd76a;outline-offset:2px}
+@media(max-width:380px){.lab-home-global{min-height:32px;padding:5px 8px;font-size:11px}}
 </style>
 </head>
 <body>
-<a class="lab-home-link" href="https://lab.alpaca-school.okinawa/" aria-label="アルパカすく〜るラボ作品一覧に戻る">← 🔬 ラボ一覧</a><div id="app" class="title-mode">
+<a class="lab-home-global" href="https://lab.alpaca-school.okinawa/" aria-label="アルパカすく〜るラボ作品一覧に戻る">← ラボ一覧</a>
+<div id="app" class="title-mode">
 <div class="decor" aria-hidden="true"><div class="sun"></div><div class="cloud"></div><div class="cloud c2"></div><div class="wave"></div><div class="wave w2"></div><div class="bubbles"><span style="--x:13%;--t:9s;--d:-2s"></span><span style="--x:70%;--t:7s;--d:-4s"></span><span style="--x:35%;--t:11s;--d:-6s"></span><span style="--x:82%;--t:8s;--d:-1s"></span></div></div>
 <header><div class="hudrow"><div><div class="little">おきなわ理科チャレンジ</div><div class="score" id="score">0000</div><div class="little" id="best">ベスト 0000</div></div><button class="mute" id="sound" aria-label="おとの切り替え">♪ おと ON</button></div><div class="pills" id="pills"><span class="pill on">操作 1〜3</span><span class="pill">考える 4〜6</span></div></header>
 <section id="title" class="screen titleScreen active"><span class="tag">⚗ 操作して「なぜ？」まで学ぶ</span><h1>ガスバーナー<br><em>名人！</em></h1><p class="subtitle">操作して、理由まで説明できるようになろう！</p><div class="hero" id="hero"></div><button class="startBtn" id="start">▶ じっけん開始！</button><p class="caption">6ステージ ・ 操作3＋思考3 ・ 何度でも挑戦！</p><p class="safety">※これは学習用シミュレーションです。実物の操作は必ず先生の指導で行いましょう。</p></section>
