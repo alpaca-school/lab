@@ -327,13 +327,14 @@ function drawLabels(ctx,w,h,si){
   ];
   ctx.save();
   ctx.fillStyle="rgba(255,238,244,.95)";
-  ctx.font="900 14px system-ui,sans-serif";
-  ctx.textAlign="left";ctx.fillText("一本の消化管を旅しているよ",12,22);
-  ctx.font="700 11px system-ui,sans-serif";
+  const desktop=w>=900;
+  ctx.font=(desktop?"900 20px":"900 14px")+" system-ui,sans-serif";
+  ctx.textAlign="left";ctx.fillText("一本の消化管を旅しているよ",desktop?18:12,desktop?30:22);
+  ctx.font=(desktop?"700 15px":"700 11px")+" system-ui,sans-serif";
   ctx.fillStyle="rgba(255,216,229,.74)";
-  ctx.fillText(labels[si][0]+"： "+labels[si][1],12,39);
+  ctx.fillText(labels[si][0]+"： "+labels[si][1],desktop?18:12,desktop?52:39);
 
-  ctx.textAlign="center";ctx.font="800 10px system-ui,sans-serif";
+  ctx.textAlign="center";ctx.font=(desktop?"800 14px":"800 10px")+" system-ui,sans-serif";
   const marks=[
     [.50,.07,"口"],[.44,.27,"食道"],[.67,.39,"胃"],[.28,.61,"小腸"],[.78,.61,"大腸"],[.64,.91,"肛門"]
   ];
@@ -342,7 +343,7 @@ function drawLabels(ctx,w,h,si){
     ctx.fillText(t,w*x,h*y);
   }
   ctx.textAlign="right";ctx.fillStyle="rgba(255,224,233,.50)";
-  ctx.fillText("連続消化管 3/3",w-10,h-10);
+  ctx.fillText("連続消化管 3/3",w-(desktop?18:10),h-(desktop?16:10));
   ctx.restore();
 }
 
@@ -413,17 +414,18 @@ function drawTunnelEdges(ctx,w,h,time,si){
 }
 
 function drawMiniMap(ctx,w,h,path,t,si){
-  const mw=Math.min(92,Math.max(70,w*.27));
-  const mh=Math.min(128,Math.max(96,h*.38));
-  const x=w-mw-8,y=49;
+  const desktop=w>=900;
+  const mw=desktop?Math.min(190,Math.max(150,w*.15)):Math.min(92,Math.max(70,w*.27));
+  const mh=desktop?Math.round(mw*1.28):Math.min(128,Math.max(96,h*.38));
+  const x=w-mw-(desktop?18:8),y=desktop?24:49;
   ctx.save();
   ctx.fillStyle="rgba(12,4,10,.76)";
   ctx.strokeStyle="rgba(255,217,102,.52)";
-  ctx.lineWidth=1.5;
+  ctx.lineWidth=desktop?2.5:1.5;
   roundRect(ctx,x,y,mw,mh,14);
   ctx.fill();ctx.stroke();
 
-  const pad=10,px=x+pad,py=y+18,pw=mw-pad*2,ph=mh-34;
+  const pad=desktop?16:10,px=x+pad,py=y+(desktop?30:18),pw=mw-pad*2,ph=mh-(desktop?52:34);
   ctx.lineCap="round";ctx.lineJoin="round";
   for(let i=1;i<path.length;i++){
     const a=path[i-1],b=path[i];
@@ -431,17 +433,17 @@ function drawMiniMap(ctx,w,h,path,t,si){
     const bx=px+(b.x/w)*pw, by=py+(b.y/h)*ph;
     ctx.strokeStyle=partColor(b.part);
     ctx.globalAlpha=(b.part===stagePart(si)||(si===5&&b.part==="anus")) ? .95 : .34;
-    ctx.lineWidth=b.part===stagePart(si)?3:1.8;
+    ctx.lineWidth=b.part===stagePart(si)?(desktop?5:3):(desktop?2.8:1.8);
     ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(bx,by);ctx.stroke();
   }
   ctx.globalAlpha=1;
   const p=posAt(path,Math.min(t,1));
   const mx=px+(p.x/w)*pw,my=py+(p.y/h)*ph;
   ctx.fillStyle="#ffd966";ctx.shadowColor="#ffd966";ctx.shadowBlur=9;
-  ctx.beginPath();ctx.arc(mx,my,4.5+Math.sin(performance.now()*.006),0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(mx,my,(desktop?8:4.5)+Math.sin(performance.now()*.006)*(desktop?1.6:1),0,Math.PI*2);ctx.fill();
   ctx.shadowBlur=0;
-  ctx.fillStyle="#ffd966";ctx.textAlign="center";ctx.font="900 10px system-ui,sans-serif";
-  ctx.fillText("いま ここ",x+mw/2,y+12);
+  ctx.fillStyle="#ffd966";ctx.textAlign="center";ctx.font=(desktop?"900 17px":"900 10px")+" system-ui,sans-serif";
+  ctx.fillText("いま ここ",x+mw/2,y+(desktop?20:12));
   ctx.restore();
 }
 function roundRect(ctx,x,y,w,h,r){
@@ -539,7 +541,8 @@ function drawFoodAhead(ctx,w,h,si,time,host,c){
   const bob=Math.sin(time*.004)*5;
   let x=c.x+Math.sin(time*.0011+si)*12;
   let y=c.y+20+bob;
-  let size=si===0?24:si===1?20:si===2?15:si===3?10:si===4?14:si===5?18:14;
+  const uiScale=w>=900?1.35:1;
+  let size=(si===0?24:si===1?20:si===2?15:si===3?10:si===4?14:si===5?18:14)*uiScale;
 
   if(si===0){
     const pieces=1+Math.min(6,Math.round(phase*6));
@@ -678,7 +681,7 @@ function drawImmersiveTunnel(ctx,w,h,si,time,host){
 
   ctx.save();
   ctx.fillStyle="rgba(10,3,8,.52)";
-  ctx.font="900 13px system-ui,sans-serif";
+  ctx.font=(w>=900?"900 17px":"900 13px")+" system-ui,sans-serif";
   ctx.textAlign="center";
   const names=["口の中","食道の中","胃の中","小腸の中","大腸の中","直腸→肛門","体の外"];
   ctx.fillText("🔎 "+names[si]+"を進んでいる",w*.5,h-14);
