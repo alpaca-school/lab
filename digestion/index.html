@@ -24,14 +24,14 @@ header{position:absolute;z-index:20;top:0;left:0;right:0;height:96px;padding:9px
 @media(max-height:650px){header{height:82px}.game{padding-top:88px}.task{padding:4px 7px}.task h2{font-size:13px}.task p{display:none}.lenses{margin-bottom:3px}.lens{min-height:36px;font-size:8px}.lens span{font-size:13px}.lab{min-height:125px}.message{min-height:29px;font-size:9px}.action{min-height:38px}.controls{padding-top:4px}}
 @media(max-height:570px){.brand{display:none}.game{padding-top:78px}.lab{min-height:105px}.lensNote{font-size:8px}.ctitle{display:none}}
 </style>
-<style id="lab-home-link-style">
-.lab-home-link{position:fixed;top:max(8px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));z-index:2147483647;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;border:2px solid rgba(255,255,255,.78);border-radius:999px;background:rgba(20,72,61,.94);color:#fff!important;text-decoration:none!important;font:800 13px/1.2 system-ui,-apple-system,"Yu Gothic",sans-serif;box-shadow:0 3px 12px rgba(0,0,0,.22);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-.lab-home-link:focus-visible{outline:3px solid #ffd76a;outline-offset:2px}
-@media(max-width:380px){.lab-home-link{padding:7px 10px;font-size:12px}}
+<style id="lab-home-global-style">
+.lab-home-global{position:fixed;top:max(8px,env(safe-area-inset-top));right:max(8px,env(safe-area-inset-right));z-index:2147483647;display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:6px 10px;border:2px solid rgba(255,255,255,.92);border-radius:999px;background:#fff;color:#17405f!important;text-decoration:none!important;font:900 12px/1.2 system-ui,-apple-system,"Yu Gothic",sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.20)}
+.lab-home-global:focus-visible{outline:3px solid #ffd76a;outline-offset:2px}
+@media(max-width:380px){.lab-home-global{min-height:32px;padding:5px 8px;font-size:11px}}
 </style>
 </head>
 <body>
-<a class="lab-home-link" href="https://lab.alpaca-school.okinawa/" aria-label="アルパカすく〜るラボ作品一覧に戻る">← 🔬 ラボ一覧</a>
+<a class="lab-home-global" href="https://lab.alpaca-school.okinawa/" aria-label="アルパカすく〜るラボ作品一覧に戻る">← ラボ一覧</a>
 <div id="app">
 <header><div class="headrow"><div><div class="brand">子どものMIKATA｜理科体験ゲーム</div><div id="stageLabel" class="stage">🍙 口 1 / 6</div></div><div class="hud"><button id="discoverBtn">🔬 発見 0</button><button id="mute">🔊</button></div></div><div class="progress"><span id="progress"></span></div></header>
 
