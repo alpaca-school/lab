@@ -547,7 +547,8 @@ function applyRemoteSettings(rows){
  for(const card of cards){
    const r=map.get(card.dataset.gameId);
    if(!r)continue;
-   const status=String(r.status||card.dataset.status).trim();
+   const rawStatus=String(r.status||card.dataset.status).trim();
+   const status=rawStatus==="公開中"?"published":rawStatus==="開発中"?"dev":rawStatus==="非表示"?"hidden":rawStatus;
    applyCardStatus(card,status,boolValue(r.visible));
    ordered.push({card,order:Number(r.sort_order)||9999,status});
  }
