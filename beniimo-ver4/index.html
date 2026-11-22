@@ -25,7 +25,7 @@ button{font:inherit;border:0;cursor:pointer}
 .stage{position:absolute;inset:calc(var(--hud-h) + var(--safe-top) + 10px) 0 calc(var(--bar-h) + var(--safe));overflow:hidden;background:linear-gradient(180deg,#ffffff 0%,#fffdf7 72%,#f8f4eb 100%)}.stage:before{content:"";position:absolute;left:0;right:0;bottom:84px;height:2px;background:#eadfce;box-shadow:0 -1px #fff}.tableSurface{position:absolute;z-index:1;left:0;right:0;bottom:0;height:86px;background:linear-gradient(180deg,#c98b52 0%,#ae6d37 9%,#9b5d2f 100%);border-top:7px solid #dca66e;box-shadow:inset 0 4px rgba(255,255,255,.22),0 -5px 14px rgba(95,57,29,.12)}.tableSurface:after{content:"";position:absolute;inset:18px 0 0;background:repeating-linear-gradient(4deg,rgba(89,48,20,.11) 0 2px,transparent 2px 22px);opacity:.55}
 .sun{position:absolute;z-index:4;left:22px;top:30px;width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 36% 32%,#fffbd0 0 13%,#ffe56b 34%,#ffb82e 100%);box-shadow:0 0 var(--sunGlow,24px) #ffd94ee6,0 0 10px #fff7b6;transform:scale(var(--sunScale,1));transition:transform .18s,box-shadow .18s;transform-origin:center}.sunFace{position:relative;z-index:2;color:#7b4a12;font-size:16px;font-weight:1000;line-height:1;letter-spacing:.02em;text-shadow:0 1px #fff8;transform:translateY(2px);transition:transform .18s,font-size .18s}.sun.maxSmile .sunFace{font-size:18px;animation:sunSmile .55s ease-in-out infinite alternate}.sun.feedFlash{animation:sunPop .28s ease-out}.ray{position:absolute;z-index:3;pointer-events:none;left:58px;top:61px;width:190px;height:245px;clip-path:polygon(0 0,100% 14%,78% 100%,12% 88%);background:linear-gradient(100deg,rgba(255,224,74,var(--rayOpacity,.68)) 0%,rgba(255,238,127,var(--rayOpacity,.5)) 38%,rgba(255,244,176,0) 100%);filter:drop-shadow(0 0 10px #ffd84a88);transition:opacity .16s,width .16s;opacity:var(--rayOpacity,.68);mix-blend-mode:multiply}
 @keyframes sunPop{50%{transform:scale(calc(var(--sunScale,1) + .16))}}@keyframes sunSmile{from{transform:translateY(2px) scale(1)}to{transform:translateY(0) scale(1.12)}}
-.co2Bottle{position:absolute;left:8px;bottom:58px;width:52px;height:105px;z-index:7}.co2Body{position:absolute;left:6px;bottom:0;width:40px;height:78px;border-radius:12px 12px 16px 16px;background:linear-gradient(90deg,#9aa8ad,#e7eef0 45%,#84969d);border:3px solid #52656c;box-shadow:0 5px #0a4b6650}.co2Body:after{content:"CO₂";position:absolute;left:4px;right:4px;top:28px;background:#fff;color:#285c68;border-radius:7px;text-align:center;font-size:11px;font-weight:1000;padding:2px}.co2Valve{position:absolute;left:17px;top:7px;width:18px;height:22px;background:#5d6d73;border-radius:5px}.co2Knob{position:absolute;left:10px;top:0;width:32px;height:9px;border-radius:6px;background:#e60012}.hose{position:absolute;z-index:6;left:47px;bottom:125px;width:83px;height:73px;border-left:5px solid #4c5c63;border-bottom:5px solid #4c5c63;border-radius:0 0 0 18px;transform:rotate(-8deg);transform-origin:left bottom}.hose:after{content:"";position:absolute;right:-5px;bottom:-6px;width:10px;height:10px;border-radius:50%;background:#4c5c63}.co2Bottle.puff .co2Knob{animation:knob .22s ease-out}.co2Bottle.puff .co2Body{animation:bottle .22s ease-out}@keyframes knob{50%{transform:rotate(18deg) scale(1.12)}}@keyframes bottle{50%{transform:translateY(-3px)}}
+.co2Bottle{position:absolute;left:8px;bottom:58px;width:52px;height:105px;z-index:7}.co2Body{position:absolute;left:6px;bottom:0;width:40px;height:78px;border-radius:12px 12px 16px 16px;background:linear-gradient(90deg,#9aa8ad,#e7eef0 45%,#84969d);border:3px solid #52656c;box-shadow:0 5px #0a4b6650}.co2Body:after{content:"CO₂";position:absolute;left:4px;right:4px;top:28px;background:#fff;color:#285c68;border-radius:7px;text-align:center;font-size:11px;font-weight:1000;padding:2px}.co2Valve{position:absolute;left:17px;top:7px;width:18px;height:22px;background:#5d6d73;border-radius:5px}.co2Knob{position:absolute;left:10px;top:0;width:32px;height:9px;border-radius:6px;background:#e60012}.hose{position:absolute;z-index:9;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}.hose path{fill:none;stroke:#4c5c63;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}.co2Bottle.puff .co2Knob{animation:knob .22s ease-out}.co2Bottle.puff .co2Body{animation:bottle .22s ease-out}@keyframes knob{50%{transform:rotate(18deg) scale(1.12)}}@keyframes bottle{50%{transform:translateY(-3px)}}
 .tank{position:absolute;z-index:2;left:72px;right:26px;bottom:57px;height:70%;border:5px solid rgba(150,177,183,.72);border-top:3px solid rgba(180,199,202,.5);border-radius:12px 12px 20px 20px;background:rgba(255,255,255,.34);overflow:hidden;box-shadow:inset 0 0 0 2px rgba(255,255,255,.7),0 10px 14px rgba(73,45,25,.18)}
 .caseLabel{position:absolute;z-index:11;right:6px;top:6px;background:#ffffffcc;color:#6b4b32;border:1px solid #d7c5aa;border-radius:10px;padding:3px 7px;font-size:8px;font-weight:1000}
 .soil{position:absolute;z-index:2;left:0;right:0;bottom:0;height:44%;background:linear-gradient(180deg,#9a6944 0%,#70492f 44%,#513522 100%);box-shadow:inset 0 8px 10px rgba(255,255,255,.08)}
@@ -214,24 +214,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     height:70%;
   }
 
-  .hose{
-    left:80px;
-    bottom:238px;
-    width:118px;
-    height:44px;
-    z-index:9;
-    border-left-width:6px;
-    border-bottom-width:6px;
-    border-radius:0 0 0 20px;
-    transform:rotate(-1deg);
-    transform-origin:left bottom;
-  }
-  .hose:after{
-    right:-6px;
-    bottom:-7px;
-    width:12px;
-    height:12px;
-  }
+  .hose path{stroke-width:6}
 
   .guide.freePractice{
     left:18px;
@@ -267,7 +250,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
  <main class="stage">
   <div class="tableSurface" aria-hidden="true"></div>
   <div id="sun" class="sun"><span id="sunFace" class="sunFace">•ﻌ•</span></div><div id="ray" class="ray"></div>
-  <div id="co2Bottle" class="co2Bottle"><div class="co2Knob"></div><div class="co2Valve"></div><div class="co2Body"></div></div><div id="co2SourceHint" class="co2SourceHint" aria-live="polite">ここからCO₂！</div><div class="hose"></div>
+  <div id="co2Bottle" class="co2Bottle"><div class="co2Knob"></div><div class="co2Valve"></div><div class="co2Body"></div></div><div id="co2SourceHint" class="co2SourceHint" aria-live="polite">ここからCO₂！</div><svg id="co2Hose" class="hose" aria-hidden="true"><path id="co2HosePath"></path></svg>
   <div class="tank">
    <div class="caseLabel">読谷べにいも 観察ケース</div>
    <div id="co2Stream" class="co2Stream"><i class="co2Dot"></i><i class="co2Dot"></i><i class="co2Dot"></i><i class="co2Dot"></i></div>
@@ -329,6 +312,29 @@ try{S.best=+localStorage.getItem('photosynthesis_best_ver4')||0}catch(e){}
 function clamp(v){return Math.max(0,Math.min(1,v))}
 function lightEff(v){return 1-Math.exp(-3*v)}
 function power(){return Math.min(lightEff(S.light),S.water,S.co2)}
+function syncLayoutAnchors(){
+ const stage=$('.stage'),valve=$('#co2Bottle .co2Valve'),tank=$('.tank'),soil=$('#soil'),hose=$('#co2Hose'),path=$('#co2HosePath');
+ if(stage&&valve&&tank&&soil&&hose&&path){
+  const sr=stage.getBoundingClientRect(),vr=valve.getBoundingClientRect(),tr=tank.getBoundingClientRect(),sor=soil.getBoundingClientRect();
+  const w=Math.max(1,sr.width),h=Math.max(1,sr.height);
+  const x1=vr.left+vr.width/2-sr.left;
+  const y1=vr.bottom-sr.top;
+  const x2=tr.left-sr.left+Math.min(Math.max(tr.width*.18,58),140);
+  const y2=sor.top-sr.top+1;
+  const bend=Math.max(34,Math.min(92,(x2-x1)*.42));
+  hose.setAttribute('viewBox',`0 0 ${w} ${h}`);
+  hose.setAttribute('preserveAspectRatio','none');
+  path.setAttribute('d',`M ${x1.toFixed(1)} ${y1.toFixed(1)} C ${(x1+bend).toFixed(1)} ${y1.toFixed(1)}, ${(x2-bend*.55).toFixed(1)} ${y2.toFixed(1)}, ${x2.toFixed(1)} ${y2.toFixed(1)}`);
+ }
+ const hud=$('.hud'),evo=$('#evo'),wave=$('.wave');
+ if(hud&&evo&&wave){
+  const hr=hud.getBoundingClientRect(),er=evo.getBoundingClientRect();
+  const waveTop=Math.max(0,er.bottom-hr.top-1);
+  wave.style.top=waveTop+'px';
+  const neededHud=Math.ceil(waveTop+12);
+  document.documentElement.style.setProperty('--hud-h',neededHud+'px');
+ }
+}
 function setPlaybackSession(cycle=false){
  if(!('audioSession' in navigator))return;
  try{
@@ -432,6 +438,7 @@ function updateHUD(){
  const liveRank=rankForScore(S.score);
  $('#liveRank').textContent=liveRank.name;
  if(S.score>=maxTarget&&!S.maxReached){S.maxReached=true;maxAchieved()}
+ requestAnimationFrame(syncLayoutAnchors);
 }
 function levelUp(){sfx('level');const r=$('#rush');r.textContent=S.level===5?'🍠 地下も成長！':'LEVEL UP！';r.classList.remove('show');void r.offsetWidth;r.classList.add('show')}
 function maxAchieved(){sfx('clear');const r=$('#rush');r.textContent='👑 ラボMAX！';r.classList.remove('show');void r.offsetWidth;r.classList.add('show');const st=$('#statusPill');st.innerHTML='👑 <b>ラボMAX！</b> 光合成で養分をつくり、酸素が出る流れをつかめた！'}
@@ -570,9 +577,15 @@ document.querySelectorAll('.btn').forEach(btn=>{const act=async e=>{
 };btn.addEventListener('click',act)});
 $('#guideSkip').addEventListener('click',()=>{if(!S.guideActive)return;if(S.guideStep>=guideSteps.length)beginCountdown();else beginCountdown()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){S.needsAudioReset=true;stopBgm()}else setPlaybackSession(true)});
-window.addEventListener('pageshow',()=>{setPlaybackSession(true);S.needsAudioReset=true});
+window.addEventListener('pageshow',()=>{setPlaybackSession(true);S.needsAudioReset=true;requestAnimationFrame(syncLayoutAnchors)});
+window.addEventListener('resize',()=>requestAnimationFrame(syncLayoutAnchors));
+if('ResizeObserver' in window){
+ const ro=new ResizeObserver(()=>requestAnimationFrame(syncLayoutAnchors));
+ const evo=$('#evo'),tank=$('.tank'),soil=$('#soil'),bottle=$('#co2Bottle');
+ [evo,tank,soil,bottle].filter(Boolean).forEach(el=>ro.observe(el));
+}
 $('#learn').addEventListener('click',()=>{$('#finish').classList.remove('show');$('#lesson').classList.add('show')});$('#backResult').addEventListener('click',()=>{$('#lesson').classList.remove('show');$('#finish').classList.add('show')});$('#retryFromLesson').addEventListener('click',start);document.querySelectorAll('.quizChoice').forEach(b=>b.addEventListener('click',()=>{$('#quizFeedback').innerHTML=b.dataset.answer==='b'?'🎉 <ruby>正解<rt>せいかい</rt></ruby>！ <ruby>二酸化炭素<rt>にさんかたんそ</rt></ruby>が<ruby>不足<rt>ふそく</rt></ruby>すると、ほかの<ruby>条件<rt>じょうけん</rt></ruby>が<ruby>十分<rt>じゅうぶん</rt></ruby>でも<ruby>光合成<rt>こうごうせい</rt></ruby>の<ruby>速<rt>はや</rt></ruby>さが<ruby>制限<rt>せいげん</rt></ruby>されることがあるよ。':'おしい！ <ruby>正解<rt>せいかい</rt></ruby>はB。<ruby>材料<rt>ざいりょう</rt></ruby>の一つが<ruby>不足<rt>ふそく</rt></ruby>すると、<ruby>光合成<rt>こうごうせい</rt></ruby>の<ruby>速<rt>はや</rt></ruby>さが<ruby>制限<rt>せいげん</rt></ruby>されることがあるよ。'}));$('#play').addEventListener('click',start);$('#retry').addEventListener('click',start);$('#mute').addEventListener('click',async e=>{S.muted=!S.muted;e.currentTarget.textContent=S.muted?'🔇':'🔊';if(S.muted){stopBgm()}else{const ok=await unlockAudio(true);if(ok){sfx('start');if(S.running)startBgm()}}});
-updateHUD();updateNeed();
+updateHUD();updateNeed();requestAnimationFrame(syncLayoutAnchors);
 })();
 </script>
 </body>
