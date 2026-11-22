@@ -222,8 +222,14 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 }
 
 </style>
+<style id="lab-home-link-style">
+.lab-home-link{position:fixed;top:max(8px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));z-index:2147483647;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 12px;border:2px solid rgba(255,255,255,.78);border-radius:999px;background:rgba(20,72,61,.94);color:#fff!important;text-decoration:none!important;font:800 13px/1.2 system-ui,-apple-system,"Yu Gothic",sans-serif;box-shadow:0 3px 12px rgba(0,0,0,.22);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.lab-home-link:focus-visible{outline:3px solid #ffd76a;outline-offset:2px}
+@media(max-width:380px){.lab-home-link{padding:7px 10px;font-size:12px}}
+</style>
 </head>
 <body>
+<a class="lab-home-link" href="https://lab.alpaca-school.okinawa/" aria-label="アルパカすく〜るラボ作品一覧に戻る">← 🔬 ラボ一覧</a>
 <div id="app">
  <section class="hud">
   <div class="hudTop"><div class="gameBrand"><span>アルパカすく〜る</span><b>べにいもラボ！</b></div><div id="timer" class="timePill" role="timer" aria-label="残り時間">⏱ あと 60 秒</div></div>
