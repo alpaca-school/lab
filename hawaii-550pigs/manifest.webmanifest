@@ -1,0 +1,22 @@
+{
+  "name": "ハワイから550頭の豚 — ひみつの贈り物",
+  "short_name": "ハワイ550豚",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait",
+  "background_color": "#7fc8e8",
+  "theme_color": "#7fc8e8",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
