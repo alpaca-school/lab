@@ -3845,6 +3845,17 @@ No matching component was found for:
   word-break:normal;
   overflow-wrap:normal;
 }
+
+/* Long-form text must flow naturally. Do not freeze each phrase into a block. */
+.story .jp-chunk,
+.hint .jp-chunk,
+.panel p .jp-chunk,
+.panel li .jp-chunk,
+.note .jp-chunk{
+  display:inline;
+  white-space:normal;
+  max-width:none;
+}
 .story,
 .hint,
 .panel p,
@@ -3855,6 +3866,8 @@ No matching component was found for:
   word-break:normal;
   overflow-wrap:normal;
 }
+
+/* Short UI keeps phrase-aware chunks and balances lines. */
 .btn,
 .chip,
 .title-chip,
