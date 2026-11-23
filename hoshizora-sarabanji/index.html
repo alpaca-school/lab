@@ -3832,6 +3832,9 @@ void main(){
 /* LAB_RUNTIME_ERROR: Ignore opaque cross-origin/extension errors such as Safari/Brave "Script error.". */
 window.__showErr = function (m) {
   try {
+    /* Public mode: never expose the developer error overlay.
+       Add ?dbg=1 to the URL when debugging this game. */
+    if (!new URLSearchParams(location.search).has('dbg')) return;
     if (!m || /^script error\.?$/i.test(String(m).trim())) return;
     var d = document.getElementById('errnote');
     if (!d) {
