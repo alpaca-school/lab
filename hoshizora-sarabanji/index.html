@@ -3844,6 +3844,45 @@ window.__showErr = function (m) {
 window.addEventListener('error', function (e) { window.__showErr(e.message || 'script error'); });
 window.addEventListener('unhandledrejection', function (e) { window.__showErr(String(e.reason && e.reason.message ? e.reason.message : e.reason)); });
 </script>
+<script>
+/* LAB_BGM: external-file-free ambient star BGM. Starts only after a user gesture for iOS/Safari. */
+(function(){
+  let ctx=null, master=null, timer=null, started=false, step=0;
+  const AudioCtx=window.AudioContext||window.webkitAudioContext;
+  if(!AudioCtx) return;
+  const chords=[
+    [261.63,329.63,392.00],[220.00,261.63,329.63],
+    [174.61,220.00,261.63],[196.00,246.94,293.66]
+  ];
+  function tone(freq,when,dur,vol){
+    const o=ctx.createOscillator(), g=ctx.createGain();
+    o.type="sine"; o.frequency.setValueAtTime(freq,when);
+    g.gain.setValueAtTime(0.0001,when);
+    g.gain.exponentialRampToValueAtTime(vol,when+1.2);
+    g.gain.exponentialRampToValueAtTime(0.0001,when+dur);
+    o.connect(g); g.connect(master); o.start(when); o.stop(when+dur+.05);
+  }
+  function phrase(){
+    if(!ctx||ctx.state!=="running") return;
+    const now=ctx.currentTime+.05, chord=chords[step++%chords.length];
+    chord.forEach((f,i)=>tone(f/2,now+i*.08,7.5,.018));
+    tone(chord[0]*2,now+2.1,2.8,.008);
+    tone(chord[1]*2,now+4.4,2.4,.006);
+  }
+  function start(){
+    if(!ctx){ctx=new AudioCtx();master=ctx.createGain();master.gain.value=.42;master.connect(ctx.destination);}
+    ctx.resume().then(()=>{
+      if(started) return;
+      started=true; phrase(); timer=setInterval(phrase,7200);
+    }).catch(()=>{});
+  }
+  function suspend(){ if(ctx&&ctx.state==="running") ctx.suspend().catch(()=>{}); }
+  function resume(){ if(started&&ctx&&ctx.state==="suspended") ctx.resume().catch(()=>{}); }
+  window.addEventListener("pointerdown",start,{once:true,capture:true});
+  window.addEventListener("keydown",start,{once:true,capture:true});
+  document.addEventListener("visibilitychange",()=>document.hidden?suspend():resume());
+})();
+</script>
 <!-- LAB: Sarabanji character（調整値は LAB_SARABANJI を検索） -->
 <!-- LAB: Reduced motion（prefers-reduced-motion の CSS と REDUCED/RM を検索） -->
 <!-- LAB: Final navigation -->
