@@ -3863,7 +3863,7 @@ No matching component was found for:
 .panel p,
 .panel li,
 .note{
-  text-wrap:pretty;
+  text-wrap:wrap;
   line-break:strict;
   word-break:keep-all;
   overflow-wrap:normal;
@@ -4502,7 +4502,7 @@ body{position:fixed;inset:0;}
 .note{
   word-break:normal;
   line-break:strict;
-  text-wrap:pretty;
+  text-wrap:wrap;
 }
 budoux-ja.budoux-long{
   display:inline;
@@ -4563,6 +4563,19 @@ budoux-ja.budoux-long{
     rgba(255,205,137,.94) 28%,
     rgba(255,205,137,.98)
   );
+}
+
+
+/* 2026-11-23 BudouX dense-result line fill */
+.result-page-2 .panel li,
+.result-page-2 .note,
+.result-page-3 .panel p{
+  text-wrap:wrap!important;
+  letter-spacing:-.025em;
+}
+.result-page-2 .panel,
+.result-page-3 .panel{
+  --content-gutter:18px;
 }
 
 </style>
