@@ -3845,12 +3845,19 @@ window.__showErr = function (m) {
 };
 window.addEventListener('error', function (e) {
   var m=e && e.message ? String(e.message) : '';
+  var src=e && e.filename ? String(e.filename) : '';
   if (!m || /^script error\.?$/i.test(m.trim())) return;
+  /* Browser extensions / injected wallets are outside this game. */
+  if (/ethereum|selectedAddress|metamask|coinbase|brave/i.test(m)) return;
+  /* Only surface errors whose source is this page (inline script or same document URL). */
+  if (src && src !== location.href && src.indexOf(location.origin) !== 0) return;
   window.__showErr(m);
 });
 window.addEventListener('unhandledrejection', function (e) {
   var m=String(e && e.reason && e.reason.message ? e.reason.message : (e && e.reason ? e.reason : ''));
-  if (m) window.__showErr(m);
+  if (!m || /ethereum|selectedAddress|metamask|coinbase|brave/i.test(m)) return;
+  /* Rejections from injected browser features are not actionable game errors. */
+  window.__showErr(m);
 });
 </script>
 <script>
