@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="アルパカすく〜るラボ Starter Kit">
+  <rect width="512" height="512" rx="112" fill="#176b87"/>
+  <circle cx="256" cy="246" r="132" fill="#eaf7f2"/>
+  <path d="M182 151c-28-48-35-79-18-91 17-13 47 13 73 63m93 28c28-48 35-79 18-91-17-13-47 13-73 63" fill="#f2c94c" stroke="#17313a" stroke-width="18" stroke-linecap="round"/>
+  <path d="M171 245c0-77 38-127 85-127s85 50 85 127c0 68-34 121-85 121s-85-53-85-121Z" fill="#fff" stroke="#17313a" stroke-width="18"/>
+  <circle cx="221" cy="239" r="12" fill="#17313a"/>
+  <circle cx="291" cy="239" r="12" fill="#17313a"/>
+  <path d="M237 286c13 12 25 12 38 0" fill="none" stroke="#17313a" stroke-width="14" stroke-linecap="round"/>
+  <path d="M256 268v12" stroke="#17313a" stroke-width="12" stroke-linecap="round"/>
+  <path d="M114 412h284" stroke="#f2c94c" stroke-width="22" stroke-linecap="round"/>
+</svg>
