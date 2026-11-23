@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#176b87">
+  <title>アルパカすく〜るラボ Starter Kit</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./lab-core.css">
+  <!-- Long Japanese text only. Remove this line if BudouX is not needed. -->
+  <script defer src="https://unpkg.com/budoux@0.8.4/bundle/budoux-ja.min.js"></script>
+  <script defer src="./lab-core.js"></script>
+</head>
+<body>
+<main id="app" class="app-shell" aria-live="polite">
+
+  <section id="screen-title" class="screen title-screen active" data-screen>
+    <div class="safe-top"></div>
+    <div class="title-content">
+      <p class="eyebrow">アルパカすく〜るラボ</p>
+      <h1>Starter Kit</h1>
+      <p class="lead">ここを新しい教材ゲームのタイトルと説明に置き換えます。</p>
+      <div class="demo-object" aria-hidden="true">🦙</div>
+      <button class="btn btn-primary btn-wide" id="start-btn" type="button">はじめる</button>
+      <p class="microcopy">見える・読める・押せる・最後まで進める・戻れる</p>
+    </div>
+  </section>
+
+  <section id="screen-play" class="screen play-screen" data-screen>
+    <div class="safe-top"></div>
+    <header class="hud">
+      <div>
+        <span class="eyebrow eyebrow-light">ステージ 1 / 1</span>
+        <h2>体験画面</h2>
+      </div>
+      <button class="icon-btn" id="sound-btn" type="button" aria-pressed="false" aria-label="音をオフにする" title="音 ON / OFF">
+        <span aria-hidden="true">🔊</span>
+      </button>
+    </header>
+
+    <div class="game-area">
+      <article class="task-card">
+        <p class="task-kicker">やってみよう</p>
+        <h3>中央のボタンを押して、変化を確かめよう。</h3>
+        <p>新作では、ここを「操作 → 動き → 学習上の変化」に置き換えます。</p>
+      </article>
+
+      <div class="interactive-stage" aria-label="教材の操作エリア">
+        <div class="demo-machine" id="demo-machine" aria-hidden="true">⚙️</div>
+        <p id="feedback" class="feedback" role="status">まだ操作していません。</p>
+      </div>
+    </div>
+
+    <div class="controls safe-bottom-controls">
+      <button class="btn btn-primary" id="action-btn" type="button">操作してみる</button>
+      <button class="btn btn-secondary" id="complete-btn" type="button" disabled>結果を見る</button>
+    </div>
+  </section>
+
+  <section id="screen-story" class="screen reading-screen" data-screen>
+    <div class="safe-top"></div>
+    <div class="reading-scroll" data-reading-scroll>
+      <article class="reading-card">
+        <p class="eyebrow">本当のお話 1 / 1</p>
+        <h2 tabindex="-1">長文結果ページの見本</h2>
+        <p id="story-text" class="story-text"></p>
+        <aside class="note-card">
+          <strong>組版の基本</strong>
+          <p>長文はBudouX＋ルビを使い、文字を小さくする前に余白・行間・構造を見直します。</p>
+        </aside>
+      </article>
+    </div>
+
+    <nav class="nav nav-sticky safe-bottom" aria-label="結果ページの操作">
+      <button class="btn btn-secondary" type="button" data-go="screen-play">◀ 戻る</button>
+      <button class="btn btn-primary" type="button" data-go="screen-final">もっと知る ▶</button>
+    </nav>
+  </section>
+
+  <section id="screen-final" class="screen reading-screen" data-screen>
+    <div class="safe-top"></div>
+    <div class="reading-scroll" data-reading-scroll>
+      <article class="reading-card">
+        <p class="eyebrow">もっと知ろう</p>
+        <h2 tabindex="-1">最後のページ</h2>
+        <p id="final-text" class="story-text"></p>
+
+        <section class="source-card" aria-labelledby="source-title">
+          <h3 id="source-title">📚 出典・参考文献</h3>
+          <p>新しい教材で実際に確認した一次資料・公的資料だけを記載します。</p>
+        </section>
+
+        <nav class="nav nav-final" aria-label="最終ページの操作">
+          <button class="btn btn-secondary" type="button" data-go="screen-story">◀ 戻る</button>
+          <button class="btn btn-secondary icon-home" type="button" data-go="screen-title" aria-label="タイトルへ戻る" title="ホーム">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 3 10.5v10.3h6v-6h6v6h6V10.5L12 3.2Zm7 15.6h-2v-6h-10v6H5v-7.3l7-5.7 7 5.7v7.3Z"/></svg>
+          </button>
+          <button class="btn btn-primary" type="button" data-go="screen-play">もう一度</button>
+          <a class="btn btn-secondary btn-link" href="../">ラボ一覧</a>
+        </nav>
+      </article>
+    </div>
+  </section>
+
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const core = window.LabCore;
+  if (!core) return;
+
+  core.init();
+
+  const story = "沖縄《おきなわ》の 子《こ》どもたちが、意味《いみ》の まとまりを 読《よ》みやすい 長文《ちょうぶん》ページの 見本《みほん》です。改行《かいぎょう》は CSS だけに 任《まか》せず、必要《ひつよう》な 場合《ばあい》は BudouX を 使《つか》います。";
+  const finalText = "遊《あそ》んだ あとに、もっと 知《し》りたいことへ 進《すす》める 導線《どうせん》を 作《つく》ります。最後《さいご》の 3〜4個《こ》の ボタンは、本文《ほんぶん》に 近《ちか》づきすぎないよう 通常《つうじょう》フローで 配置《はいち》します。";
+
+  core.renderRubyText(document.getElementById("story-text"), story, { budoux: true });
+  core.renderRubyText(document.getElementById("final-text"), finalText, { budoux: true });
+
+  document.getElementById("start-btn").addEventListener("click", () => {
+    core.beep("start");
+    core.showScreen("screen-play");
+  });
+
+  document.getElementById("sound-btn").addEventListener("click", (event) => {
+    core.toggleMute(event.currentTarget);
+  });
+
+  document.getElementById("action-btn").addEventListener("click", () => {
+    const machine = document.getElementById("demo-machine");
+    const feedback = document.getElementById("feedback");
+    machine.classList.remove("is-active");
+    void machine.offsetWidth;
+    machine.classList.add("is-active");
+    feedback.textContent = "操作 → 動き → フィードバックがつながりました。";
+    feedback.classList.add("good");
+    document.getElementById("complete-btn").disabled = false;
+    core.beep("success");
+  });
+
+  document.getElementById("complete-btn").addEventListener("click", () => {
+    core.showScreen("screen-story");
+  });
+
+  document.querySelectorAll("[data-go]").forEach((element) => {
+    element.addEventListener("click", () => core.showScreen(element.dataset.go));
+  });
+
+  core.registerServiceWorker("./sw.js");
+});
+</script>
+</body>
+</html>
