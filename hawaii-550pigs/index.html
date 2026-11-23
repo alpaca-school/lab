@@ -4451,6 +4451,33 @@ body{position:fixed;inset:0;}
   }
 }
 
+
+/* 2026-11-23 shared content gutter */
+:root{
+  --content-gutter:clamp(20px,5.5vw,24px);
+}
+.card{
+  padding-left:var(--content-gutter);
+  padding-right:var(--content-gutter);
+}
+.result-paged .panel{
+  padding-left:var(--content-gutter);
+  padding-right:var(--content-gutter);
+}
+.result-page-0 .panel.center{
+  padding-left:var(--content-gutter);
+  padding-right:var(--content-gutter);
+}
+.result-page-3 .panel{
+  padding-left:var(--content-gutter);
+  padding-right:var(--content-gutter);
+}
+@media (max-width:380px){
+  :root{
+    --content-gutter:18px;
+  }
+}
+
 </style>
 <script id="alpaca-standard-extras">
 (()=>{
