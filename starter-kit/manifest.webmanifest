@@ -1,0 +1,18 @@
+{
+  "name": "アルパカすく〜るラボ Starter Kit",
+  "short_name": "Lab Starter",
+  "description": "アルパカすく〜るラボ教材ゲームの共通スターター",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eaf7f2",
+  "theme_color": "#176b87",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
