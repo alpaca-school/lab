@@ -4526,6 +4526,45 @@ budoux-ja.budoux-long{
   white-space:normal;
 }
 
+
+/* 2026-11-23 visual viewport result guard */
+:root{
+  --alpaca-visual-height:100dvh;
+}
+.result-paged{
+  height:var(--alpaca-visual-height)!important;
+  max-height:var(--alpaca-visual-height)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+  scroll-padding-bottom:calc(env(safe-area-inset-bottom) + 74px);
+  padding-bottom:calc(env(safe-area-inset-bottom) + 12px)!important;
+}
+.result-page-0 > .btn,
+.result-page-1 .btns,
+.result-page-2 .btns,
+.result-page-3 .btns{
+  position:sticky;
+  bottom:calc(env(safe-area-inset-bottom) + 8px);
+  z-index:12;
+}
+.result-page-0 > .btn{
+  display:block;
+  margin-top:8px;
+}
+.result-page-1 .btns,
+.result-page-2 .btns,
+.result-page-3 .btns{
+  padding:7px 0 5px;
+  background:linear-gradient(
+    to bottom,
+    rgba(255,205,137,0),
+    rgba(255,205,137,.94) 28%,
+    rgba(255,205,137,.98)
+  );
+}
+
 </style>
 <script id="alpaca-standard-extras">
 (()=>{
@@ -4535,8 +4574,27 @@ budoux-ja.budoux-long{
     const show=!!document.querySelector(".title-wrap");
     back.classList.toggle("is-hidden",!show);
   };
+
+  const syncVisualHeight=()=>{
+    const vv=window.visualViewport;
+    const scale=vv&&Number.isFinite(vv.scale)?vv.scale:1;
+    if(vv&&Math.abs(scale-1)<.08){
+      document.documentElement.style.setProperty("--alpaca-visual-height",Math.round(vv.height)+"px");
+    }else if(!vv){
+      document.documentElement.style.setProperty("--alpaca-visual-height",window.innerHeight+"px");
+    }
+  };
+
   new MutationObserver(syncGlobalLabBack).observe(document.getElementById("root"),{childList:true,subtree:true});
   syncGlobalLabBack();
+  syncVisualHeight();
+
+  if(window.visualViewport){
+    window.visualViewport.addEventListener("resize",syncVisualHeight,{passive:true});
+    window.visualViewport.addEventListener("scroll",syncVisualHeight,{passive:true});
+  }
+  window.addEventListener("orientationchange",()=>setTimeout(syncVisualHeight,120),{passive:true});
+  window.addEventListener("resize",syncVisualHeight,{passive:true});
 })();
 </script>
 <script>
