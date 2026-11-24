@@ -677,9 +677,13 @@ function playCassetteSounds(){
     tone(122,.045,.028,"square",.025);
   },2640));
   soundTimers.push(setTimeout(()=>{
-    tone(68,.105,.058,"triangle");noise(.100,.046);
-    tone(108,.050,.032,"square",.025);
-    screenMain.textContent="▶ PLAY";screenSub.textContent="テープを読み込んでいます";
+    // PLAY: button clack -> head/pinch-roller mechanism engages -> reels begin turning.
+    tone(76,.070,.060,"triangle");noise(.065,.050);
+    tone(118,.040,.034,"square",.018);
+    setTimeout(()=>{tone(70,.055,.052,"triangle");noise(.050,.043);},75);
+    setTimeout(()=>{tone(82,.050,.048,"triangle");noise(.045,.040);},145);
+    setTimeout(()=>{tone(96,.045,.044,"square");noise(.040,.034);},210);
+    screenMain.textContent="▶ PLAY";screenSub.textContent="ヘッドをセットしています";
   },3040));
   soundTimers.push(setTimeout(()=>{
     screenMain.textContent="NOW LOADING...";
