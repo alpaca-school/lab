@@ -27,7 +27,7 @@ jobs:
           done
           exit 1
       - name: Run pilot regression tests
-        run: npx playwright test qa/hoshiatsume-pilot.spec.mjs --workers=1 --reporter=html --trace=retain-on-failure --screenshot=only-on-failure
+        run: npx playwright test qa/hoshiatsume-pilot.spec.mjs --workers=1 --reporter=html --trace=retain-on-failure
         env:
           CI: 'true'
           PLAYWRIGHT_HTML_OPEN: never
