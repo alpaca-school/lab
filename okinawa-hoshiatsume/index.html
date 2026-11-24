@@ -4172,5 +4172,23 @@ alpaca-school/lab/index.html はラボトップなので上書きしない。
 </style>
 
 <style id="refactor-pilot-layout">.storycard.storypages{height:min(calc(var(--app-height,100dvh) - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)),700px)!important;position:relative;inset:auto;transform:none;max-height:100%!important}.storyskip{display:block;width:100%;min-height:44px}.storyprev:disabled{opacity:.4}.toppill,.toppill.explorepill{bottom:var(--guide-bottom,18px);}.journeyexit.materialhome{transition:none!important}.photo3-stage{overflow:auto}.photo3-camera{max-width:100%}.photo3-polaroid{width:min(76vw,300px,calc(var(--app-height,100dvh) - 240px))}.photo3-message{color:white;margin:0}.photo3-album-card{box-sizing:border-box}.activitymenu{max-height:calc(var(--app-height,100dvh) - 140px);overflow:auto}</style>
+<style id="refactor-touch-targets">
+/* Pilot only: preserve physical CSS-pixel hit areas under the legacy UI zoom. */
+.app{--touch-min:calc(45px / var(--ui,1))}
+.app :is(.title,.bottombar,.sheet,.skyhead,.skyfoot,.ending,.bookwrap,.modal) button,
+.app .title .lablink{min-width:var(--touch-min)!important;min-height:var(--touch-min)!important}
+.app .hud{zoom:1;gap:6px}
+.app .hudbtns{gap:6px;flex-shrink:0}
+.app .hudbtns button{width:46px;height:46px;min-width:45px;min-height:45px;flex-shrink:0}
+.app .hud .progress{margin-left:0!important;padding:5px 8px;font-size:18px}
+.app .hud .progress b{font-size:22px}
+.app .journeyexit.materialhome{min-width:44px!important;min-height:44px!important}
+@media(max-height:760px){
+ .title .activitymenu{gap:6px;margin-top:8px}
+ .title .activitymenu .modebtn{padding:5px 8px}
+ .title .activitymenu .back{padding:4px 8px}
+ .sheet .qtext{gap:6px}
+}
+</style>
 </body>
 </html>
