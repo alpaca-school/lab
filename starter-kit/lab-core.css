@@ -280,3 +280,10 @@ rt{font-size:.55em;font-weight:700;color:#60777f}
 .lab-story-foot{padding:10px 16px calc(12px + var(--safe-bottom));border-top:1px solid var(--line);background:#fff}
 .lab-story-nav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0}
 .lab-story-nav .btn{min-height:48px}
+
+/* Collision-aware floating controls. JS selects data-placement after measuring blockers. */
+.lab-floating-control{position:absolute;z-index:20;transition:left .18s ease,right .18s ease,top .18s ease,bottom .18s ease}
+.lab-floating-control[data-placement="bottom-left"]{left:14px;right:auto;top:auto;bottom:calc(14px + var(--safe-bottom))}
+.lab-floating-control[data-placement="top-left"]{left:14px;right:auto;top:calc(72px + var(--safe-top));bottom:auto}
+.lab-floating-control[data-placement="bottom-right"]{right:14px;left:auto;top:auto;bottom:calc(14px + var(--safe-bottom))}
+.lab-floating-control[data-placement="top-right"]{right:14px;left:auto;top:calc(72px + var(--safe-top));bottom:auto}
