@@ -4157,5 +4157,43 @@ alpaca-school/lab/index.html はラボトップなので上書きしない。
  addEventListener("resize",place);addEventListener("orientationchange",place);requestAnimationFrame(place);
 })();
 </script>
+
+<style id="lab-home-bottom-left-20261124">
+/* Home is a low-frequency navigation action: keep it bottom-left, away from status controls. */
+.journeyexit.materialhome{
+ top:auto!important;right:auto!important;
+ left:calc(env(safe-area-inset-left) + 14px)!important;
+ bottom:calc(env(safe-area-inset-bottom) + 18px)!important;
+ width:48px!important;height:48px!important;min-height:48px!important;max-width:none!important;
+ padding:0!important;border-radius:50%!important;z-index:12;
+}
+.hud .progress{margin-left:0!important}
+.toppill,.toppill.explorepill{
+ left:calc(50% + 26px)!important;
+ max-width:calc(100% - 104px)!important;
+ bottom:calc(env(safe-area-inset-bottom) + 20px)!important;
+}
+@media(max-width:390px){
+ .journeyexit.materialhome{left:calc(env(safe-area-inset-left) + 10px)!important;bottom:calc(env(safe-area-inset-bottom) + 14px)!important;width:44px!important;height:44px!important;min-height:44px!important}
+ .toppill,.toppill.explorepill{left:calc(50% + 24px)!important;max-width:calc(100% - 92px)!important;bottom:calc(env(safe-area-inset-bottom) + 14px)!important}
+}
+</style>
+<script id="lab-home-guide-collision-20261124">
+(function(){
+ function ov(a,b,p){if(!a||!b)return false;var A=a.getBoundingClientRect(),B=b.getBoundingClientRect(),q=p||0;return !(A.right+q<=B.left||B.right+q<=A.left||A.bottom+q<=B.top||B.bottom+q<=A.top)}
+ function fix(){
+   var h=document.querySelector(".journeyexit.materialhome"),g=document.querySelector(".toppill"),bar=document.querySelector(".bottombar"),sheet=document.querySelector(".sheet");
+   if(!g)return;
+   g.style.top="auto";
+   var lift=14;
+   [bar,sheet].filter(Boolean).forEach(function(x){var r=x.getBoundingClientRect();lift=Math.max(lift,innerHeight-r.top+12)});
+   g.style.bottom="calc(env(safe-area-inset-bottom) + "+lift+"px)";
+   if(h&&ov(h,g,8)){g.style.left="calc(50% + 34px)";g.style.maxWidth="calc(100% - 118px)"}
+ }
+ function s(){requestAnimationFrame(function(){requestAnimationFrame(fix)})}
+ new MutationObserver(s).observe(document.getElementById("root")||document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["class"]});
+ addEventListener("resize",s);addEventListener("orientationchange",s);s();
+})();
+</script>
 </body>
 </html>
