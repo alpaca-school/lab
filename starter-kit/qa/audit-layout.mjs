@@ -2,8 +2,9 @@ import { expect } from '@playwright/test';
 
 // Reusable copy of the audit passed by Hoshiatsume pilot QA #7.
 // Run against explicit selectors for the current active screen.
-export async function auditLayout(page, testInfo, name, selectors) {
-  const problems=await page.evaluate(async selectors=>{
+export async function inspectLayout(page, selectors) {
+  if (!Array.isArray(selectors) || !selectors.length) throw new Error('Explicit required selectors needed');
+  return page.evaluate(async selectors=>{
     await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
     const vv=window.visualViewport;
     const bounds={left:vv?.offsetLeft||0,top:vv?.offsetTop||0,width:vv?.width||innerWidth,height:vv?.height||innerHeight};
@@ -12,7 +13,7 @@ export async function auditLayout(page, testInfo, name, selectors) {
       return r.width>0&&r.height>0&&st.visibility!=='hidden'&&st.display!=='none'&&!el.closest('[inert]')&&!el.disabled;
     });
     const label=el=>el.getAttribute('aria-label')||el.textContent.trim().slice(0,70)||el.className;
-    const issues=[];
+    const issues=selectors.filter(s=>!targets.some(el=>el.matches(s))).map(s=>'missing visible enabled target: '+s);
     const entries=targets.map(el=>({el,r:el.getBoundingClientRect()}));
     for(const {el,r} of entries){
       const tag=label(el);
@@ -28,6 +29,9 @@ export async function auditLayout(page, testInfo, name, selectors) {
     }
     return issues;
   },selectors);
+}
+export async function auditLayout(page, testInfo, name, selectors) {
+  const problems=await inspectLayout(page,selectors);
   await page.screenshot({path:testInfo.outputPath(name+'.png'),animations:'disabled'});
   expect.soft(problems,name).toEqual([]);
 }
