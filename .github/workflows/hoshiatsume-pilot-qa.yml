@@ -8,7 +8,7 @@ permissions:
 jobs:
   browser-qa:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -26,7 +26,7 @@ jobs:
             sleep 1
           done
           exit 1
-      - name: Run pilot regression tests
+      - name: Run pilot and full-stage regression tests
         run: npx playwright test qa/hoshiatsume-pilot.spec.mjs --workers=1 --reporter=html --trace=retain-on-failure
         env:
           CI: 'true'
@@ -35,7 +35,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: hoshiatsume-pilot-qa
+          name: hoshiatsume-all-stage-qa
           path: |
             playwright-report/
             test-results/
