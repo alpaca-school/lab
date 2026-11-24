@@ -657,11 +657,11 @@ function motorRamp(duration=1.25){
   const ctx=getAudioCtx();if(!ctx)return;
   const now=ctx.currentTime;
   const osc=ctx.createOscillator(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();
-  osc.type="sawtooth";osc.frequency.setValueAtTime(58,now);osc.frequency.exponentialRampToValueAtTime(118,now+.42);osc.frequency.exponentialRampToValueAtTime(126,now+duration);
-  filter.type="lowpass";filter.frequency.setValueAtTime(420,now);filter.frequency.linearRampToValueAtTime(760,now+.5);
-  gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.022,now+.12);gain.gain.exponentialRampToValueAtTime(.013,now+duration);
+  // Keep the belt-drive motor almost subliminal; the tape hiss should be heard first.
+  osc.type="sine";osc.frequency.setValueAtTime(52,now);osc.frequency.linearRampToValueAtTime(57,now+.28);osc.frequency.linearRampToValueAtTime(59,now+duration);
+  filter.type="lowpass";filter.frequency.setValueAtTime(150,now);
+  gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.0032,now+.18);gain.gain.exponentialRampToValueAtTime(.0022,now+duration);
   osc.connect(filter).connect(gain).connect(ctx.destination);osc.start(now);osc.stop(now+duration+.04);
-  tone(252,duration*.9,.004,"sine",.06);
 }
 function playCassetteSounds(){
   clearSoundTimers();
@@ -686,12 +686,11 @@ function playCassetteSounds(){
     tone(104,.055,.040,"square",.025);
     screenMain.textContent="▶ PLAY";screenSub.textContent="テープを読み込んでいます";
   },3040));
-  // Small belt-drive motor comes up after the mechanism engages.
+  // After a tiny pause, tape hiss appears first; motor vibration stays barely audible underneath.
   soundTimers.push(setTimeout(()=>{
+    noise(1.12,.009);
     motorRamp(1.20);
-    tone(78,.85,.006,"sine");
-    noise(1.12,.005);
-  },3160));
+  },3200));
   soundTimers.push(setTimeout(()=>{
     screenMain.textContent="NOW LOADING...";
     screenSub.textContent="ALPACA WORLD DIGITAL LAB";
