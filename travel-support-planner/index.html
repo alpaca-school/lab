@@ -8,10 +8,10 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./lab-core.css">
-  <link rel="stylesheet" href="./game.css">
+  <link rel="stylesheet" href="./game.css">\n  <link rel="stylesheet" href="./local-search.css">
   <script defer src="https://unpkg.com/budoux@0.8.4/bundle/budoux-ja.min.js"></script>
   <script defer src="./lab-core.js"></script>
-  <script defer src="./game.js"></script>
+  <script defer src="./game.js"></script>\n  <script defer src="./local-search.js"></script>
 </head>
 <body>
 <main id="app" class="app-shell" aria-live="polite">
@@ -24,7 +24,7 @@
       <div class="travel-hero" aria-hidden="true"><span>🦙</span><span>🧳</span><span>♿</span><span>✈️</span></div>
       <div class="title-actions">
         <button class="btn btn-primary btn-wide" id="start-btn" type="button">ミッション開始</button>
-        <button class="btn btn-secondary btn-wide" id="story-btn" type="button">ゲームのねらい</button>
+        <button class="btn btn-secondary btn-wide" id="story-btn" type="button">ゲームのねらい</button>\n        <button class="btn btn-secondary btn-wide" id="search-btn" type="button">📍 現地サポートを探す</button>
       </div>
       <p class="microcopy">個人情報の入力・保存・外部送信はしません。</p>
     </div>
@@ -75,6 +75,41 @@
     </nav>
   </section>
 
+
+  <section id="screen-local-search" class="screen reading-screen" data-screen>
+    <div class="safe-top"></div>
+    <div class="reading-scroll" data-reading-scroll>
+      <article class="reading-card local-search-card">
+        <p class="eyebrow">現地サポート検索</p>
+        <h2 tabindex="-1">行き先の近くで、旅を支える場所を探す</h2>
+        <p class="local-search-lead">市区町村・駅・空港・観光地などを入力すると、必要な支援先の候補をGoogleマップで検索できます。</p>
+
+        <div class="local-search-field">
+          <label for="local-search-destination">行き先</label>
+          <input id="local-search-destination" type="search" inputmode="search" autocomplete="off" maxlength="80" placeholder="例：那覇市 / 新千歳空港 / 東京ビッグサイト">
+        </div>
+
+        <div class="local-search-grid" aria-label="探したい支援先">
+          <button class="local-search-option" type="button" data-local-search="prosthetics"><span aria-hidden="true">🦿</span>義肢装具・車椅子修理</button>
+          <button class="local-search-option" type="button" data-local-search="hospital"><span aria-hidden="true">🏥</span>病院・救急</button>
+          <button class="local-search-option" type="button" data-local-search="taxi"><span aria-hidden="true">🚕</span>福祉・介護タクシー</button>
+          <button class="local-search-option" type="button" data-local-search="toilet"><span aria-hidden="true">♿</span>車いす対応トイレ</button>
+        </div>
+
+        <p id="local-search-status" class="local-search-status" role="status">行き先を入れて、必要な支援先を探そう。</p>
+
+        <aside class="note-card local-search-note">
+          <strong>候補を見つけた後に確認すること</strong>
+          <p>営業時間、対応できる車椅子や義肢装具、修理可否、救急受入、車いすのまま乗車できるか、予約方法、料金などは施設・事業者へ直接確認してください。検索結果だけで「利用できる」と確定しません。</p>
+        </aside>
+      </article>
+    </div>
+    <nav class="nav nav-sticky safe-bottom" aria-label="現地サポート検索の操作">
+      <button class="btn btn-secondary" type="button" data-go="screen-title">◀ タイトルへ</button>
+      <a class="btn btn-secondary btn-link" href="../">🔬 ラボ一覧</a>
+    </nav>
+  </section>
+
   <section id="screen-final" class="screen reading-screen" data-screen>
     <div class="safe-top"></div>
     <div class="reading-scroll" data-reading-scroll>
@@ -91,7 +126,7 @@
         <aside class="note-card case-note"><strong>聞き取り事例の扱い</strong><p>「公的制度で1日6時間」「完全自費で2日間8万円」などは今回の聞き取りに出た事例で、制度全体の固定条件ではありません。実際の旅行では地域・制度・事業者・本人条件を確認します。</p></aside>
         <section class="source-card" aria-labelledby="source-title"><h3 id="source-title">📚 この試作版の出典</h3><p>このゲームは、今回ユーザーから提供された旅行支援サービス要件 Ver.0.1 と聞き取り整理を教材化した試作です。外部資料は使用していません。</p></section>
         <nav class="nav nav-final" aria-label="最終ページの操作">
-          <button class="btn btn-secondary" id="retry-btn" type="button">もう一度</button>
+          <button class="btn btn-secondary" id="retry-btn" type="button">もう一度</button>\n          <button class="btn btn-secondary" id="final-search-btn" type="button">📍 現地候補を探す</button>
           <button class="btn btn-secondary icon-home" type="button" data-go="screen-title" aria-label="タイトルへ戻る" title="ホーム"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 3 10.5v10.3h6v-6h6v6h6V10.5L12 3.2Zm7 15.6h-2v-6h-10v6H5v-7.3l7-5.7 7 5.7v7.3Z"/></svg></button>
           <a class="btn btn-secondary btn-link" href="../">ラボ一覧</a>
         </nav>
