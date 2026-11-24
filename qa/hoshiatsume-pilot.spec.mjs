@@ -105,7 +105,7 @@ for(const viewport of [{width:390,height:560},{width:390,height:650},{width:390,
    await page.locator('.sheet.card .big').click();
    await quiz(page);await stars(page);await screen(page,'reward');
    await expect(page.locator('.photo3-stage')).toBeVisible();
-   await auditLayout(page,testInfo,'photo',['.photo3-save']);
+   await auditLayout(page,testInfo,'photo',['.photo3-save','.photo3-skip']);
    expect((await saved(page)).photos).toHaveLength(0);
    await page.locator('.photo3-save').click();
    expect((await saved(page)).photos).toHaveLength(1);
@@ -127,3 +127,146 @@ for(const viewport of [{width:390,height:560},{width:390,height:650},{width:390,
   });
  });
 }
+
+
+// Independent expected catalog: do not derive expectations from the implementation.
+const catalog=[
+ ['残波岬','読谷村','おひつじ座','aries',4,3],
+ ['万座毛','恩納村','おうし座','taurus',6,4],
+ ['海中道路','うるま市','ふたご座','gemini',8,7],
+ ['古宇利島','今帰仁村','かに座','cancer',5,4],
+ ['辺戸岬','国頭村','しし座','leo',9,9],
+ ['沖縄こどもの国','沖縄市','おとめ座','virgo',7,6],
+ ['知念岬','南城市','てんびん座','libra',5,5],
+ ['喜屋武岬','糸満市','さそり座','scorpius',10,9],
+ ['座間味島','座間味村','いて座','sagittarius',8,10],
+ ['東平安名崎','宮古島市','やぎ座','capricornus',9,9],
+ ['石垣島天文台','石垣市','みずがめ座','aquarius',7,6],
+ ['波照間島','竹富町','うお座','pisces',9,9]
+];
+async function pick(page,id){
+ await screen(page,'map');
+ await page.evaluate(id=>window.__dbg.pickPlace(id),id);
+ await expect.poll(()=>page.evaluate(()=>window.__dbg.cur)).toBe(id);
+}
+async function correct(page,expected){
+ const buttons=page.locator('.opts button');
+ // ruby readings are excluded when matching base Japanese labels.
+ const labels=await buttons.evaluateAll(els=>els.map(el=>{
+   const clone=el.cloneNode(true);clone.querySelectorAll('rt,rp').forEach(x=>x.remove());return clone.textContent.replace(/\s/g,'');
+ }));
+ expect(labels.filter(x=>x===expected)).toHaveLength(1);
+ await buttons.nth(labels.indexOf(expected)).click();
+}
+async function completeStars(page,count){
+ await screen(page,'sky');
+ await page.evaluate(()=>window.__dbg.onStar(1));
+ await expect.poll(()=>page.evaluate(()=>window.__dbg.lit.length)).toBe(0);
+ for(let i=0;i<count;i++){
+   await page.evaluate(i=>window.__dbg.onStar(i),i);
+   await expect.poll(()=>page.evaluate(()=>window.__dbg.lit.length)).toBe(i+1);
+ }
+}
+async function assertBaseLabel(locator,expected){
+ await expect.poll(()=>locator.evaluate(el=>{const clone=el.cloneNode(true);clone.querySelectorAll('rt,rp').forEach(x=>x.remove());return clone.textContent.replace(/\s/g,'')})).toContain(expected);
+}
+for(const viewport of [{width:390,height:560},{width:390,height:650},{width:390,height:760},{width:1280,height:800}]){
+ test.describe('all stages '+viewport.width+'x'+viewport.height,()=>{
+  test.use({viewport});
+  test('twelve places, rewards, album, unlock and persistence',async({page},testInfo)=>{
+   test.setTimeout(480000);
+   const errors=[];page.on('pageerror',e=>errors.push(e.message));
+   await menu(page);
+   await page.locator('.activitymenu').getByRole('button',{name:/ぼうけんする/}).click();
+   await screen(page,'map');
+   await page.evaluate(()=>window.__dbg.pickPlace(12));
+   await expect.poll(()=>page.evaluate(()=>window.__dbg.screen)).toBe('map');
+   expect(await saved(page)).toEqual({done:[],photos:[]});
+   const order=[1,0,2,3,4,5,6,7,8,9,10,11];
+   for(const [index,id] of order.entries()){
+    const [place,muni,zodiac,code,count,edgeCount]=catalog[id];
+    await test.step(place+' / '+zodiac,async()=>{
+     await expect(page.locator('.bottombar .next')).toBeVisible();
+     await expect.poll(()=>page.evaluate(()=>window.__dbg.nextId)).toBe(id);
+     await auditLayout(page,testInfo,'map-'+id,mapControls);
+     await page.locator('.bottombar .next').click();
+     await screen(page,'card');
+     await expect.poll(()=>page.evaluate(()=>window.__dbg.cur)).toBe(id);
+     await assertBaseLabel(page.locator('.pname'),place);
+     await assertBaseLabel(page.locator('.pmuni'),muni);
+     await auditLayout(page,testInfo,'card-'+id,['.journeyexit','.hudbtns button','.sheet.card button']);
+     await page.locator('.sheet.card .big').click();
+     await screen(page,'quiz');
+     await auditLayout(page,testInfo,'quiz-place-'+id,quizControls);
+     await correct(page,place);
+     await expect(page.locator('.qtext')).toContainText('市町村');
+     await auditLayout(page,testInfo,'quiz-muni-'+id,quizControls);
+     await correct(page,muni);
+     await completeStars(page,count);
+     await screen(page,'reward');
+     await expect(page.locator('.photo3-stage')).toBeVisible();
+     await expect(page.locator('.photo3-caption b')).toHaveText(place);
+     await expect(page.locator('.photo3-caption span')).toHaveText(zodiac);
+     await expect(page.locator('.photo3-stars circle')).toHaveCount(count);
+     await expect(page.locator('.photo3-stars line')).toHaveCount(edgeCount);
+     await auditLayout(page,testInfo,'photo-'+id,['.photo3-save','.photo3-skip']);
+     expect((await saved(page)).photos).toHaveLength(index);
+     await page.locator('.photo3-save').click();
+     const record=await saved(page);
+     expect(record.done).toEqual(order.slice(0,index+1));
+     expect(record.photos).toHaveLength(index+1);
+     expect(record.photos.at(-1)).toMatchObject({spot_id:id,place_name:place,municipality:muni,constellation_id:code,constellation_name:zodiac,kind:'game-illustration'});
+     await auditLayout(page,testInfo,'reward-'+id,['.journeyexit','.hudbtns button','.sheet.reward button']);
+     await page.locator('.sheet.reward .big').click();
+     await screen(page,'map');
+    });
+   }
+   await page.locator('.rbtn.book').click();
+   await expect(page.locator('.photo3-mini')).toHaveCount(12);
+   await expect(page.locator('.photo3-empty')).toHaveCount(0);
+   for(const [id,[place,,zodiac]] of catalog.entries())await expect(page.locator('.photo3-mini[data-spot="'+id+'"] b')).toHaveText(place+' × '+zodiac);
+   await auditLayout(page,testInfo,'album-full',['.photo3-album-head button']);
+   await page.locator('.photo3-album-head button').click();
+   // Replay a previously earned location: saving the same card is idempotent.
+   await pick(page,1);await screen(page,'card');
+   await page.locator('.sheet.card .big').click();await screen(page,'quiz');
+   await correct(page,'万座毛');await expect(page.locator('.qtext')).toContainText('市町村');await correct(page,'恩納村');
+   await completeStars(page,6);await screen(page,'reward');await page.locator('.photo3-save').click();
+   expect((await saved(page)).photos).toHaveLength(12);
+   await page.locator('.sheet.reward .big').click();await screen(page,'map');
+   await expect.poll(()=>page.evaluate(()=>window.__dbg.nextId)).toBe(12);
+   await page.locator('.bottombar .next').click();await screen(page,'card');
+   await page.locator('.sheet.card .big').click();await screen(page,'quiz');
+   await correct(page,'波照間島');await completeStars(page,5);await screen(page,'reward');
+   await expect(page.locator('.photo3-stage')).toHaveCount(0);
+   await page.locator('.sheet.reward .big').click();await screen(page,'ending');
+   const record=await saved(page);
+   expect(record.done).toEqual([...order,12]);
+   expect(record.photos).toHaveLength(12);
+   await page.reload();await screen(page,'title');
+   expect(await saved(page)).toEqual(record);
+   expect(errors).toEqual([]);
+  });
+ });
+}
+
+test('non-pilot practice and skipped photo do not pollute records',async({page})=>{
+ test.setTimeout(120000);
+ await menu(page);
+ await page.locator('.activitymenu').getByRole('button',{name:/地名クイズ/}).click();
+ await pick(page,9);await screen(page,'quiz');
+ await correct(page,'東平安名崎');await expect(page.locator('.qtext')).toContainText('市町村');await correct(page,'宮古島市');await screen(page,'map');
+ expect(await saved(page)).toEqual({done:[],photos:[]});
+ await page.locator('.journeyexit').click();await screen(page,'title');
+ await page.getByRole('button',{name:'はじめる',exact:true}).click();
+ await page.locator('.activitymenu').getByRole('button',{name:/星座つなぎ/}).click();
+ await pick(page,7);await completeStars(page,10);await screen(page,'map');
+ expect(await saved(page)).toEqual({done:[],photos:[]});
+ await page.locator('.journeyexit').click();await screen(page,'title');
+ await page.getByRole('button',{name:'はじめる',exact:true}).click();
+ await page.locator('.activitymenu').getByRole('button',{name:/ぼうけんする/}).click();
+ await pick(page,3);await screen(page,'card');await page.locator('.sheet.card .big').click();await screen(page,'quiz');
+ await correct(page,'古宇利島');await expect(page.locator('.qtext')).toContainText('市町村');await correct(page,'今帰仁村');
+ await completeStars(page,5);await screen(page,'reward');await page.locator('.photo3-skip').click();
+ expect(await saved(page)).toEqual({done:[3],photos:[]});
+});
