@@ -4297,5 +4297,97 @@ window.LabSarabanjiStory={open:openExpanded};document.addEventListener("click",f
  addEventListener("resize",schedule,{passive:true});addEventListener("orientationchange",schedule,{passive:true});if(visualViewport){visualViewport.addEventListener("resize",schedule,{passive:true});visualViewport.addEventListener("scroll",schedule,{passive:true})}schedule();
 })();
 </script>
+
+<style id="lab-adventure-photo-album-20261124">
+.ap-stage,.ap-album{position:fixed;inset:0;z-index:80;padding:calc(env(safe-area-inset-top) + 12px) 14px calc(env(safe-area-inset-bottom) + 12px);background:rgba(7,14,38,.82);backdrop-filter:blur(5px)}
+.ap-stage{display:grid;place-items:center;animation:apFade .18s ease}.ap-flash{position:absolute;inset:0;background:#fff3cf;opacity:0;pointer-events:none;animation:apFlash .42s ease}
+.ap-camera{width:min(92vw,390px);display:grid;justify-items:center;gap:10px}.ap-title{font:900 18px/1.4 sans-serif;color:#fff;text-shadow:0 2px 8px #000}
+.ap-polaroid{width:min(82vw,330px);background:#fffdf7;padding:13px 13px 26px;box-shadow:0 16px 40px #0008;transform:rotate(var(--ap-rot,-1.2deg));border-radius:3px;animation:apEject .7s cubic-bezier(.2,.8,.2,1) both}
+.ap-photo{position:relative;aspect-ratio:4/3;overflow:hidden;background:linear-gradient(180deg,#081634 0 55%,#17466a 56% 67%,#183d32 68%);isolation:isolate}
+.ap-photo:before{content:"";position:absolute;left:-5%;right:-5%;bottom:16%;height:27%;background:#142f2b;clip-path:polygon(0 78%,12% 59%,24% 72%,36% 42%,48% 61%,60% 45%,72% 64%,84% 50%,100% 70%,100% 100%,0 100%)}
+.ap-photo:after{content:"";position:absolute;left:50%;bottom:16%;width:48%;height:22%;transform:translateX(-50%);border-radius:50% 50% 8% 8%;background:#25352f;clip-path:polygon(0 100%,12% 52%,28% 32%,46% 22%,62% 35%,78% 56%,100% 100%);opacity:.92}
+.ap-const{position:absolute;inset:7%;z-index:2;opacity:0;animation:apDevelop 1.05s .62s ease forwards}.ap-const svg{width:100%;height:100%}.ap-const line{stroke:#ffe98a;stroke-width:1.5;stroke-linecap:round}.ap-const circle{fill:#fff5a8;filter:drop-shadow(0 0 4px #fff)}
+.ap-caption{padding:13px 8px 0;color:#253052}.ap-caption b{display:block;font:900 22px/1.3 "Hiragino Maru Gothic ProN","BIZ UDPGothic",sans-serif}.ap-caption span{display:block;margin-top:4px;font:800 17px/1.3 sans-serif;color:#52618a}.ap-note{margin-top:7px;font:700 11px/1.3 sans-serif;color:#7a8195}
+.ap-next{width:min(92vw,390px);min-height:54px;border:0;border-radius:999px;background:#ff7b25;color:#fff;box-shadow:0 4px #bd4b0c;font:900 18px/1.2 sans-serif}
+.ap-album{overflow:auto;color:#263457}.ap-book{width:min(94vw,760px);min-height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 24px);margin:0 auto;background:#fffaf0;border-radius:28px;padding:16px 14px 28px}.ap-head{display:flex;align-items:center;gap:12px;position:sticky;top:0;background:#fffaf0f2;padding:2px 0 12px;z-index:2}.ap-head h2{margin:0;font-size:24px}.ap-close{width:48px;height:48px;border:0;border-radius:50%;background:#eef2fb;color:#42527c;font-size:22px;font-weight:900}
+.ap-note-top{font-size:13px;color:#6c7285;margin:2px 0 16px;line-height:1.5}.ap-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.ap-slot{border:0;background:transparent;padding:0}.ap-mini{background:#fff;padding:7px 7px 14px;box-shadow:0 5px 14px #26345724;transform:rotate(var(--ap-rot));min-height:175px}.ap-mini .ap-photo{width:100%}.ap-mini .ap-const{opacity:1;animation:none}.ap-mini b{display:block;margin-top:8px;font-size:13px;line-height:1.35}.ap-empty{height:175px;border:2px dashed #c7c3b8;border-radius:4px;display:grid;place-items:center;background:#eee9df;color:#8b887e;font:900 15px/1.4 sans-serif;text-align:center}
+.ap-stage[data-reduced="true"] .ap-polaroid,.ap-stage[data-reduced="true"] .ap-const,.ap-stage[data-reduced="true"] .ap-flash{animation-duration:.01ms!important;animation-delay:0s!important}
+@keyframes apFlash{0%,100%{opacity:0}35%{opacity:.45}}@keyframes apEject{from{opacity:0;transform:translateY(-70px) rotate(var(--ap-rot,-1.2deg)) scale(.92)}to{opacity:1;transform:translateY(0) rotate(var(--ap-rot,-1.2deg)) scale(1)}}@keyframes apDevelop{from{opacity:.04;filter:blur(4px)}to{opacity:1;filter:none}}@keyframes apFade{from{opacity:0}to{opacity:1}}
+@media(min-width:700px){.ap-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+</style>
+<script id="lab-adventure-photo-album-20261124">
+(function(){
+ const PHOTO_KEY="okinawa-hoshiatsume-adventure-photos-v1";
+ const clean=s=>String(s||"").replace(/\{[^}]*\}/g,"");
+ const spots=[
+  ["残波岬","読谷村","おひつじざ"],["万座毛","恩納村","おうしざ"],["海中道路","うるま市","ふたござ"],["古宇利島","今帰仁村","かにざ"],
+  ["辺戸岬","国頭村","ししざ"],["沖縄こどもの国","沖縄市","おとめざ"],["知念岬","南城市","てんびんざ"],["喜屋武岬","糸満市","さそりざ"],
+  ["座間味島","座間味村","いてざ"],["東平安名崎","宮古島市","やぎざ"],["石垣島天文台","石垣市","みずがめざ"],["波照間島","竹富町","うおざ"]
+ ];
+ function read(){try{const x=JSON.parse(localStorage.getItem(PHOTO_KEY)||"[]");return Array.isArray(x)?x:[]}catch{return[]}}
+ function write(x){try{localStorage.setItem(PHOTO_KEY,JSON.stringify(x))}catch{}}
+ function meta(i){const s=spots[i];return s?{photo_id:"spot-"+i+"-v1",spot_id:i,place_name:s[0],municipality:s[1],constellation_name:s[2],background_id:"okinawa-coast-"+i,card_version:1,kind:"game-illustration"}:null}
+ function save(m){const xs=read();if(m&&!xs.some(x=>x.photo_id===m.photo_id)){xs.push({...m,acquired_at:new Date().toISOString()});write(xs)}}
+ function svg(i){
+  const stage=(window.__dbg&&window.__dbg.cur===i&&window.__dbg)||null;
+  const maps=[
+   [[20,32],[55,49],[78,67],[82,82]],[[78,75],[52,60],[57,48],[22,23],[15,59],[88,43]],
+   [[18,25],[55,46],[74,55],[88,55],[16,67],[38,58],[50,70],[65,84]],[[68,78],[48,51],[49,40],[47,18],[30,70]],
+   [[70,75],[72,58],[63,47],[66,35],[82,24],[88,33],[35,44],[16,61],[35,57]],[[40,20],[45,40],[52,52],[65,50],[87,44],[18,50],[25,82]],
+   [[70,42],[48,18],[32,36],[30,82],[58,70]],[[78,18],[81,28],[70,38],[65,42],[52,62],[49,82],[39,86],[22,84],[18,70],[24,62]],
+   [[86,50],[68,47],[60,25],[40,33],[30,29],[16,38],[22,49],[64,78]],[[86,25],[83,34],[62,70],[56,76],[34,61],[16,39],[22,42],[38,42],[50,44]],
+   [[86,52],[60,43],[43,30],[31,29],[18,49],[20,63],[16,69]],[[86,59],[82,65],[73,64],[74,55],[65,52],[48,51],[16,60],[24,48],[31,35]]
+  ], lines=[
+   [[0,1],[1,2],[2,3]],[[0,1],[1,2],[2,3],[1,4]],[[0,1],[1,2],[2,3],[4,5],[5,6],[6,7],[1,5]],[[0,1],[1,2],[2,3],[1,4]],
+   [[0,1],[1,2],[2,3],[3,4],[4,5],[2,6],[6,7],[7,8],[8,0]],[[0,1],[1,2],[2,3],[3,4],[2,5],[2,6]],[[0,1],[1,2],[2,3],[3,4],[4,0]],
+   [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9]],[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,1],[7,0],[3,6]],
+   [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,0]],[[0,1],[1,2],[2,3],[3,4],[4,5],[5,6]],[[0,1],[1,2],[2,3],[3,0],[3,4],[4,5],[5,6],[6,7],[7,8]]
+  ];
+  const p=maps[i]||maps[0],l=lines[i]||lines[0];
+  return '<svg viewBox="0 0 100 100" aria-hidden="true">'+l.map(x=>'<line x1="'+p[x[0]][0]+'" y1="'+p[x[0]][1]+'" x2="'+p[x[1]][0]+'" y2="'+p[x[1]][1]+'"/>').join("")+p.map(x=>'<circle cx="'+x[0]+'" cy="'+x[1]+'" r="2.1"/>').join("")+'</svg>';
+ }
+ function card(m,mini){
+  const rot=((m.spot_id%5)-2)*.55;
+  return '<div class="ap-polaroid'+(mini?' ap-mini':'')+'" style="--ap-rot:'+rot+'deg"><div class="ap-photo"><div class="ap-const">'+svg(m.spot_id)+'</div></div><div class="ap-caption"><b>'+m.place_name+'</b><span>'+m.constellation_name+'</span><div class="ap-note">サラバンジの星空スケッチ｜ゲーム内イラスト</div></div></div>';
+ }
+ function shutter(){try{const A=window.AudioContext||window.webkitAudioContext,c=new A(),t=c.currentTime,o=c.createOscillator(),g=c.createGain();o.type="square";o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(70,t+.055);g.gain.setValueAtTime(.1,t);g.gain.exponentialRampToValueAtTime(.001,t+.075);o.connect(g).connect(c.destination);o.start(t);o.stop(t+.08);setTimeout(()=>c.close(),250)}catch{}}
+ function currentSpot(reward){
+  const title=reward.querySelector(".rtitle")?.textContent||"";
+  return spots.findIndex(s=>title.includes(s[2]));
+ }
+ function showPhoto(reward,i){
+  if(document.querySelector(".ap-stage"))return;
+  const m=meta(i);if(!m)return;shutter();
+  const el=document.createElement("div");el.className="ap-stage";el.dataset.reduced=String(matchMedia("(prefers-reduced-motion: reduce)").matches);
+  el.innerHTML='<div class="ap-flash"></div><div class="ap-camera"><div class="ap-title">📸 とれた！ 旅の写真</div>'+card(m,false)+'<button class="ap-next">📔 アルバムにしまう</button></div>';
+  document.body.appendChild(el);
+  el.querySelector(".ap-next").onclick=()=>{save(m);el.remove();const next=reward.querySelector(".big.grow");if(next)next.click()};
+ }
+ function showAlbum(){
+  document.querySelector(".ap-album")?.remove();
+  const got=read(),el=document.createElement("div");el.className="ap-album";
+  let slots="";for(let i=0;i<12;i++){const m=meta(i),g=got.find(x=>x.photo_id===m.photo_id);slots+=g?'<button class="ap-slot" data-i="'+i+'">'+card(g,true)+'</button>':'<div class="ap-empty">？<br><small>まだ とっていないよ</small></div>'}
+  el.innerHTML='<div class="ap-book"><div class="ap-head"><button class="ap-close" aria-label="とじる">←</button><h2>📔 ぼうけんアルバム</h2></div><p class="ap-note-top">本編の旅で集めた12枚の星空スケッチ。実際の天体写真ではなく、ゲーム内で表現した思い出カードです。</p><div class="ap-grid">'+slots+'</div></div>';
+  document.body.appendChild(el);el.querySelector(".ap-close").onclick=()=>el.remove();
+  el.querySelectorAll(".ap-slot").forEach(x=>x.onclick=()=>{const m=meta(+x.dataset.i),big=document.createElement("div");big.className="ap-stage";big.innerHTML='<div class="ap-camera">'+card(m,false)+'<button class="ap-next">とじる</button></div>';document.body.appendChild(big);big.querySelector("button").onclick=()=>big.remove()});
+ }
+ function labels(){
+  document.querySelectorAll(".rbtn.book").forEach(b=>{b.textContent="📔";b.setAttribute("aria-label","ぼうけんアルバム");b.title="ぼうけんアルバム"});
+  document.querySelectorAll("button.big").forEach(b=>{if(b.textContent.includes("ずかんを 見る"))b.textContent="📔 ぼうけんアルバム"});
+ }
+ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("button");if(!b)return;if(b.matches(".rbtn.book")||b.textContent.includes("ぼうけんアルバム")){e.preventDefault();e.stopImmediatePropagation();showAlbum()}},true);
+ new MutationObserver(()=>{
+  labels();
+  document.querySelectorAll(".sheet.reward").forEach(r=>{
+   if(r.dataset.apPhoto)return;
+   const i=currentSpot(r);if(i<0)return;
+   const title=r.querySelector(".rtitle")?.textContent||"";
+   if(title.includes("つなげたよ"))return;
+   r.dataset.apPhoto="1";setTimeout(()=>showPhoto(r,i),140);
+  });
+ }).observe(document.getElementById("root")||document.body,{subtree:true,childList:true});
+ labels();
+})();
+</script>
 </body>
 </html>
