@@ -667,11 +667,14 @@ function playCassetteSounds(){
   clearSoundTimers();
   const ctx=getAudioCtx();
   if(ctx&&ctx.state==="suspended")ctx.resume().catch(()=>{});
-  // Plastic shell touches the deck.
-  soundTimers.push(setTimeout(()=>{noise(.055,.020);tone(118,.045,.025,"triangle");},1320));
-  // Guide mechanism engages, then the cassette seats flat.
-  soundTimers.push(setTimeout(()=>{tone(235,.035,.020,"square");noise(.035,.014);},1660));
-  soundTimers.push(setTimeout(()=>{tone(154,.055,.042,"square");tone(82,.07,.018,"triangle",.012);noise(.055,.022);},1930));
+  // Cassette shell rattles against the guides as it is pushed into place.
+  soundTimers.push(setTimeout(()=>{tone(205,.032,.036,"square");noise(.045,.030);},1280));
+  soundTimers.push(setTimeout(()=>{tone(168,.038,.042,"square");noise(.050,.034);},1420));
+  soundTimers.push(setTimeout(()=>{tone(225,.030,.034,"square");noise(.040,.028);},1545));
+  soundTimers.push(setTimeout(()=>{tone(146,.045,.050,"square");noise(.055,.038);},1680));
+  // Final mechanical seating: a heavier clack followed by the latch click.
+  soundTimers.push(setTimeout(()=>{tone(96,.070,.040,"triangle");tone(178,.045,.055,"square",.015);noise(.075,.045);},1840));
+  soundTimers.push(setTimeout(()=>{tone(265,.032,.042,"square");noise(.035,.026);},1945));
   // Door closes, followed by the latch.
   soundTimers.push(setTimeout(()=>{tone(74,.085,.040,"triangle");noise(.10,.032);},2580));
   soundTimers.push(setTimeout(()=>{tone(188,.04,.038,"square");noise(.035,.020);},2720));
