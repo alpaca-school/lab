@@ -4250,35 +4250,21 @@ alpaca-school/lab/index.html はラボトップなので上書きしない。
 }
 </style>
 <style id="lab-story-pages-20261124">
-.storycard.storypages{max-height:min(78dvh,680px);overflow:auto;text-align:left}
-.storycard.storypages h2{text-align:center}
-.storypage{display:none}
-.storypage.active{display:block}
-.storypage p{font-size:18px;line-height:1.75}
-.storyquote{background:#f5f8ff;border-radius:20px;padding:12px 15px;margin:12px 0!important;color:#3155a4}
-.storynav{display:flex;gap:10px;margin-top:16px}
-.storynav button{flex:1;min-height:52px;border:0;border-radius:999px;font:900 17px/1.3 sans-serif}
-.storyprev{background:#eef2fb;color:#52618a}.storynext{background:linear-gradient(180deg,#ffad42,#ff7624);color:#fff;box-shadow:0 5px #c24a08}
-.storydots{text-align:center;color:#8290b5;font-weight:900;letter-spacing:5px;margin-top:10px}
+.storygate.expanded{padding:calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 12px);align-items:center;overflow:hidden}.storycard.storypages{width:min(94vw,620px);height:min(82dvh,700px);max-height:calc(var(--vvh,100dvh) - 24px);padding:0!important;overflow:hidden!important;display:grid;grid-template-rows:auto minmax(0,1fr) auto;background:#fffdf4;border-radius:30px}.storyhead{padding:18px 20px 8px;text-align:center}.storyhead h2{margin:5px 0 0;font-size:clamp(22px,6vw,30px);line-height:1.3;color:#d9480f}.storyscroll{min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:2px 20px 16px;text-align:left}.storyscroll p{font-size:clamp(16px,4.3vw,19px);line-height:1.75;margin:12px 0;font-weight:750;color:#263457}.storyscroll rt{font-size:.52em;font-weight:800;color:#526aa3}.storyquote{background:#f3f6ff;border-radius:20px;padding:12px 15px!important;color:#3155a4!important;font-weight:950!important}.storyfoot{padding:9px 16px calc(12px + env(safe-area-inset-bottom));background:#fffdf4;border-top:1px solid #e8e2cf}.storydots{text-align:center;color:#8290b5;font-weight:900;letter-spacing:4px;margin:0 0 8px}.storynav{display:grid;grid-template-columns:1fr 1.35fr;gap:10px;margin:0}.storynav button{min-height:52px;border:0;border-radius:999px;font:900 17px/1.3 sans-serif}.storyprev{background:#eef2fb;color:#52618a}.storynext{background:linear-gradient(180deg,#ffad42,#ff7624);color:#fff;box-shadow:0 5px #c24a08}@media(max-width:390px){.storycard.storypages{height:min(80dvh,640px)}.storyhead{padding:14px 16px 7px}.storyscroll{padding:2px 16px 12px}.storyfoot{padding-left:12px;padding-right:12px}}
 </style>
 <script id="lab-expanded-sarabanji-story-20261124">
-(function(){
- var pages=[
-  '<div class="storyeyebrow">「旅立ちの山」の その先へ</div><h2>サラバンジ、夜空を見上げる</h2><p>旅立ちの山を こえた サラバンジ。ある夜、沖縄の空いっぱいに光る星を見上げて、ひらめきました。</p><p class="storyquote">「沖縄のいろんな場所へ行ったら、どんな星が見えるんだろう？」</p>',
-  '<div class="storyeyebrow">サラバンジの ひらめき</div><h2>まずは、写真を撮ればいい！</h2><p>考えるより先に動くのが、サラバンジ。</p><p class="storyquote">「とりあえず写真を連写！ あとで見れば何とかなるっしょ！」</p><p>ところが、あとで写真を見返すと……。</p><p class="storyquote">「あれ？ 何時？ どっち向き？」</p><p>これでは、どこで見た星なのか、うまく分かりません。</p>',
-  '<div class="storyeyebrow">だったら、自分で確かめよう</div><h2>沖縄を めぐってみよう！</h2><p>サラバンジは、またひらめきました。</p><p class="storyquote">「場所が変わったら、見える星も変わるかも。だったら、自分で行って確かめればいい！」</p><p>辺戸岬から沖縄の島々まで。星を見つけたら、その場所も覚えて、星座もつないでみることにしました。</p>',
-  '<div class="storyeyebrow">沖縄で星集め</div><h2>さあ、星を探しに出発！</h2><p>計画はざっくり。でも、勢いだけは誰にも負けません。</p><p class="storyquote">「よーし！ 沖縄じゅうをめぐって、星を集めるぞ！」</p><p>サラバンジといっしょに、好きな場所から星空をめぐってみよう。</p>'
- ];
- function openExpanded(){
-  var old=document.querySelector(".storygate");if(old)old.remove();
-  var gate=document.createElement("div");gate.className="storygate expanded";gate.setAttribute("role","dialog");gate.setAttribute("aria-modal","true");gate.setAttribute("aria-label","サラバンジのお話");
-  gate.innerHTML='<div class="storycard storypages"><div class="storybody"></div><div class="storydots"></div><div class="storynav"><button class="storyprev" type="button">← まえ</button><button class="storynext" type="button">つぎへ →</button></div></div>';
-  document.body.appendChild(gate);var i=0,body=gate.querySelector(".storybody"),dots=gate.querySelector(".storydots"),prev=gate.querySelector(".storyprev"),next=gate.querySelector(".storynext");
-  function draw(){body.innerHTML='<div class="storypage active">'+pages[i]+'</div>';dots.textContent=pages.map(function(_,n){return n===i?"●":"○"}).join(" ");prev.style.visibility=i?"visible":"hidden";next.textContent=i===pages.length-1?"お話を とじる":"つぎへ →"}
-  prev.onclick=function(){if(i>0){i--;draw()}};next.onclick=function(){if(i<pages.length-1){i++;draw()}else gate.remove()};gate.addEventListener("click",function(e){if(e.target===gate)gate.remove()});draw();
- }
- document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest(".storyreplay");if(!b)return;e.preventDefault();e.stopImmediatePropagation();openExpanded()},true);
-})();
+(function(){var pages=[
+{k:"わたしの夢つむぎ から",t:"まだ、外へ出るのが こわかったころ",b:["サラバンジにも、外《そと》へ出《で》たり、新《あたら》しいことを始《はじ》めたりするのを迷《まよ》っていた時期《じき》がありました。","「やってみたい。でも、うまくできるかな」——そんな気持《きも》ちを抱《かか》えながら、夢《ゆめ》つむぎの島《しま》で、いろいろな経験《けいけん》を重《かさ》ねてきました。"]},
+{k:"旅立ちの山",t:"一歩ずつ、山を こえて",b:["考《かんが》えたり、失敗《しっぱい》したり、もう一度《いちど》やってみたり。そうしてサラバンジは「旅立《たびだ》ちの山《やま》」をこえ、少《すこ》しずつ外《そと》の世界《せかい》へ出《で》かけるようになりました。","Q:「全部《ぜんぶ》わかってからじゃなくても、まず行《い》ってみよう！」"]},
+{k:"山の向こうの沖縄で",t:"ある夜、星を 見上げて",b:["旅《たび》をするようになったサラバンジは、沖縄《おきなわ》の夜空《よぞら》を見《み》て、またひとつ思《おも》いつきました。","Q:「沖縄《おきなわ》って、場所《ばしょ》が変《か》わったら、見《み》える星《ほし》も変《か》わるのかな？」","気《き》になったら、じっとしていられません。"]},
+{k:"サラバンジらしい作戦",t:"写真を 撮れば、わかるっしょ！",b:["Q:「とりあえず写真《しゃしん》を連写《れんしゃ》！ あとで見《み》れば何《なん》とかなるっしょ！」","ところが、あとで見返《みかえ》すと……。","Q:「あれ？ 何時《なんじ》？ どっち向《む》き？」","写真《しゃしん》だけでは、どこで見《み》た星《ほし》なのか、よく分《わ》かりません。"]},
+{k:"沖縄で星集め",t:"だったら、自分で 見に行こう！",b:["サラバンジは、すぐに次《つぎ》の作戦《さくせん》を思《おも》いつきました。","Q:「沖縄《おきなわ》のいろんなところを回《まわ》って、自分《じぶん》の目《め》で星《ほし》を見《み》ればいい！」","辺戸岬《へどみさき》から沖縄《おきなわ》の島々《しまじま》まで。場所《ばしょ》をめぐり、星《ほし》を見《み》つけ、星座《せいざ》をつないでいく新《あたら》しい旅《たび》の始《はじ》まりです。","さあ、サラバンジといっしょに、好《す》きな場所《ばしょ》から出《で》かけよう。"]}];
+function ruby(el,text){var re=/([一-龯々〆ヵヶぁ-んァ-ヶー]+)《([^》]+)》/g,last=0,m;while((m=re.exec(text))){if(m.index>last)el.append(document.createTextNode(text.slice(last,m.index)));var r=document.createElement("ruby");r.append(document.createTextNode(m[1]));var rt=document.createElement("rt");rt.textContent=m[2];r.append(rt);el.append(r);last=m.index+m[0].length}if(last<text.length)el.append(document.createTextNode(text.slice(last)))}
+function openExpanded(){var old=document.querySelector(".storygate");if(old)old.remove();var gate=document.createElement("div");gate.className="storygate expanded";gate.setAttribute("role","dialog");gate.setAttribute("aria-modal","true");gate.innerHTML='<div class="storycard storypages"><div class="storyhead"><div class="storyeyebrow"></div><h2></h2></div><div class="storyscroll"></div><div class="storyfoot"><div class="storydots"></div><div class="storynav"><button class="storyprev">← まえ</button><button class="storynext">つぎへ →</button></div></div></div>';document.body.appendChild(gate);var i=0,body=gate.querySelector(".storyscroll"),prev=gate.querySelector(".storyprev"),next=gate.querySelector(".storynext");
+function guard(){var h=visualViewport?visualViewport.height:innerHeight;document.documentElement.style.setProperty("--vvh",Math.round(h)+"px");var n=gate.querySelector(".storynav").getBoundingClientRect();if(n.bottom>h-2)gate.querySelector(".storycard").style.height=Math.max(350,h-24)+"px"}
+function draw(){var p=pages[i];gate.querySelector(".storyeyebrow").textContent=p.k;gate.querySelector("h2").textContent=p.t;body.replaceChildren();p.b.forEach(function(x){var q=x.startsWith("Q:"),el=document.createElement("p");if(q){el.className="storyquote";x=x.slice(2)}ruby(el,x);body.append(el)});body.scrollTop=0;gate.querySelector(".storydots").textContent=pages.map(function(_,n){return n===i?"●":"○"}).join(" ");prev.style.visibility=i?"visible":"hidden";next.textContent=i===pages.length-1?"お話を とじる":"つぎへ →";requestAnimationFrame(guard)}
+prev.onclick=function(){if(i){i--;draw()}};next.onclick=function(){if(i<pages.length-1){i++;draw()}else gate.remove()};gate.onclick=function(e){if(e.target===gate)gate.remove()};addEventListener("resize",guard,{passive:true});if(visualViewport)visualViewport.addEventListener("resize",guard,{passive:true});draw()}
+window.LabSarabanjiStory={open:openExpanded};document.addEventListener("click",function(e){var x=e.target.closest&&e.target.closest(".storyreplay");if(x){e.preventDefault();e.stopImmediatePropagation();openExpanded()}},true)})();
 </script>
-</body>
+<script id="lab-first-start-expanded-story-20261124">(function(){document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest(".title .startmenu .big");if(!b)return;setTimeout(function(){var x=document.querySelector(".storygate:not(.expanded)");if(x&&window.LabSarabanjiStory){x.remove();window.LabSarabanjiStory.open()}},0)},true)})();</script></body>
 </html>
