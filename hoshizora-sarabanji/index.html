@@ -4264,11 +4264,10 @@ alpaca-school/lab/index.html はラボトップなので上書きしない。
 <script id="lab-expanded-sarabanji-story-20261124">
 (function(){
  var pages=[
-  '<div class="storyeyebrow">わたしの夢つむぎ から</div><h2>まだ、外へ出るのがこわかったころ</h2><p>サラバンジにも、外へ出たり、新しいことを始めたりするのを迷っていた時期がありました。</p><p>「やってみたい。でも、うまくできるかな」——そんな気持ちを抱えながら、夢つむぎの島でいろいろな経験を重ねてきました。</p>',
-  '<div class="storyeyebrow">旅立ちの山</div><h2>一歩ずつ、山をこえて</h2><p>考えたり、失敗したり、もう一度やってみたり。そうしてサラバンジは「旅立ちの山」をこえ、少しずつ外の世界へ出かけるようになりました。</p><p class="storyquote">「全部わかってからじゃなくても、まず行ってみよう！」</p>',
-  '<div class="storyeyebrow">山の向こうの沖縄で</div><h2>ある夜、星を見上げて</h2><p>旅をするようになったサラバンジは、沖縄の夜空を見て、またひとつ思いつきました。</p><p class="storyquote">「沖縄って、場所が変わったら、見える星も変わるのかな？」</p><p>気になったら、じっとしていられません。</p>',
-  '<div class="storyeyebrow">サラバンジらしい作戦</div><h2>写真を撮れば、わかるっしょ！</h2><p class="storyquote">「とりあえず写真を連写！ あとで見れば何とかなるっしょ！」</p><p>ところが、あとで見返すと……。</p><p class="storyquote">「あれ？ 何時？ どっち向き？」</p><p>写真だけでは、どこで見た星なのか、よく分かりません。</p>',
-  '<div class="storyeyebrow">沖縄で星集め</div><h2>だったら、自分で見に行こう！</h2><p>サラバンジは、すぐに次の作戦を思いつきました。</p><p class="storyquote">「沖縄のいろんなところを回って、自分の目で星を見ればいい！」</p><p>辺戸岬から沖縄の島々まで。場所をめぐり、星を見つけ、星座をつないでいく新しい旅の始まりです。</p><p>さあ、サラバンジといっしょに、好きな場所から出かけよう。</p>'
+  '<div class="storyeyebrow">「旅立ちの山」の その先へ</div><h2>サラバンジ、夜空を見上げる</h2><p>旅立ちの山を こえた サラバンジ。ある夜、沖縄の空いっぱいに光る星を見上げて、ひらめきました。</p><p class="storyquote">「沖縄のいろんな場所へ行ったら、どんな星が見えるんだろう？」</p>',
+  '<div class="storyeyebrow">サラバンジの ひらめき</div><h2>まずは、写真を撮ればいい！</h2><p>考えるより先に動くのが、サラバンジ。</p><p class="storyquote">「とりあえず写真を連写！ あとで見れば何とかなるっしょ！」</p><p>ところが、あとで写真を見返すと……。</p><p class="storyquote">「あれ？ 何時？ どっち向き？」</p><p>これでは、どこで見た星なのか、うまく分かりません。</p>',
+  '<div class="storyeyebrow">だったら、自分で確かめよう</div><h2>沖縄を めぐってみよう！</h2><p>サラバンジは、またひらめきました。</p><p class="storyquote">「場所が変わったら、見える星も変わるかも。だったら、自分で行って確かめればいい！」</p><p>辺戸岬から沖縄の島々まで。星を見つけたら、その場所も覚えて、星座もつないでみることにしました。</p>',
+  '<div class="storyeyebrow">沖縄で星集め</div><h2>さあ、星を探しに出発！</h2><p>計画はざっくり。でも、勢いだけは誰にも負けません。</p><p class="storyquote">「よーし！ 沖縄じゅうをめぐって、星を集めるぞ！」</p><p>サラバンジといっしょに、好きな場所から星空をめぐってみよう。</p>'
  ];
  function openExpanded(){
   var old=document.querySelector(".storygate");if(old)old.remove();
@@ -4278,11 +4277,8 @@ alpaca-school/lab/index.html はラボトップなので上書きしない。
   function draw(){body.innerHTML='<div class="storypage active">'+pages[i]+'</div>';dots.textContent=pages.map(function(_,n){return n===i?"●":"○"}).join(" ");prev.style.visibility=i?"visible":"hidden";next.textContent=i===pages.length-1?"お話を とじる":"つぎへ →"}
   prev.onclick=function(){if(i>0){i--;draw()}};next.onclick=function(){if(i<pages.length-1){i++;draw()}else gate.remove()};gate.addEventListener("click",function(e){if(e.target===gate)gate.remove()});draw();
  }
- window.LabSarabanjiStory={open:openExpanded};
  document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest(".storyreplay");if(!b)return;e.preventDefault();e.stopImmediatePropagation();openExpanded()},true);
 })();
 </script>
-
-<script id="lab-first-start-expanded-story-20261124">(function(){document.addEventListener("click",function(e){var b=e.target.closest&&e.target.closest(".title .startmenu .big");if(!b)return;setTimeout(function(){var short=document.querySelector(".storygate:not(.expanded)");if(short&&window.LabSarabanjiStory){short.remove();window.LabSarabanjiStory.open()}},0)},true)})();</script>
 </body>
 </html>
