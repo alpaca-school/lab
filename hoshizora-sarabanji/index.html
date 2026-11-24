@@ -4135,5 +4135,27 @@ alpaca-school/lab/index.html はラボトップなので上書きしない。
  addEventListener("resize",s);s();
 })();
 </script>
+
+<style id="lab-bottom-guide-20261124">
+/* Keep the top for navigation/status. Put transient guidance at the bottom. */
+.hud .progress{margin-left:54px}
+.toppill,.toppill.explorepill{top:auto!important;bottom:calc(env(safe-area-inset-bottom) + 24px);max-width:calc(100% - 32px);white-space:normal;text-align:center;line-height:1.55;padding:8px 20px;font-size:20px;animation:none}
+@media (max-width:390px){.hud .progress{margin-left:50px}.toppill,.toppill.explorepill{bottom:calc(env(safe-area-inset-bottom) + 18px);font-size:18px}}
+</style>
+<script id="lab-bottom-guide-guard-20261124">
+(function(){
+ function place(){
+  var g=document.querySelector(".toppill");if(!g)return;
+  g.style.top="auto";
+  var reserve=18;
+  [document.querySelector(".bottombar"),document.querySelector(".sheet")].forEach(function(x){
+   if(x){var r=x.getBoundingClientRect();reserve=Math.max(reserve,innerHeight-r.top+12)}
+  });
+  g.style.bottom="calc(env(safe-area-inset-bottom) + "+reserve+"px)";
+ }
+ new MutationObserver(function(){requestAnimationFrame(place)}).observe(document.getElementById("root")||document.body,{subtree:true,childList:true});
+ addEventListener("resize",place);addEventListener("orientationchange",place);requestAnimationFrame(place);
+})();
+</script>
 </body>
 </html>
