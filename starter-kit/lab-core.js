@@ -145,6 +145,38 @@
     }, { once: true });
   }
 
+
+  function elementsOverlap(a, b, padding = 0) {
+    if (!a || !b) return false;
+    const A = a.getBoundingClientRect();
+    const B = b.getBoundingClientRect();
+    return !(
+      A.right + padding <= B.left ||
+      B.right + padding <= A.left ||
+      A.bottom + padding <= B.top ||
+      B.bottom + padding <= A.top
+    );
+  }
+
+  function watchCollisions(pairs = [], onCollision) {
+    const check = () => {
+      pairs.forEach(([a, b, padding = 0]) => {
+        const left = typeof a === "string" ? document.querySelector(a) : a;
+        const right = typeof b === "string" ? document.querySelector(b) : b;
+        if (elementsOverlap(left, right, padding) && typeof onCollision === "function") {
+          onCollision(left, right);
+        }
+      });
+    };
+    const schedule = () => requestAnimationFrame(() => requestAnimationFrame(check));
+    const observer = new MutationObserver(schedule);
+    observer.observe(document.body, { subtree: true, childList: true, attributes: true });
+    window.addEventListener("resize", schedule, { passive: true });
+    window.addEventListener("orientationchange", schedule, { passive: true });
+    schedule();
+    return () => observer.disconnect();
+  }
+
   function init() {
     syncVisualViewport();
 
@@ -165,6 +197,8 @@
     beep,
     toggleMute,
     registerServiceWorker,
-    syncVisualViewport
+    syncVisualViewport,
+    elementsOverlap,
+    watchCollisions
   });
 })();
