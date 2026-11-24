@@ -308,10 +308,10 @@ footer{text-align:center;color:#948a80;font-size:11px;margin-top:34px;line-heigh
 .lab-deck-door{position:absolute;left:50%;top:44px;width:238px;height:154px;transform:translateX(-50%) rotateX(-68deg);transform-origin:center top;background:linear-gradient(180deg,rgba(235,240,238,.48),rgba(104,112,110,.28));border:5px solid #514d47;border-radius:16px;box-shadow:0 16px 20px rgba(0,0,0,.20);z-index:9;backdrop-filter:blur(1px)}
 .lab-deck-door:before{content:"CASSETTE";position:absolute;left:0;right:0;top:10px;text-align:center;font-size:9px;font-weight:1000;letter-spacing:.18em;color:#4d4944}
 .lab-deck-door:after{content:"";position:absolute;left:24px;right:24px;bottom:24px;height:56px;border:2px solid rgba(55,54,51,.45);border-radius:9px;background:rgba(255,255,255,.12)}
-.lab-console-overlay.booting .lab-cartridge{animation:layCassette 1.55s cubic-bezier(.18,.75,.22,1) .38s forwards}
-.lab-console-overlay.booting .lab-deck-door{animation:closeDeckDoor .72s cubic-bezier(.35,.0,.2,1) 1.93s forwards}
-.lab-console-overlay.booting .lab-console-screen{animation:screenBoot .82s ease 2.58s forwards}
-.lab-console-overlay.booting .lab-reel{animation:reelSpin .55s linear 2.58s 2}
+.lab-console-overlay.booting .lab-cartridge{animation:layCassette 1.65s cubic-bezier(.18,.75,.22,1) .30s forwards}
+.lab-console-overlay.booting .lab-deck-door{animation:closeDeckDoor .72s cubic-bezier(.35,.0,.2,1) 2.00s forwards}
+.lab-console-overlay.booting .lab-console-screen{animation:screenBoot .72s ease 3.48s forwards}
+.lab-console-overlay.booting .lab-reel{animation:reelStart 1.38s cubic-bezier(.25,.05,.3,1) 3.05s forwards}
 .lab-console-actions{display:flex;justify-content:center;margin-top:2px}
 .lab-console-skip{appearance:none;border:0;background:transparent;color:#746c64;text-decoration:underline;cursor:pointer;font-weight:800;padding:8px}
 @keyframes layCassette{
@@ -330,7 +330,14 @@ footer{text-align:center;color:#948a80;font-size:11px;margin-top:34px;line-heigh
   35%{color:#6b876d;background:#1d2b25}
   100%{color:#d9ffd9;background:#203128;box-shadow:inset 0 0 0 3px #0f1212,0 0 26px rgba(159,255,162,.32)}
 }
-@keyframes reelSpin{to{transform:rotate(360deg)}}
+@keyframes reelStart{
+  0%{transform:rotate(0deg)}
+  12%{transform:rotate(10deg)}
+  28%{transform:rotate(52deg)}
+  52%{transform:rotate(180deg)}
+  76%{transform:rotate(390deg)}
+  100%{transform:rotate(690deg)}
+}
 @media(prefers-reduced-motion:reduce){.lab-console-overlay.booting .lab-cartridge,.lab-console-overlay.booting .lab-deck-door,.lab-console-overlay.booting .lab-console-screen,.lab-console-overlay.booting .lab-reel{animation:none}}
 @media(max-width:760px){
   .grid{grid-template-columns:1fr}
@@ -493,7 +500,7 @@ footer{text-align:center;color:#948a80;font-size:11px;margin-top:34px;line-heigh
 <div class="lab-console-overlay" id="labConsoleOverlay" role="dialog" aria-modal="true" aria-label="デジタル実験カセット起動中">
   <div class="lab-console">
     <div class="lab-console-brand">ALPACA WORLD DIGITAL LAB</div>
-    <div class="lab-console-screen" aria-live="polite"><div><strong>READY</strong><span>カセットをセットしています</span></div></div>
+    <div class="lab-console-screen" aria-live="polite"><div><strong id="labScreenMain">READY</strong><span id="labScreenSub">カセットをセットしています</span></div></div>
     <div class="lab-deck" aria-hidden="true">
       <div class="lab-deck-body"></div>
       <div class="lab-deck-bed"><span class="lab-reel left"></span><span class="lab-reel right"></span></div>
@@ -604,6 +611,8 @@ const overlay=document.getElementById("labConsoleOverlay");
 const cartTitle=document.getElementById("labCartridgeTitle");
 const cartStatus=document.getElementById("labCartridgeStatus");
 const skip=document.getElementById("labConsoleSkip");
+const screenMain=document.getElementById("labScreenMain");
+const screenSub=document.getElementById("labScreenSub");
 let destination="";
 let audioCtx=null;
 let soundTimers=[];
@@ -644,17 +653,43 @@ function noise(duration,volume,startDelay=0){
   src.start(ctx.currentTime+startDelay);
 }
 function clearSoundTimers(){for(const t of soundTimers)clearTimeout(t);soundTimers=[];}
+function motorRamp(duration=1.25){
+  const ctx=getAudioCtx();if(!ctx)return;
+  const now=ctx.currentTime;
+  const osc=ctx.createOscillator(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();
+  osc.type="sawtooth";osc.frequency.setValueAtTime(58,now);osc.frequency.exponentialRampToValueAtTime(118,now+.42);osc.frequency.exponentialRampToValueAtTime(126,now+duration);
+  filter.type="lowpass";filter.frequency.setValueAtTime(420,now);filter.frequency.linearRampToValueAtTime(760,now+.5);
+  gain.gain.setValueAtTime(.0001,now);gain.gain.exponentialRampToValueAtTime(.022,now+.12);gain.gain.exponentialRampToValueAtTime(.013,now+duration);
+  osc.connect(filter).connect(gain).connect(ctx.destination);osc.start(now);osc.stop(now+duration+.04);
+  tone(252,duration*.9,.004,"sine",.06);
+}
 function playCassetteSounds(){
   clearSoundTimers();
   const ctx=getAudioCtx();
   if(ctx&&ctx.state==="suspended")ctx.resume().catch(()=>{});
-  soundTimers.push(setTimeout(()=>{tone(170,0.06,0.045,"square");noise(0.05,0.025);},1850)); // cassette seats
-  soundTimers.push(setTimeout(()=>{tone(95,0.08,0.05,"triangle");noise(0.09,0.035);},2520)); // lid closes
+  // Plastic shell touches the deck.
+  soundTimers.push(setTimeout(()=>{noise(.055,.020);tone(118,.045,.025,"triangle");},1320));
+  // Guide mechanism engages, then the cassette seats flat.
+  soundTimers.push(setTimeout(()=>{tone(235,.035,.020,"square");noise(.035,.014);},1660));
+  soundTimers.push(setTimeout(()=>{tone(154,.055,.042,"square");tone(82,.07,.018,"triangle",.012);noise(.055,.022);},1930));
+  // Door closes, followed by the latch.
+  soundTimers.push(setTimeout(()=>{tone(74,.085,.040,"triangle");noise(.10,.032);},2580));
+  soundTimers.push(setTimeout(()=>{tone(188,.04,.038,"square");noise(.035,.020);},2720));
+  // Intentional mechanical pause, then PLAY head/pinch roller engages.
   soundTimers.push(setTimeout(()=>{
-    tone(105,0.82,0.018,"sawtooth");
-    tone(132,0.82,0.012,"sine",0.02);
-    noise(0.7,0.009);
-  },2710)); // reels start spinning
+    tone(112,.045,.050,"square");noise(.055,.030);
+    tone(72,.075,.025,"triangle",.025);
+    screenMain.textContent="▶ PLAY";screenSub.textContent="テープを読み込んでいます";
+  },3040));
+  // Motor spins up and tape hiss appears as the reels accelerate.
+  soundTimers.push(setTimeout(()=>{
+    motorRamp(1.20);
+    noise(1.12,.006);
+  },3130));
+  soundTimers.push(setTimeout(()=>{
+    screenMain.textContent="NOW LOADING...";
+    screenSub.textContent="ALPACA WORLD DIGITAL LAB";
+  },3600));
 }
 function go(){clearSoundTimers();if(destination)location.href=destination;}
 document.addEventListener("click",e=>{
@@ -665,8 +700,10 @@ document.addEventListener("click",e=>{
  const card=link.closest(".game-card");
  cartTitle.textContent=card?.querySelector("h3")?.textContent.trim()||"DIGITAL EXPERIMENT";
  cartStatus.textContent=card?.dataset.status==="dev"?"DEVELOPMENT CARTRIDGE":"RELEASE CARTRIDGE";
- overlay.classList.remove("booting","show");void overlay.offsetWidth;
- overlay.classList.add("show","booting");playCassetteSounds();setTimeout(go,3500);
+ overlay.classList.remove("booting","show");
+ screenMain.textContent="READY";screenSub.textContent="カセットをセットしています";
+ void overlay.offsetWidth;
+ overlay.classList.add("show","booting");playCassetteSounds();setTimeout(go,4450);
 });
 skip.addEventListener("click",go);
 overlay.addEventListener("click",e=>{if(e.target===overlay){clearSoundTimers();overlay.classList.remove("show","booting");}});
