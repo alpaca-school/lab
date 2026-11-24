@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+test.use({ screenshot: 'only-on-failure' });
 
 const progressKey = 'hoshizora-shisa-refactor-20261124';
 const photoKey = 'okinawa-hoshiatsume-photos-refactor-20261124';
