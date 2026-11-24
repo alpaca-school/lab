@@ -4055,5 +4055,57 @@ alpaca-school/lab/index.html はラボトップなので上書きしない。
   },true);
 })();
 </script>
+
+<style id="lab-collision-layout-20261124">
+/* One top navigation row; guidance gets its own row below it. */
+.journeyexit{top:calc(env(safe-area-inset-top) + 10px);left:calc(env(safe-area-inset-left) + 10px);max-width:108px;overflow:hidden;text-overflow:ellipsis}
+.hud{padding:calc(env(safe-area-inset-top) + 10px) 10px 0;align-items:center}
+.hud .progress{margin-left:112px;padding:6px 10px;font-size:20px;flex:0 0 auto}
+.hud .progress b{font-size:24px}
+.hudbtns{gap:6px;margin-left:auto}
+.rbtn{width:46px;height:46px;font-size:23px}
+.rbtn.mapreset svg{width:27px;height:27px}
+.toppill{top:calc(env(safe-area-inset-top) + 78px);max-width:calc(100% - 28px);white-space:normal;text-align:center;line-height:1.55;padding:7px 18px;font-size:20px}
+@media (max-width:390px){
+  .journeyexit{max-width:96px;font-size:12px;padding:7px 8px}
+  .hud .progress{margin-left:98px;padding:5px 8px;font-size:18px}
+  .hud .progress b{font-size:22px}
+  .hudbtns{gap:4px}
+  .rbtn{width:42px;height:42px;font-size:21px}
+  .rbtn.mapreset svg{width:24px;height:24px}
+  .toppill{top:calc(env(safe-area-inset-top) + 72px);font-size:18px}
+}
+</style>
+<script id="lab-collision-check-20261124">
+(function(){
+  function overlaps(a,b,pad){
+    if(!a||!b)return false;
+    var A=a.getBoundingClientRect(),B=b.getBoundingClientRect(),p=pad||0;
+    return !(A.right+p<=B.left||B.right+p<=A.left||A.bottom+p<=B.top||B.bottom+p<=A.top);
+  }
+  function fix(){
+    var exit=document.querySelector(".journeyexit"), progress=document.querySelector(".hud .progress"), buttons=document.querySelector(".hudbtns"), guide=document.querySelector(".toppill");
+    if(exit&&progress&&overlaps(exit,progress,4)){
+      var w=Math.max(76,Math.floor(progress.getBoundingClientRect().left-exit.getBoundingClientRect().left-8));
+      exit.style.maxWidth=w+"px";
+    }
+    if(progress&&buttons&&overlaps(progress,buttons,4)){
+      progress.style.fontSize="16px";progress.style.padding="4px 6px";
+      var b=progress.querySelector("b");if(b)b.style.fontSize="20px";
+    }
+    if(guide){
+      var bottoms=[exit,progress,buttons].filter(Boolean).map(function(x){return x.getBoundingClientRect().bottom});
+      if(bottoms.length){
+        var need=Math.max.apply(null,bottoms)+10, g=guide.getBoundingClientRect();
+        if(g.top<need)guide.style.top=Math.ceil(need)+"px";
+      }
+    }
+    document.documentElement.dataset.labCollisionChecked="true";
+  }
+  function schedule(){requestAnimationFrame(function(){requestAnimationFrame(fix)})}
+  new MutationObserver(schedule).observe(document.getElementById("root")||document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["class"]});
+  addEventListener("resize",schedule);addEventListener("orientationchange",schedule);schedule();
+})();
+</script>
 </body>
 </html>
