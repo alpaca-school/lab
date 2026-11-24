@@ -53,13 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const query = encodeURIComponent(place + " " + category.query);
     const url = "https://www.google.com/maps/search/?api=1&query=" + query;
-    const popup = window.open(url, "_blank", "noopener,noreferrer");
-
-    if (!popup) {
-      window.location.href = url;
-      return;
-    }
-
+    window.open(url, "_blank", "noopener,noreferrer");
     setStatus(place + " 周辺の「" + category.label + "」候補を地図で開いたよ。利用条件は公式情報や電話で再確認してね。");
     core.beep("tap");
   }
