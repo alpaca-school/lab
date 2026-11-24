@@ -187,6 +187,32 @@
     return () => observer.disconnect();
   }
 
+
+  function placeFloatingControl(control, options = {}) {
+    const el = typeof control === "string" ? document.querySelector(control) : control;
+    if (!el) return null;
+    const placements = options.placements || ["bottom-left", "top-left", "bottom-right", "top-right"];
+    const blockers = (options.blockers || []).map((item) =>
+      typeof item === "string" ? document.querySelector(item) : item
+    ).filter(Boolean);
+    const padding = options.padding ?? 8;
+    const collisionPadding = options.collisionPadding ?? 10;
+    let chosen = placements[0];
+
+    for (const placement of placements) {
+      el.dataset.placement = placement;
+      void el.offsetWidth;
+      const blocked = !isFullyVisible(el, padding) ||
+        blockers.some((blocker) => elementsOverlap(el, blocker, collisionPadding));
+      if (!blocked) {
+        chosen = placement;
+        break;
+      }
+    }
+    el.dataset.placement = chosen;
+    return chosen;
+  }
+
   function init() {
     syncVisualViewport();
 
@@ -209,6 +235,7 @@
     registerServiceWorker,
     syncVisualViewport,
     isFullyVisible,
+    placeFloatingControl,
     elementsOverlap,
     watchCollisions
   });
