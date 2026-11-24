@@ -171,3 +171,10 @@ Starter Kitは作品固有の物語本文を持ちません。共通の器とし
 ### 長文モーダルの必須構造
 
 物語・説明など本文量が増えるモーダルは、カード全体をスクロールさせず、**見出し / 本文スクロール / 下部ナビ**の3層に分けます。下部ナビはSafe Area内に予約し、SafariのブラウザUI表示中でも「次へ／閉じる」が常にVisual Viewport内に残ることを `LabCore.isFullyVisible()` と実機QAで確認します。子ども向け本文は `LabCore.renderRubyText()` を使い、対象年齢に応じたルビを付けます。
+
+
+## 11. 浮動ナビゲーションの衝突回避
+
+ホーム等の低頻度ナビを「左下固定」だけで設計しません。画面固有の主ボタン、カード、案内、HUDと競合する場合は、Floating UIの collision / shift の考え方を参考に、外部依存を増やさない軽量API `LabCore.placeFloatingControl()` で候補位置を実測します。
+
+基本候補は `bottom-left → top-left → bottom-right → top-right`。各候補で `isFullyVisible()` と `elementsOverlap()` を確認し、Visual Viewport内かつblockerと重ならない最初の位置を採用します。ゲーム固有の重要操作を浮動ホームより優先します。
