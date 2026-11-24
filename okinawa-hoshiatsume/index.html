@@ -4339,20 +4339,46 @@ window.LabSarabanjiStory={open:openExpanded};document.addEventListener("click",f
   setTimeout(()=>{if(t.isConnected){t.remove();const next=reward.querySelector(".big.grow");if(next)next.click()}},5000);
  }
  function labelAlbum(){
-  document.querySelectorAll(".rbtn.book").forEach(b=>{b.textContent="📔";b.setAttribute("aria-label","ぼうけんアルバム");b.title="ぼうけんアルバム"});
+  document.querySelectorAll(".rbtn.book").forEach(b=>{
+    if(b.textContent!=="📔")b.textContent="📔";
+    if(b.getAttribute("aria-label")!=="ぼうけんアルバム")b.setAttribute("aria-label","ぼうけんアルバム");
+    if(b.title!=="ぼうけんアルバム")b.title="ぼうけんアルバム";
+  });
   const menu=document.querySelector(".activitymenu");
-  if(menu&&!menu.querySelector(".photo3-entry")){const b=document.createElement("button");b.className="sub modebtn photo3-entry";b.textContent="📔 ぼうけんアルバムを見る";b.onclick=album;const reset=menu.querySelector(".resetbtn");menu.insertBefore(b,reset||menu.querySelector(".back"))}
+  if(menu&&!menu.querySelector(".photo3-entry")){
+    const b=document.createElement("button");
+    b.className="sub modebtn photo3-entry";
+    b.textContent="📔 ぼうけんアルバムを見る";
+    b.onclick=album;
+    const reset=menu.querySelector(".resetbtn");
+    menu.insertBefore(b,reset||menu.querySelector(".back"));
+  }
   const map=document.querySelector(".bottombar");
-  if(map&&!document.querySelector(".photo3-map-entry")){const b=document.createElement("button");b.className="photo3-entry photo3-map-entry";b.textContent="📔 ぼうけんアルバム";b.onclick=album;document.body.appendChild(b)}
-  if(!map)document.querySelector(".photo3-map-entry")?.remove();
+  const entry=document.querySelector(".photo3-map-entry");
+  if(map&&!entry){
+    const b=document.createElement("button");
+    b.className="photo3-entry photo3-map-entry";
+    b.textContent="📔 ぼうけんアルバム";
+    b.onclick=album;
+    document.body.appendChild(b);
+  }else if(!map&&entry){
+    entry.remove();
+  }
  }
  document.addEventListener("click",function(e){const b=e.target.closest&&e.target.closest(".rbtn.book");if(!b)return;e.preventDefault();e.stopImmediatePropagation();album()},true);
- new MutationObserver(function(){
-  labelAlbum();
-  const rewards=[...document.querySelectorAll(".sheet.reward")];
-  const reward=rewards.find(x=>x.textContent.includes("おうし")&&x.textContent.includes("万座毛"));
-  if(reward&&!reward.dataset.photo3){reward.dataset.photo3="1";setTimeout(()=>show(reward),120)}
- }).observe(document.getElementById("root")||document.body,{subtree:true,childList:true});
+ let photo3Scheduled=false;
+ function photo3Refresh(){
+   if(photo3Scheduled)return;
+   photo3Scheduled=true;
+   requestAnimationFrame(function(){
+     photo3Scheduled=false;
+     labelAlbum();
+     const rewards=[...document.querySelectorAll(".sheet.reward")];
+     const reward=rewards.find(x=>x.textContent.includes("おうし")&&x.textContent.includes("万座毛"));
+     if(reward&&!reward.dataset.photo3){reward.dataset.photo3="1";setTimeout(()=>show(reward),120)}
+   });
+ }
+ new MutationObserver(photo3Refresh).observe(document.getElementById("root")||document.body,{subtree:true,childList:true});
  labelAlbum();
 })();
 </script></body>
