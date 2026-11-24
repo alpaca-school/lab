@@ -4297,5 +4297,39 @@ window.LabSarabanjiStory={open:openExpanded};document.addEventListener("click",f
  addEventListener("resize",schedule,{passive:true});addEventListener("orientationchange",schedule,{passive:true});if(visualViewport){visualViewport.addEventListener("resize",schedule,{passive:true});visualViewport.addEventListener("scroll",schedule,{passive:true})}schedule();
 })();
 </script>
-</body>
+
+<style id="lab-photo-reward-stage3-20261124">
+.photo3-stage{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:calc(env(safe-area-inset-top) + 14px) 14px calc(env(safe-area-inset-bottom) + 14px);background:rgba(7,14,38,.82);backdrop-filter:blur(5px);animation:photo3Fade .18s ease}
+.photo3-flash{position:absolute;inset:0;background:#fff8dc;opacity:0;pointer-events:none;animation:photo3Flash .42s ease}
+.photo3-camera{width:min(92vw,390px);display:grid;justify-items:center;gap:12px}.photo3-title{font:900 20px/1.35 "Hiragino Maru Gothic ProN","BIZ UDPGothic",sans-serif;color:#fff;text-shadow:0 2px 8px #000}
+.photo3-polaroid{width:min(82vw,330px);background:#fffdf7;padding:13px 13px 26px;box-shadow:0 16px 40px #0008;transform:rotate(-1.4deg);border-radius:3px;animation:photo3Eject .7s cubic-bezier(.2,.8,.2,1) both}
+.photo3-photo{position:relative;aspect-ratio:4/3;overflow:hidden;background:linear-gradient(#081634 0 58%,#17466a 59% 66%,#183d32 67%);isolation:isolate}.photo3-photo:before{content:"";position:absolute;left:-5%;right:-5%;bottom:18%;height:26%;background:#132b2b;clip-path:polygon(0 76%,12% 64%,24% 70%,37% 43%,47% 58%,60% 46%,70% 61%,82% 49%,100% 69%,100% 100%,0 100%)}.photo3-photo:after{content:"";position:absolute;left:50%;bottom:17%;width:42%;height:26%;transform:translateX(-50%);border-radius:55% 55% 8% 8%;background:#21312d;clip-path:polygon(0 100%,8% 55%,22% 35%,37% 25%,52% 30%,68% 43%,82% 63%,100% 100%);opacity:.95}
+.photo3-stars{position:absolute;inset:0;opacity:0;animation:photo3Develop 1.05s .65s ease forwards}.photo3-stars svg{width:100%;height:100%}.photo3-stars line{stroke:#ffe98a;stroke-width:1.7}.photo3-stars circle{fill:#fff5a8;filter:drop-shadow(0 0 4px #fff)}
+.photo3-caption{padding:14px 8px 0;color:#253052}.photo3-caption b{display:block;font:900 23px/1.25 "Hiragino Maru Gothic ProN","BIZ UDPGothic",sans-serif}.photo3-caption span{display:block;margin-top:4px;font:800 17px/1.3 sans-serif;color:#52618a}.photo3-note{margin-top:7px;font:700 11px/1.3 sans-serif;color:#7a8195}.photo3-save{width:min(82vw,330px);min-height:58px;border-radius:999px;background:#ff7b25;color:#fff;box-shadow:0 4px #bd4b0c;font:900 18px/1.2 "Hiragino Maru Gothic ProN","BIZ UDPGothic",sans-serif}
+@keyframes photo3Flash{0%,100%{opacity:0}35%{opacity:.48}}@keyframes photo3Eject{from{opacity:0;transform:translateY(-70px) rotate(-1.4deg) scale(.92)}to{opacity:1;transform:translateY(0) rotate(-1.4deg) scale(1)}}@keyframes photo3Develop{from{opacity:.04;filter:blur(4px)}to{opacity:1;filter:none}}@keyframes photo3Fade{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.photo3-stage *{animation-duration:.01ms!important;animation-delay:0s!important}}
+</style>
+<script id="lab-photo-reward-stage3-20261124">
+(function(){
+ const KEY="okinawa-hoshiatsume-photos";
+ const META={photo_id:"manzamo-taurus-v1",spot_id:1,place_name:"万座毛",municipality:"恩納村",constellation_id:"taurus",constellation_name:"おうし座",background_id:"manzamo-illustration-v1",card_version:1,kind:"game-illustration"};
+ const stars=[[76,75],[52,60],[57,48],[22,23],[15,59],[88,43]],lines=[[0,1],[1,2],[2,3],[1,4]];
+ function read(){try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch{return[]}}
+ function save(){const xs=read();if(!xs.some(x=>x.photo_id===META.photo_id)){xs.push({...META,acquired_at:new Date().toISOString()});try{localStorage.setItem(KEY,JSON.stringify(xs))}catch{}}}
+ function svg(){return '<svg viewBox="0 0 100 100" aria-hidden="true">'+lines.map(x=>'<line x1="'+stars[x[0]][0]+'" y1="'+stars[x[0]][1]+'" x2="'+stars[x[1]][0]+'" y2="'+stars[x[1]][1]+'"/>').join("")+stars.map(x=>'<circle cx="'+x[0]+'" cy="'+x[1]+'" r="2.2"/>').join("")+'</svg>'}
+ function show(reward){
+  if(document.querySelector(".photo3-stage"))return;
+  save();
+  const el=document.createElement("div");el.className="photo3-stage";
+  el.innerHTML='<div class="photo3-flash"></div><div class="photo3-camera"><div class="photo3-title">📸 とれた！ 旅の写真</div><div class="photo3-polaroid"><div class="photo3-photo"><div class="photo3-stars">'+svg()+'</div></div><div class="photo3-caption"><b>万座毛</b><span>おうし座 ♉</span><div class="photo3-note">サラバンジの星空スケッチ｜ゲーム内イラスト</div></div></div><button class="photo3-save">📔 アルバムにしまう</button></div>';
+  document.body.appendChild(el);
+  el.querySelector(".photo3-save").onclick=function(){el.remove();const next=reward.querySelector(".big.grow");if(next)next.click()};
+ }
+ new MutationObserver(function(){
+  const rewards=[...document.querySelectorAll(".sheet.reward")];
+  const reward=rewards.find(x=>x.textContent.includes("おうし")&&x.textContent.includes("万座毛"));
+  if(reward&&!reward.dataset.photo3){reward.dataset.photo3="1";setTimeout(()=>show(reward),120)}
+ }).observe(document.getElementById("root")||document.body,{subtree:true,childList:true});
+})();
+</script></body>
 </html>
