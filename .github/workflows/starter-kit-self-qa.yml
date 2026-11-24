@@ -1,0 +1,52 @@
+name: Starter Kit self QA
+on:
+  push:
+    branches:
+      - refactor/starter-kit-qa-gates-20261125
+permissions:
+  contents: read
+jobs:
+  self-qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: G1 syntax and manifest
+        run: |
+          node --check starter-kit/lab-core.js
+          node --check starter-kit/sw.js
+          for file in starter-kit/qa/*.mjs; do node --check "$file" || exit 1; done
+          python3 -m json.tool starter-kit/manifest.webmanifest > /dev/null
+      - name: G2 unit tests
+        run: node --test starter-kit/qa/*.unit.mjs
+      - name: Install browser test runner
+        run: npm install --no-save --package-lock=false @playwright/test@1.56.1
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Serve isolated checkout
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/starter-http.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8765/starter-kit/ -o /dev/null; then exit 0; fi
+            sleep 1
+          done
+          exit 1
+      - name: G3 helper browser fixtures
+        run: npx playwright test starter-kit/qa/self-check.spec.mjs --grep-invert 'template ' --workers=1 --reporter=list
+      - name: G4 template regression
+        run: npx playwright test starter-kit/qa/self-check.spec.mjs --grep 'template ' --workers=1 --reporter=html --trace=retain-on-failure
+        env:
+          PLAYWRIGHT_HTML_OPEN: never
+      - name: Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: starter-kit-self-qa
+          path: |
+            playwright-report/
+            test-results/
+            /tmp/starter-http.log
+          retention-days: 7
