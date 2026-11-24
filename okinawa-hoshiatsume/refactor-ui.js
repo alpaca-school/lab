@@ -7,11 +7,14 @@ const pages=[
 {k:"サラバンジらしい作戦",t:"写真を 撮れば、わかるっしょ！",b:["Q:「とりあえず写真《しゃしん》を連写《れんしゃ》！ あとで見《み》れば何《なん》とかなるっしょ！」","ところが、あとで見返《みかえ》すと……。","Q:「あれ？ 何時《なんじ》？ どっち向《む》き？」","写真《しゃしん》だけでは、どこで見《み》た星《ほし》なのか、よく分《わ》かりません。"]},
 {k:"沖縄で星集め",t:"だったら、自分で 見に行こう！",b:["サラバンジは、すぐに次《つぎ》の作戦《さくせん》を思《おも》いつきました。","Q:「沖縄《おきなわ》のいろんなところを回《まわ》って、自分《じぶん》の目《め》で星《ほし》を見《み》ればいい！」","辺戸岬《へどみさき》から沖縄《おきなわ》の島々《しまじま》まで。場所《ばしょ》をめぐり、星《ほし》を見《み》つけ、星座《せいざ》をつないでいく新《あたら》しい旅《たび》の始《はじ》まりです。","さあ、サラバンジといっしょに、好《す》きな場所《ばしょ》から出《で》かけよう。"]}];
  const KEY="okinawa-hoshiatsume-photos-refactor-20261124";
- const META={photo_id:"manzamo-taurus-v1",spot_id:1,place_name:"万座毛",municipality:"恩納村",constellation_id:"taurus",constellation_name:"おうし座",background_id:"manzamo-illustration-v1",card_version:1,kind:"game-illustration"};
- const stars=[[76,75],[52,60],[57,48],[22,23],[15,59],[88,43]],lines=[[0,1],[1,2],[2,3],[1,4]];
- function read(){try{const a=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(a)?a:[]}catch{return[]}}
- function save(){const xs=read();if(!xs.some(x=>x.photo_id===META.photo_id)){xs.push({...META,acquired_at:new Date().toISOString()});try{localStorage.setItem(KEY,JSON.stringify(xs))}catch{return false}}return true}
- function svg(){return '<svg viewBox="0 0 100 100" aria-hidden="true">'+lines.map(x=>'<line x1="'+stars[x[0]][0]+'" y1="'+stars[x[0]][1]+'" x2="'+stars[x[1]][0]+'" y2="'+stars[x[1]][1]+'"/>').join("")+stars.map(x=>'<circle cx="'+x[0]+'" cy="'+x[1]+'" r="2.2"/>').join("")+'</svg>'}
+ let stages=[];
+ const ids=["aries","taurus","gemini","cancer","leo","virgo","libra","scorpius","sagittarius","capricornus","aquarius","pisces"];
+ const plain=s=>String(s).replace(/\{[^}]*\}/g,"");
+ const esc=s=>String(s).replace(/[&<>"']/g,x=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[x]));
+ function setStages(data){if(!Array.isArray(data)||data.length!==12)throw Error("Invalid stage catalog");stages=data.map((s,i)=>({photo_id:i===1?"manzamo-taurus-v1":"spot-"+i+"-"+ids[i]+"-v1",spot_id:i,place_name:plain(s.name),municipality:plain(s.muni),constellation_id:ids[i],constellation_name:s.zodiac.replace(/ざ$/,"座"),background_id:i===1?"manzamo-illustration-v1":"schematic-night-v1",card_version:1,kind:"game-illustration",stars:s.stars.map(([x,y])=>[50+x*18,50-y*18]),lines:s.lines.map(x=>[...x])}));}
+ function read(){try{const a=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(a)?a.filter(x=>x&&typeof x.photo_id==="string"):[]}catch{return[]}}
+ function save(meta){const xs=read();if(!xs.some(x=>x.photo_id===meta.photo_id)){const {stars,lines,...record}=meta;xs.push({...record,acquired_at:new Date().toISOString()});try{localStorage.setItem(KEY,JSON.stringify(xs))}catch{return false}}return true}
+ function svg(meta){const {stars,lines}=meta;return '<svg viewBox="0 0 100 100" aria-hidden="true">'+lines.map(x=>'<line x1="'+stars[x[0]][0]+'" y1="'+stars[x[0]][1]+'" x2="'+stars[x[1]][0]+'" y2="'+stars[x[1]][1]+'"/>').join("")+stars.map(x=>'<circle cx="'+x[0]+'" cy="'+x[1]+'" r="2.2"/>').join("")+'</svg>'}
 
 let active=null;
 function dialog(className,html,onClose){
@@ -29,14 +32,16 @@ function story(openMenu){
  prev.onclick=()=>{if(i>0){i--;draw()}};next.onclick=()=>{if(i<pages.length-1){i++;draw()}else d.close()};el.querySelector(".storyskip").onclick=d.close;draw();
 }
 function album(){
- const got=read().some(x=>x?.photo_id===META.photo_id);let slots="";
- for(let i=0;i<12;i++)slots+=i===1&&got?'<div class="photo3-mini"><div class="photo3-photo"><div class="photo3-stars">'+svg()+'</div></div><b>万座毛 × おうし座</b></div>':'<div class="photo3-empty">？<br>まだ とっていないよ</div>';
- const d=dialog("photo3-album",'<div class="photo3-album-card"><div class="photo3-album-head"><button aria-label="とじる">←</button><h2>📔 ぼうけんアルバム</h2></div><p class="photo3-album-note">ゲーム内の星空イラストです。</p><div class="photo3-grid">'+slots+'</div></div>');if(d)d.el.querySelector("button").onclick=d.close;
+ const got=new Set(read().map(x=>x.photo_id));let slots="";
+ for(const meta of stages)slots+=got.has(meta.photo_id)?'<div class="photo3-mini" data-spot="'+meta.spot_id+'"><div class="photo3-photo"><div class="photo3-stars">'+svg(meta)+'</div></div><b>'+esc(meta.place_name)+' × '+esc(meta.constellation_name)+'</b></div>':'<div class="photo3-empty">？<br>まだ とっていないよ</div>';
+ const d=dialog("photo3-album",'<div class="photo3-album-card"><div class="photo3-album-head"><button aria-label="とじる">←</button><h2>📔 ぼうけんアルバム</h2></div><p class="photo3-album-note">ゲーム内の星空イラストです。実際の観測写真ではありません。</p><div class="photo3-grid">'+slots+'</div></div>');if(d)d.el.querySelector("button").onclick=d.close;
 }
-function photograph(){
- const d=dialog("photo3-stage",'<div class="photo3-flash"></div><div class="photo3-camera"><div class="photo3-title">📸 とれた！ 旅の写真</div><div class="photo3-polaroid"><div class="photo3-photo"><div class="photo3-stars">'+svg()+'</div></div><div class="photo3-caption"><b>万座毛</b><span>おうし座 ♉</span><div class="photo3-note">ゲーム内イラスト</div></div></div><button class="photo3-save">📔 アルバムにしまう</button><p class="photo3-message" role="status"></p></div>');
- if(!d)return;d.el.querySelector("button").onclick=()=>{if(save())d.close();else d.el.querySelector(".photo3-message").textContent="保存できなかったよ。もう一度ためしてね。"};
+function photograph(id){
+ const meta=stages[id];if(!meta)return;
+ const d=dialog("photo3-stage",'<div class="photo3-flash"></div><div class="photo3-camera"><div class="photo3-title">📸 とれた！ 旅の写真</div><div class="photo3-polaroid"><div class="photo3-photo"><div class="photo3-stars">'+svg(meta)+'</div></div><div class="photo3-caption"><b>'+esc(meta.place_name)+'</b><span>'+esc(meta.constellation_name)+'</span><div class="photo3-note">ゲーム内の模式イラスト</div></div></div><button class="photo3-save">📔 アルバムにしまう</button><button class="photo3-skip">保存せずに すすむ</button><p class="photo3-message" role="status"></p></div>');
+ if(!d)return;d.el.querySelector(".photo3-save").onclick=()=>{if(save(meta))d.close();else d.el.querySelector(".photo3-message").textContent="保存できなかったよ。もう一度ためしてね。"};d.el.querySelector(".photo3-skip").onclick=d.close;
 }
+
 let frame=0;
 function layout(){
  const home=document.querySelector(".journeyexit.materialhome"),guide=document.querySelector(".toppill"),bar=document.querySelector(".bottombar"),sheet=document.querySelector(".sheet"),progress=document.querySelector(".hud .progress"),buttons=document.querySelector(".hudbtns");
@@ -45,6 +50,6 @@ function layout(){
 }
 function schedule(){if(frame)return;frame=requestAnimationFrame(()=>{frame=0;layout()})}
 window.addEventListener("resize",schedule,{passive:true});window.visualViewport?.addEventListener("resize",schedule,{passive:true});
-window.HoshiUI={story,album,photograph,schedule,resetPhotos(){try{localStorage.removeItem(KEY)}catch{}}};
+window.HoshiUI={story,album,photograph,setStages,schedule,resetPhotos(){try{localStorage.removeItem(KEY)}catch{}}};
 LabCore.init();
 })();
