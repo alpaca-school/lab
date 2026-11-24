@@ -4048,7 +4048,7 @@ alpaca-school/lab/index.html はラボトップなので上書きしない。
     if(!btn||bypass||shown)return;
     ev.preventDefault();ev.stopPropagation();shown=true;
     var gate=document.createElement("div");gate.className="storygate";gate.setAttribute("role","dialog");gate.setAttribute("aria-modal","true");gate.setAttribute("aria-label","サラバンジの新しい冒険");
-    gate.innerHTML='<div class="storycard"><div class="storyeyebrow">「旅立ちの山」の その先へ</div><h2>サラバンジの 新しい冒険</h2><p>旅立ちの山を こえた サラバンジ。<br>こんどは 沖縄の 夜空へ！</p><p class="storysmall">好きな星を見つけて、沖縄をめぐろう。</p><button class="storygo" type="button">星を 集めにいく ▶</button><button class="storyskip" type="button">すぐに はじめる</button></div>';
+    gate.innerHTML='<div class="storycard storylong"><div class="storyeyebrow">「旅立ちの山」の その先へ</div><h2>サラバンジと 沖縄の星</h2><div class="storybody"><p>旅立ちの山を こえた サラバンジ。<br>山のむこうには、まだ知らない 世界が ひろがっていました。</p><p>その夜、遠くに きらきら光る 沖縄の夜空を 見つけます。</p><p class="storyquote">「あそこだ！」</p><p>考えるより先に、サラバンジは 勢いよく とび出しました。<br>無謀に見えることでも、運と勢いで のりこえるのが サラバンジです。</p><p>ところが、沖縄に着いてみると、星は ひとつの場所に あるのではありません。<br>北から南まで、島じゅうの いろいろな場所に 星が ちらばっていました。</p><p>「よし。いっきに 集めよう！」</p><p>体力がない サラバンジは、長い勝負より 短期決戦。<br>星を見つけ、星座をつなぎ、星のある土地の名前を おぼえながら、沖縄を めぐることにしました。</p><p class="storysmall">さあ、好きな星から 出かけよう。サラバンジの 星集めが はじまります。</p></div><button class="storygo" type="button">星を 集めにいく ▶</button><button class="storyskip" type="button">すぐに はじめる</button></div>';
     document.body.appendChild(gate);
     gate.querySelector(".storygo").onclick=function(){closeAndStart(btn,gate)};
     gate.querySelector(".storyskip").onclick=function(){closeAndStart(btn,gate)};
@@ -4203,7 +4203,7 @@ alpaca-school/lab/index.html はラボトップなので上書きしない。
 </style>
 <script id="lab-story-replay-20261124">
 (function(){
- var story='<div class="storycard"><div class="storyeyebrow">「旅立ちの山」の その先へ</div><h2>サラバンジの 新しい冒険</h2><p>旅立ちの山を こえた サラバンジ。<br>こんどは 沖縄の 夜空へ！</p><p class="storysmall">好きな星を見つけて、沖縄をめぐろう。</p><button class="storyclose" type="button">タイトルへ もどる</button></div>';
+ var story='<div class="storycard storylong"><div class="storyeyebrow">「旅立ちの山」の その先へ</div><h2>サラバンジと 沖縄の星</h2><div class="storybody"><p>旅立ちの山を こえた サラバンジ。<br>山のむこうには、まだ知らない 世界が ひろがっていました。</p><p>その夜、遠くに きらきら光る 沖縄の夜空を 見つけます。</p><p class="storyquote">「あそこだ！」</p><p>考えるより先に、サラバンジは 勢いよく とび出しました。<br>無謀に見えることでも、運と勢いで のりこえるのが サラバンジです。</p><p>ところが、沖縄に着いてみると、星は ひとつの場所に あるのではありません。<br>北から南まで、島じゅうの いろいろな場所に 星が ちらばっていました。</p><p>「よし。いっきに 集めよう！」</p><p>体力がない サラバンジは、長い勝負より 短期決戦。<br>星を見つけ、星座をつなぎ、星のある土地の名前を おぼえながら、沖縄を めぐることにしました。</p><p class="storysmall">さあ、好きな星から 出かけよう。サラバンジの 星集めが はじまります。</p></div><button class="storyclose" type="button">タイトルへ もどる</button></div>';
  function openStory(){
    if(document.querySelector(".storygate.replay"))return;
    var gate=document.createElement("div");gate.className="storygate replay";gate.setAttribute("role","dialog");gate.setAttribute("aria-modal","true");gate.setAttribute("aria-label","サラバンジのお話");gate.innerHTML=story;document.body.appendChild(gate);
@@ -4220,5 +4220,15 @@ alpaca-school/lab/index.html はラボトップなので上書きしない。
  addButton();
 })();
 </script>
+
+<style id="lab-story-long-20261124">
+.storygate{overflow-y:auto;padding:calc(env(safe-area-inset-top) + 18px) 14px calc(env(safe-area-inset-bottom) + 18px);box-sizing:border-box;align-items:start}
+.storycard.storylong{margin:auto;max-height:none}
+.storylong .storybody{text-align:left;max-height:min(54vh,480px);overflow-y:auto;overscroll-behavior:contain;padding:2px 8px 4px;margin:6px -2px;border-radius:16px;background:linear-gradient(180deg,rgba(240,245,255,.55),rgba(255,255,255,.2))}
+.storylong .storybody p{font-size:17px;line-height:1.8;margin:12px 4px;font-weight:750}
+.storylong .storyquote{text-align:center!important;font-size:24px!important;color:#d9480f;font-weight:1000!important;margin:14px 0!important}
+.storylong .storysmall{background:#fff7dc;border-radius:14px;padding:10px 12px;color:#4c5578!important}
+@media(max-width:390px){.storycard.storylong{padding:18px 16px}.storycard.storylong h2{font-size:23px}.storylong .storybody{max-height:52vh}.storylong .storybody p{font-size:16px;line-height:1.75}.storylong .storyquote{font-size:22px!important}}
+</style>
 </body>
 </html>
