@@ -290,7 +290,7 @@
 
   // beach.html の画面状態("title"/"play"/"ending"/…)から場面を決める
   function setScreen(screen) {
-    if (screen === "ending") return setScene("ending");
+    if (screen === "ending" || screen === "truth") return setScene("ending");
     if (screen === "play") {
       var st = stageFromUrl();
       return setScene(st === null ? "stage0" : "stage" + st);
