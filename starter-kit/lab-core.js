@@ -146,6 +146,16 @@
   }
 
 
+  function isFullyVisible(element, padding = 0) {
+    if (!element) return false;
+    const rect = element.getBoundingClientRect();
+    const vv = window.visualViewport;
+    const width = vv ? vv.width : window.innerWidth;
+    const height = vv ? vv.height : window.innerHeight;
+    return rect.left >= padding && rect.top >= padding &&
+      rect.right <= width - padding && rect.bottom <= height - padding;
+  }
+
   function elementsOverlap(a, b, padding = 0) {
     if (!a || !b) return false;
     const A = a.getBoundingClientRect();
@@ -198,6 +208,7 @@
     toggleMute,
     registerServiceWorker,
     syncVisualViewport,
+    isFullyVisible,
     elementsOverlap,
     watchCollisions
   });
