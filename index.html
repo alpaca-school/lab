@@ -667,28 +667,31 @@ function playCassetteSounds(){
   clearSoundTimers();
   const ctx=getAudioCtx();
   if(ctx&&ctx.state==="suspended")ctx.resume().catch(()=>{});
-  // Cassette shell rattles against the guides as it is pushed into place.
-  soundTimers.push(setTimeout(()=>{tone(205,.032,.036,"square");noise(.045,.030);},1280));
-  soundTimers.push(setTimeout(()=>{tone(168,.038,.042,"square");noise(.050,.034);},1420));
-  soundTimers.push(setTimeout(()=>{tone(225,.030,.034,"square");noise(.040,.028);},1545));
-  soundTimers.push(setTimeout(()=>{tone(146,.045,.050,"square");noise(.055,.038);},1680));
-  // Final mechanical seating: a heavier clack followed by the latch click.
-  soundTimers.push(setTimeout(()=>{tone(96,.070,.040,"triangle");tone(178,.045,.055,"square",.015);noise(.075,.045);},1840));
-  soundTimers.push(setTimeout(()=>{tone(265,.032,.042,"square");noise(.035,.026);},1945));
-  // Door closes, followed by the latch.
-  soundTimers.push(setTimeout(()=>{tone(74,.085,.040,"triangle");noise(.10,.032);},2580));
-  soundTimers.push(setTimeout(()=>{tone(188,.04,.038,"square");noise(.035,.020);},2720));
-  // Intentional mechanical pause, then PLAY head/pinch roller engages.
+  // Old boombox cassette well: dull plastic guide knocks rather than bright electronic clicks.
+  soundTimers.push(setTimeout(()=>{tone(92,.055,.032,"triangle");noise(.060,.026);},1280));
+  soundTimers.push(setTimeout(()=>{tone(118,.050,.038,"triangle");noise(.065,.030);},1435));
+  soundTimers.push(setTimeout(()=>{tone(82,.065,.042,"triangle");noise(.075,.034);},1590));
+  // Cassette drops fully onto the hubs: low "gakon" plus a small spring/latch chatter.
   soundTimers.push(setTimeout(()=>{
-    tone(112,.045,.050,"square");noise(.055,.030);
-    tone(72,.075,.025,"triangle",.025);
+    tone(62,.105,.050,"triangle");noise(.105,.045);
+    tone(132,.050,.026,"square",.035);
+  },1770));
+  soundTimers.push(setTimeout(()=>{tone(154,.038,.030,"square");noise(.045,.024);},1900));
+  // Heavy cassette door and mechanical latch.
+  soundTimers.push(setTimeout(()=>{tone(58,.120,.055,"triangle");noise(.125,.042);},2540));
+  soundTimers.push(setTimeout(()=>{tone(126,.050,.040,"square");tone(74,.075,.025,"triangle",.018);noise(.055,.028);},2700));
+  // Physical PLAY key: head block and pinch roller engage with a weighty clack.
+  soundTimers.push(setTimeout(()=>{
+    tone(68,.100,.060,"triangle");noise(.090,.040);
+    tone(104,.055,.040,"square",.025);
     screenMain.textContent="▶ PLAY";screenSub.textContent="テープを読み込んでいます";
   },3040));
-  // Motor spins up and tape hiss appears as the reels accelerate.
+  // Small belt-drive motor comes up after the mechanism engages.
   soundTimers.push(setTimeout(()=>{
     motorRamp(1.20);
-    noise(1.12,.006);
-  },3130));
+    tone(78,.85,.006,"sine");
+    noise(1.12,.005);
+  },3160));
   soundTimers.push(setTimeout(()=>{
     screenMain.textContent="NOW LOADING...";
     screenSub.textContent="ALPACA WORLD DIGITAL LAB";
