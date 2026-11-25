@@ -20,6 +20,12 @@ jobs:
       - name: Install pinned test runner
         run: |
           npm install --no-save --ignore-scripts @playwright/test@1.56.1
+          mkdir -p /tmp/kina-dependency-audit
+          cd /tmp/kina-dependency-audit
+          npm init -y
+          npm install --package-lock-only --ignore-scripts --save-exact three@0.180.0 @playwright/test@1.56.1
+          npm audit --audit-level=high
+          cd "$GITHUB_WORKSPACE"
           npx playwright install --with-deps chromium
       - name: Test
         run: |
