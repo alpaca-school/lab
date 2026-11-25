@@ -109,3 +109,34 @@ test('clock harness advances from a future pause',async({page})=>{
  const before=await page.evaluate(()=>Date.now());await page.clock.runFor(1000);
  expect(await page.evaluate(()=>Date.now())).toBe(before+1000);
 });
+
+test('audio lifecycle: gesture, BGM, mute, SFX and home',async({page})=>{
+ await page.addInitScript(()=>{
+  const C=window.AudioContext||window.webkitAudioContext;
+  window.qaAudio={contexts:0,triangle:0,sine:0};
+  const native=C.prototype.createOscillator;
+  C.prototype.createOscillator=function(...args){
+   const o=native.apply(this,args),start=o.start.bind(o);
+   o.start=(...args)=>{if(o.type==='triangle')window.qaAudio.triangle++;else if(o.type==='sine')window.qaAudio.sine++;return start(...args)};
+   return o;
+  };
+  const ctor=new Proxy(C,{construct(target,args){window.qaAudio.contexts++;return Reflect.construct(target,args)}});
+  if(window.AudioContext)window.AudioContext=ctor;else window.webkitAudioContext=ctor;
+ });
+ await page.route('https://cdn.jsdelivr.net/**',r=>r.abort());
+ await page.goto(url);
+ const read=()=>page.evaluate(()=>({...window.qaAudio}));
+ expect(await read()).toEqual({contexts:0,triangle:0,sine:0});
+ await page.locator('#mode').selectOption('relax');await page.locator('#start').click();
+ await expect(page.locator('#inn')).toBeEnabled();
+ await expect.poll(async()=>(await read()).triangle).toBeGreaterThanOrEqual(3);
+ const before=await read();await page.locator('#inn').click();
+ expect((await read()).sine).toBeGreaterThan(before.sine);
+ await page.locator('#sound').click();await expect(page.locator('#sound')).toHaveAttribute('aria-pressed','false');
+ const muted=await read();await page.waitForTimeout(600);expect(await read()).toEqual(muted);
+ await page.locator('#sound').click();await expect.poll(async()=>(await read()).triangle).toBeGreaterThan(muted.triangle);
+ await page.locator('#explain').click();await expect(page.locator('#readingDialog')).toBeVisible();
+ const reading=await read();await page.waitForTimeout(600);expect(await read()).toEqual(reading);
+ await page.locator('#closeReading').click();await expect.poll(async()=>(await read()).triangle).toBeGreaterThan(reading.triangle);
+ await page.locator('#home').click();const home=await read();await page.waitForTimeout(600);expect(await read()).toEqual(home);
+});
