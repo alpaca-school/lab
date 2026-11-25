@@ -4,3 +4,35 @@ async function audit(page,info,name,selectors){const errors=await page.evaluate(
 for(const [width,height] of [[390,560],[390,650],[390,760],[1280,800]])test('fallback and representative screens '+width+'x'+height,async({page},info)=>{await page.setViewportSize({width,height});await page.route('https://cdn.jsdelivr.net/**',r=>r.abort());await page.route('https://unpkg.com/**',r=>r.abort());const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto(url);await expect(page.locator('#start')).toBeVisible();await audit(page,info,'title',['#start','#screen-title [data-go]','#screen-title a']);await page.locator('#screen-title [data-go]').click();await expect(page.locator('#story ruby').first()).toBeVisible();await audit(page,info,'story',['#screen-story [data-go="screen-title"]','#screen-story [data-go="screen-play"]']);await page.locator('#screen-story [data-go="screen-play"]').click();await expect(page.locator('#fallback')).toBeVisible();await audit(page,info,'play',['#screen-play [data-go]','#sound','#reset','#help','#next']);await page.locator('#help').click();await expect(page.locator('#time')).toHaveText('昼の村');await expect(page.locator('#help')).toBeDisabled();await page.locator('#next').click();await expect(page.locator('#reflection ruby').first()).toBeVisible();await audit(page,info,'result',['#screen-result [data-go="screen-play"]','#screen-result [data-go="screen-final"]']);await page.locator('#screen-result [data-go="screen-final"]').click();await expect(page.locator('#final ruby').first()).toBeVisible();await page.locator('#replay').scrollIntoViewIfNeeded();await audit(page,info,'final',['#screen-final [data-go="screen-result"]','#screen-final [data-go="screen-title"]','#replay','#screen-final a']);await page.locator('#replay').click();await expect(page.locator('#time')).toHaveText('朝の村');await expect(page.locator('#next')).toBeDisabled();expect(errors).toEqual([])});
 test('real 3D and reduced motion',async({page},info)=>{await page.setViewportSize({width:390,height:650});await page.emulateMedia({reducedMotion:'reduce'});await page.goto(url);await expect(page.locator('canvas')).toHaveCount(0);await page.locator('#start').click();await expect(page.locator('#world canvas')).toBeVisible({timeout:30000});await page.screenshot({path:info.outputPath('village.png')});await page.locator('#help').click();await expect(page.locator('#next')).toBeEnabled();await page.locator('#next').click();await expect(page.locator('#screen-result')).toBeVisible()});
 test('missing target must fail',async({page},info)=>{await page.goto(url);await expect(audit(page,info,'negative',['#absent'])).rejects.toThrow()});
+
+test('direct guest interaction and drag suppression',async({page},info)=>{
+ await page.setViewportSize({width:390,height:650});
+ await page.emulateMedia({reducedMotion:'reduce'});
+ await page.goto(url);
+ await page.locator('#start').click();
+ const canvas=page.locator('#world canvas');
+ await expect(canvas).toBeVisible({timeout:30000});
+ await expect(canvas).toHaveAttribute('data-guest-x',/\d/);
+ const initial=await canvas.getAttribute('data-view-angle');
+ const b=await canvas.boundingBox();
+ await page.mouse.move(b.x+b.width*.5,b.y+b.height*.5);
+ await page.mouse.down();await page.mouse.move(b.x+b.width*.5+60,b.y+b.height*.5,{steps:5});await page.mouse.up();
+ await expect(canvas).not.toHaveAttribute('data-view-angle',initial);
+ await expect(page.locator('#help')).toBeEnabled();
+ await page.locator('#reset').click();
+ await expect(canvas).toHaveAttribute('data-view-angle',initial);
+ const position=await canvas.evaluate(e=>({x:Number(e.dataset.guestX)*e.clientWidth,y:Number(e.dataset.guestY)*e.clientHeight}));
+ expect(position.x).toBeGreaterThan(0);expect(position.x).toBeLessThan(b.width);
+ expect(position.y).toBeGreaterThan(0);expect(position.y).toBeLessThan(b.height);
+ await canvas.click({position});
+ await expect(page.locator('#help')).toBeDisabled();
+ await expect(page.locator('#time')).toHaveText('昼の村');
+ await page.screenshot({path:info.outputPath('direct-guest.png')});
+});
+test('BudouX bundle registers and ruby survives',async({page})=>{
+ await page.goto(url);
+ await expect.poll(()=>page.evaluate(()=>!!customElements.get('budoux-ja')),{timeout:20000}).toBe(true);
+ await page.locator('#screen-title [data-go]').click();
+ await expect(page.locator('#story budoux-ja ruby').first()).toBeVisible();
+ await expect(page.locator('#story budoux-ja')).toContainText('旅人');
+});
