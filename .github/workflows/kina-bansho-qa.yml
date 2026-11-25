@@ -1,0 +1,32 @@
+name: Kina Bansho QA
+on:
+  push:
+    branches: ['qa/kina-bansho-v2-standard']
+permissions:
+  contents: read
+jobs:
+  qa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax
+        run: |
+          node --check kina-bansho-v2/src/game.js
+          node --check kina-bansho-v2/qa/game.spec.mjs
+      - name: Install pinned test runner
+        run: |
+          npm install --no-save --ignore-scripts @playwright/test@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Test
+        run: |
+          python3 -m http.server 8765 > /tmp/kina-server.log 2>&1 &
+          npx playwright test kina-bansho-v2/qa/game.spec.mjs --workers=1 --reporter=list
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: kina-qa-evidence
+          path: test-results/
