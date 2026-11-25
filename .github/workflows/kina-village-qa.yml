@@ -1,0 +1,39 @@
+name: Kina village prototype QA
+on:
+  push:
+    branches: [qa/kina-bansho-v04-village]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and dependencies
+        run: |
+          node --check kina-bansho-v04-qa/src/village.js
+          node --check kina-bansho-v04-qa/lab-core.js
+          npm install --no-save --ignore-scripts @playwright/test@1.56.1
+          mkdir -p /tmp/village-audit
+          cd /tmp/village-audit
+          npm init -y
+          npm install --package-lock-only --ignore-scripts --save-exact three@0.180.0 budoux@0.8.4 @playwright/test@1.56.1
+          npm audit --audit-level=high
+          npm explain uuid || true
+          npm explain gaxios || true
+          npm view budoux@0.8.4 dependencies optionalDependencies --json
+          npm audit --omit=dev --audit-level=high
+          cd "$GITHUB_WORKSPACE"
+          npx playwright install --with-deps chromium
+      - name: QA
+        run: |
+          python3 -m http.server 8765 >/tmp/village-http.log 2>&1 &
+          npx playwright test kina-bansho-v04-qa/qa/village.spec.mjs --workers=1 --reporter=list
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: village-evidence
+          path: test-results/
