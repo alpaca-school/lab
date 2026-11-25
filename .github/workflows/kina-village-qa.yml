@@ -22,6 +22,10 @@ jobs:
           npm init -y
           npm install --package-lock-only --ignore-scripts --save-exact three@0.180.0 budoux@0.8.4 @playwright/test@1.56.1
           npm audit --audit-level=high
+          npm explain uuid || true
+          npm explain gaxios || true
+          npm view budoux@0.8.4 dependencies optionalDependencies --json
+          npm audit --omit=dev --audit-level=high
           cd "$GITHUB_WORKSPACE"
           npx playwright install --with-deps chromium
       - name: QA
