@@ -52,17 +52,23 @@ test('progression, five-hit rush, all unlocks and clear',async({page},info)=>{
  await page.addInitScript(()=>{Math.random=()=>.999});
  await page.clock.install();await boot(page);
  await page.clock.pauseAt(new Date(await page.evaluate(()=>Date.now()+100)));
+ // Stock three guests before starting the timed combo. Each later guest
+ // is served as soon as it appears, not after a coarse 1600ms step.
+ await page.clock.runFor(3300);
+ expect(await page.locator('#queue .guestCard').count()).toBe(3);
  let lastScore=0,seen=new Set();
  for(let i=0;i<100;i++){
    if(await page.locator('#result').isVisible())break;
-   if(!await page.locator('#queue .guestCard').count())await page.clock.runFor(1600);
+   for(let step=0;step<40 && !await page.locator('#queue .guestCard').count();step++)await page.clock.runFor(50);
+   expect(await page.locator('#queue .guestCard').count()).toBeGreaterThan(0);
    const label=await page.locator('#queue .guestCard').first().textContent();
    const job=serviceIcons.findIndex(icon=>label.includes(icon));expect(job).toBeGreaterThanOrEqual(0);
    seen.add(job);
    await page.locator('[data-job="'+serviceKeys[job]+'"]').click();
    const s=Number(await page.locator('#score').textContent());expect(s).toBeGreaterThan(lastScore);lastScore=s;
+   if(i<5)expect(Number(await page.locator('#combo').textContent())).toBe(i+1);
    if(i===4){expect(s).toBeGreaterThanOrEqual(1265);expect(await page.locator('#tea').textContent()).toMatch(/3/)}
-   await page.clock.runFor(100);
+   await page.clock.runFor(20);
  }
  expect([...seen].sort()).toEqual([0,1,2,3]);
  expect(lastScore).toBeGreaterThanOrEqual(7000);
