@@ -51,7 +51,7 @@ test('progression, five-hit rush, all unlocks and clear',async({page},info)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.addInitScript(()=>{Math.random=()=>.999});
  await page.clock.install();await boot(page);
- await page.clock.pauseAt(new Date(await page.evaluate(()=>Date.now())));
+ await page.clock.pauseAt(new Date(await page.evaluate(()=>Date.now()+100)));
  let lastScore=0,seen=new Set();
  for(let i=0;i<100;i++){
    if(await page.locator('#result').isVisible())break;
@@ -73,7 +73,7 @@ test('progression, five-hit rush, all unlocks and clear',async({page},info)=>{
 });
 test('tea, helper, timeout and restart',async({page})=>{
  await page.clock.install();await boot(page,'challenge');
- await page.clock.pauseAt(new Date(await page.evaluate(()=>Date.now())));
+ await page.clock.pauseAt(new Date(await page.evaluate(()=>Date.now()+100)));
  await page.clock.runFor(2400);
  const before=await page.locator('#queue progress').first().evaluate(e=>e.value);
  await page.locator('#tea').click();expect(await page.locator('#queue progress').first().evaluate(e=>e.value)).toBeGreaterThan(before);
@@ -94,4 +94,12 @@ test('real WebGL startup and render',async({page},info)=>{
  await page.locator('#resetView').click();
  await page.locator('#inn').click();await expect(page.locator('#score')).toHaveText('130');
  await page.screenshot({path:info.outputPath('webgl.png')});expect(errors).toEqual([]);
+});
+
+// Regression for QA #2: pause in the future, then advance time deterministically.
+test('clock harness advances from a future pause',async({page})=>{
+ await page.clock.install();await page.goto(url);
+ await page.clock.pauseAt(new Date(await page.evaluate(()=>Date.now()+100)));
+ const before=await page.evaluate(()=>Date.now());await page.clock.runFor(1000);
+ expect(await page.evaluate(()=>Date.now())).toBe(before+1000);
 });
