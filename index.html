@@ -543,7 +543,7 @@ function parseGviz(text){
  return response.table.rows.map(r=>cols.reduce((o,name,i)=>{const c=r.c&&r.c[i];o[name]=c?c.v:null;return o;},{})).filter(r=>r.game_id);
 }
 function fetchLabSettings(){
- const url="https://docs.google.com/spreadsheets/d/"+encodeURIComponent(LAB_SHEET_ID)+"/gviz/tq?gid="+encodeURIComponent(LAB_SHEET_GID)+"&tqx=out:json";
+ const url="https://docs.google.com/spreadsheets/d/"+encodeURIComponent(LAB_SHEET_ID)+"/gviz/tq?gid="+encodeURIComponent(LAB_SHEET_GID)+"&tqx=out:json&headers=1";
  const controller=new AbortController();
  const timer=setTimeout(()=>controller.abort(),REMOTE_TIMEOUT_MS);
  return fetch(url,{credentials:"omit",signal:controller.signal}).then(r=>{if(!r.ok)throw new Error("HTTP "+r.status);return r.text();}).then(parseGviz).finally(()=>clearTimeout(timer));
@@ -592,24 +592,9 @@ function apply(filter){
  empty.classList.toggle("show",shown===0);
  for(const b of buttons)b.setAttribute("aria-pressed",String(b.dataset.filter===filter));
 }
-function applyRemoteSettings(rows){
- const map=new Map(rows.map(r=>[String(r.game_id).trim(),r]));
- const ordered=[];
- for(const card of cards){
-   const r=map.get(card.dataset.gameId);
-   if(!r)continue;
-   const rawStatus=String(r.status||card.dataset.status).trim();
-   const status=rawStatus==="公開中"?"published":rawStatus==="開発中"?"dev":rawStatus==="非表示"?"hidden":rawStatus;
-   applyCardStatus(card,status,boolValue(r.visible));
-   ordered.push({card,order:Number(r.sort_order)||9999,status});
- }
- ordered.sort((a,b)=>a.order-b.order);
- for(const item of ordered){
-   if(item.card.dataset.catalogVisible==="false")continue;
-   (item.status==="published"?publishedGrid:devGrid).appendChild(item.card);
- }
- updateCounts();apply(activeFilter);
-}
+function catalogRows(rows){const seen=new Set(),out=[];for(const r of rows){const id=String(r.game_id||"").trim(),title=String(r["タイトル"]||r.title||"").trim(),status=({"公開中":"published","開発中":"dev","非表示":"hidden"})[String(r.status||"").trim()];if(!/^[a-z0-9][a-z0-9-]*$/.test(id)||seen.has(id)||!title||!status)continue;const href=String(r.href||"").trim();if(!/^\.\/[a-z0-9][a-z0-9-]*\/$/.test(href))continue;seen.add(id);const split=v=>String(v||"").split(",").map(x=>x.trim()).filter(Boolean);let idea="https://ittoushouguu.ryukyu-tane.com/?campaign=alpaca-lab-feedback-2026&game="+encodeURIComponent(id);try{const u=new URL(String(r.feedback_url||""));if(u.protocol==="https:"&&u.hostname==="ittoushouguu.ryukyu-tane.com"&&!u.username&&!u.password)idea=u.href}catch(e){}out.push({id,title,status,visible:r.visible===true||String(r.visible).trim().toUpperCase()==="TRUE",order:Number(r.sort_order)||9999,href,thumb:String(r.thumb||"🎮"),meta:String(r.meta||""),desc:String(r.description||""),tags:split(r.tags),tagTexts:split(r.tag_texts),idea})}return out.sort((a,b)=>a.order-b.order)}
+function makeRemoteCard(g){const card=document.createElement("article");card.className="game-card";card.dataset.gameId=g.id;card.dataset.tags=g.tags.join(" ");card.innerHTML='<div class="thumb" aria-hidden="true"></div><div class="game-body"><div class="status"></div><div class="meta"></div><h3></h3><p></p><div class="tags"></div><div class="actions"><a class="play"></a><a class="idea" target="_blank" rel="noopener noreferrer">🍀 もっとこうして！</a></div></div>';card.querySelector(".thumb").textContent=g.thumb;card.querySelector(".meta").textContent=g.meta;card.querySelector("h3").textContent=g.title;card.querySelector("p").textContent=g.desc;for(const tag of g.tagTexts){const e=document.createElement("span");e.textContent=tag;card.querySelector(".tags").appendChild(e)}card.querySelector(".play").href=g.href;card.querySelector(".idea").href=g.idea;return card}
+function applyRemoteSettings(rows){const list=catalogRows(rows);if(!list.length)return;for(const card of cards)card.remove();for(const g of list){if(!g.visible||g.status==="hidden")continue;const card=makeRemoteCard(g);applyCardStatus(card,g.status,true)}cards=[...document.querySelectorAll(".game-card")];updateCounts();apply(activeFilter)}
 
 buttons.forEach(b=>b.addEventListener("click",()=>apply(b.dataset.filter)));
 fetchLabSettings().then(applyRemoteSettings).catch(()=>{updateCounts();apply(activeFilter);});
