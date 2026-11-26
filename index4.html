@@ -22,7 +22,7 @@
 .catalog-empty{padding:44px;text-align:center;color:#766f68;font-weight:800}
 @media(max-width:900px){.catalog-grid{grid-template-columns:repeat(4,1fr)}}@media(max-width:620px){.catalog-grid{grid-template-columns:repeat(2,1fr)}.catalog-head{align-items:start;gap:8px;flex-direction:column}}
 .intro-desc{max-width:760px;margin:0 auto;color:#665f57;line-height:1.85;font-size:clamp(14px,2.6vw,18px)}
-.about-lab-entry{display:flex;justify-content:center;margin:28px 0 4px}.about-lab-entry button{appearance:none;border:1px solid #e1c98b;background:#fff4cf;color:#6c5423;border-radius:999px;padding:12px 18px;font-weight:1000;cursor:pointer;box-shadow:0 5px 16px rgba(84,68,45,.09)}
+.about-lab-entry{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:124;display:flex;justify-content:center;margin:0;pointer-events:none}.about-lab-entry button{pointer-events:auto;appearance:none;border:1px solid #e1c98b;background:rgba(255,244,207,.96);color:#6c5423;border-radius:999px;padding:12px 18px;font-weight:1000;cursor:pointer;box-shadow:0 8px 24px rgba(84,68,45,.18);backdrop-filter:blur(8px);white-space:nowrap}
 .about-lab-entry button:hover{background:#ffeaa0}
 .about-modal{display:none;position:fixed;inset:0;z-index:130;background:rgba(38,32,28,.54);padding:20px;align-items:center;justify-content:center;backdrop-filter:blur(5px)}.about-modal.show{display:flex}
 .about-card{width:min(860px,100%);max-height:90vh;overflow:auto;background:linear-gradient(135deg,#fff7db,#fff 55%,#edf7fb);border:1px solid #e4d5bc;border-radius:26px;padding:28px;position:relative;box-shadow:0 28px 80px rgba(0,0,0,.26)}
@@ -33,11 +33,12 @@
 @media(max-width:700px){.about-steps{grid-template-columns:1fr}.layout-toggle-fixed{top:6px;left:6px;padding:8px 11px;font-size:12px}}
 
 /* Mobile overflow hardening */
-html,body{max-width:100%;overflow-x:hidden}
+html,body{max-width:100%;overflow-x:hidden}body{padding-bottom:110px}
 .wrap,.toolbar,.search,.filters,.hero-strip,.subjects,.dashboard,.panel,.feature,.area,.tiles,.catalog-view,.catalog-shelf,.catalog-grid{min-width:0;max-width:100%}
 .tile,.catalog-tile{min-width:0;max-width:100%}
 .tile .t,.catalog-title,.panel h2,.area small,.feature h1,.feature p{overflow-wrap:anywhere;word-break:normal}
 @media(max-width:560px){
+  .about-lab-entry{max-width:calc(100vw - 24px);width:max-content}.about-lab-entry button{max-width:100%;padding:11px 16px;font-size:14px}
   .wrap{width:100%;padding-left:10px;padding-right:10px}
   .intro-hero{margin-left:-10px;margin-right:-10px;padding-left:14px;padding-right:14px}
   .intro-title{font-size:clamp(30px,10vw,40px);max-width:100%;overflow-wrap:anywhere}
