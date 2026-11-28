@@ -1,0 +1,54 @@
+name: Groundwater prototype build QA
+on:
+  push:
+    branches: ['qa/okinawa-groundwater-explorer']
+  pull_request:
+    branches: [main]
+    paths: ['okinawa-groundwater-explorer/**', '.github/workflows/groundwater-build-qa.yml']
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: okinawa-groundwater-explorer
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check source syntax
+        run: |
+          node --check build.mjs
+          node --input-type=module --check < src/engine.js
+          node --input-type=module --check < src/audio.js
+      - name: Resolve dependencies for baseline
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Build
+        run: node build.mjs
+      - name: Check output
+        run: |
+          test -s dist/index.html
+          node -e "const s=require('fs').readFileSync('dist/index.html','utf8'); if(!s.includes('okinawa-groundwater-explorer') || !s.includes('<script>')) process.exit(1)"
+      - name: Install browser test runner (isolated from game dependencies)
+        working-directory: .
+        run: |
+          npm install --no-save --no-package-lock @playwright/test@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Run startup browser QA
+        working-directory: .
+        run: npx playwright test okinawa-groundwater-explorer/qa/startup.spec.mjs --workers=1 --reporter=list --output=groundwater-qa-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: groundwater-browser-evidence
+          path: groundwater-qa-results
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        with:
+          name: groundwater-baseline-build
+          path: |
+            okinawa-groundwater-explorer/dist/index.html
+            okinawa-groundwater-explorer/package-lock.json
+          if-no-files-found: error
