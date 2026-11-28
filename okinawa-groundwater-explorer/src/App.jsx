@@ -24,6 +24,7 @@ function R({ t }) {
 }
 
 const LAB_URL = 'https://lab.alpaca-school.okinawa/';
+const BADGE_KEY = 'okinawa-groundwater-explorer-qa-v1-badges';
 
 const STAGES = {
   s1: {
@@ -191,14 +192,14 @@ const PLANS = {
 
 function loadBadges() {
   try {
-    return JSON.parse(localStorage.getItem('gj-badges') || '[]');
+    return JSON.parse(localStorage.getItem(BADGE_KEY) || '[]');
   } catch (e) {
     return [];
   }
 }
 function saveBadges(b) {
   try {
-    localStorage.setItem('gj-badges', JSON.stringify(b));
+    localStorage.setItem(BADGE_KEY, JSON.stringify(b));
   } catch (e) {
     /* noop */
   }
@@ -244,9 +245,24 @@ export default function App() {
   const [seen, setSeen] = useState([]);
   const [infoMsg, setInfoMsg] = useState('');
 
+  const [graphicsError, setGraphicsError] = useState(false);
+  const [engineReady, setEngineReady] = useState(false);
+  const [pendingStart, setPendingStart] = useState(null);
+
   useEffect(() => {
-    const e = createEngine(holder.current);
+    if (!pendingStart || !holder.current || eng.current) return;
+    let e;
+    try {
+      e = createEngine(holder.current);
+    } catch (error) {
+      console.warn('3D initialization failed', error);
+      holder.current.replaceChildren();
+      setGraphicsError(true);
+      setPendingStart(null);
+      return;
+    }
     eng.current = e;
+    setEngineReady(true);
     const id = setInterval(() => {
       const s0 = e.getStats();
       setStats({ ...s0, zoneRain: [...s0.zoneRain], maxDepth: [...s0.maxDepth], slots: [...s0.slots] });
@@ -254,8 +270,9 @@ export default function App() {
     return () => {
       clearInterval(id);
       e.dispose();
+      eng.current = null;
     };
-  }, []);
+  }, [pendingStart]);
 
   const stageName = PLANS[plan].stages[si];
   const st = STAGES[stageName];
@@ -290,8 +307,13 @@ export default function App() {
     audio.pop();
     setPlan(p);
     setSi(i);
-    enterStage(p, i);
+    if (eng.current) enterStage(p, i);
+    else setPendingStart({ p, i });
   };
+
+  useEffect(() => {
+    if (engineReady && pendingStart && eng.current) enterStage(pendingStart.p, pendingStart.i);
+  }, [engineReady, pendingStart, enterStage]);
 
   const toTitle = () => {
     audio.pop();
@@ -472,9 +494,15 @@ export default function App() {
           <R t="ガンジューの {地下水|ちかすい}たんけん" />
         </h1>
         <p className="sub">
-          <R t="しさくばん ・ ステージを えらんで あそぼう" />
+          <R t="【じっき けんしょうばん・きょうざい みかくにん】" />
         </p>
-        {['A'].map((p) => (
+        {graphicsError ? (
+          <div className="bubble" role="alert">
+            <p className="say">この ブラウザでは 3D が つかえないよ。</p>
+            <p className="hint">べつの ブラウザや 3D が つかえる ききで ためしてね。</p>
+            <a className="btn lab" href={LAB_URL}>ラボいちらんに もどる</a>
+          </div>
+        ) : pendingStart && !engineReady ? <p role="status">3Dを よみこんでいるよ…</p> : ['A'].map((p) => (
           <div key={p} className="cardwrap">
             <button className="card" onClick={() => startPlan(p)}>
               <span className="tag">
@@ -933,7 +961,7 @@ export default function App() {
           <p className="tapc">とじる</p>
         </div>
       )}
-      <div className="stagebox" ref={holder} />
+      <div className="stagebox"><div ref={holder} style={{position:'absolute',inset:0}} />{screen === 'title' && !engineReady && !graphicsError && <div aria-hidden="true" style={{display:'grid',placeItems:'center',height:'100%',fontSize:'72px',pointerEvents:'none'}}>🦙💧</div>}</div>
       {panel}
     </div>
   );
