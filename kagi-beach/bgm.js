@@ -62,7 +62,7 @@
   function stageFromUrl() {
     try {
       var raw = new URLSearchParams(location.search).get("stage");
-      if (raw !== null && /^[012]$/.test(raw)) return Number(raw);
+      if (raw !== null && /^[0-5]$/.test(raw)) return Number(raw);
     } catch (e) {}
     return null;
   }
@@ -71,7 +71,7 @@
     var isBeach = /beach\.html$/.test(location.pathname);
     if (!isBeach) return "map";
     var st = stageFromUrl();
-    return st === null ? "title" : "stage" + st;
+    return st === null ? "title" : "stage" + (st % 3);
   }
 
   function mtof(m) { return 440 * Math.pow(2, (m - 69) / 12); }
@@ -290,10 +290,10 @@
 
   // beach.html の画面状態("title"/"play"/"ending"/…)から場面を決める
   function setScreen(screen) {
-    if (screen === "ending") return setScene("ending");
+    if (screen === "ending" || screen === "truth") return setScene("ending");
     if (screen === "play") {
       var st = stageFromUrl();
-      return setScene(st === null ? "stage0" : "stage" + st);
+      return setScene(st === null ? "stage0" : "stage" + (st % 3));
     }
     return setScene(defaultScene());
   }
