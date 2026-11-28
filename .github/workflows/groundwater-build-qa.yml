@@ -31,6 +31,20 @@ jobs:
         run: |
           test -s dist/index.html
           node -e "const s=require('fs').readFileSync('dist/index.html','utf8'); if(!s.includes('okinawa-groundwater-explorer') || !s.includes('<script>')) process.exit(1)"
+      - name: Install browser test runner (isolated from game dependencies)
+        working-directory: .
+        run: |
+          npm install --no-save --no-package-lock @playwright/test@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Run startup browser QA
+        working-directory: .
+        run: npx playwright test okinawa-groundwater-explorer/qa/startup.spec.mjs --workers=1 --reporter=list --output=groundwater-qa-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: groundwater-browser-evidence
+          path: groundwater-qa-results
+          if-no-files-found: warn
       - uses: actions/upload-artifact@v4
         with:
           name: groundwater-baseline-build
