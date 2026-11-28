@@ -1427,6 +1427,5 @@ export function createEngine(container) {
       if (el.parentNode) el.parentNode.removeChild(el);
     },
   };
-  if (typeof window !== 'undefined' && /[?&]qa=1/.test(window.location.search)) window.__gj = api;
   return api;
 }
