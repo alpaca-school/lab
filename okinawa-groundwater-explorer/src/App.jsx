@@ -498,8 +498,8 @@ export default function App() {
         </p>
         {graphicsError ? (
           <div className="bubble" role="alert">
-            <p className="say">この ブラウザでは 3D が つかえないよ。</p>
-            <p className="hint">べつの ブラウザや 3D が つかえる ききで ためしてね。</p>
+            <p className="say">この ブラウザでは 3D を はじめられなかったよ。</p>
+            <p className="hint">3D（WebGL）が つかえないことが あるよ。べつの ブラウザや ききで ためしてね。</p>
             <a className="btn lab" href={LAB_URL}>ラボいちらんに もどる</a>
           </div>
         ) : pendingStart && !engineReady ? <p role="status">3Dを よみこんでいるよ…</p> : ['A'].map((p) => (
@@ -890,7 +890,7 @@ export default function App() {
                 もんだいに もどる ▶
               </button>
             ) : (
-              <button className="btn go big pulse" onClick={wakeToQuiz}>
+              <button className="btn go big" onClick={wakeToQuiz}>
                 👆 かたを トントン して おこす
               </button>
             )
@@ -935,7 +935,7 @@ export default function App() {
   return (
     <div className="app">
       <div className="hud">
-        <a className="hbtn labl" href={LAB_URL} target="_blank" rel="noopener noreferrer">
+        <a className="hbtn labl" href={LAB_URL} aria-label="ラボいちらんに もどる">
           ← 🔬 ラボ一覧
         </a>
         <div className="hsp" />
