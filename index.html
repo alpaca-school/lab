@@ -362,6 +362,25 @@ footer{text-align:center;color:#948a80;font-size:11px;margin-top:34px;line-heigh
 .journey-label span{font-size:14px;font-weight:1000}.now-label{color:#7d6220}.future-label{color:#4d7655;text-align:right}
 .journey-flow .future-step{border-style:dashed;border-color:#94c29a;background:#f6fbf7}.journey-flow .future-bridge{color:#6b9a73}
 @media(max-width:560px){.journey-label{grid-template-columns:1fr}.future-label{text-align:left}}
+
+.lab-friends{margin:34px 0 24px}
+.lab-friends h2{margin:0 0 5px;font-size:24px;color:var(--text,#3f3a34)}
+.lab-friends>p{color:#625d56;line-height:1.7;margin:0 0 14px}
+.lab-friends .friends-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.lab-friends .friend{background:#fff;border:1px solid var(--line,#eadfc8);border-radius:20px;overflow:hidden;box-shadow:var(--shadow,0 10px 28px rgba(84,68,45,.10));display:flex;flex-direction:column;min-width:0}
+.lab-friends .portrait{background:var(--tint);padding:12px;display:grid;place-items:center}
+.lab-friends .portrait img{display:block;width:100%;height:clamp(110px,24vw,180px);object-fit:contain;min-width:0;color:#51493f;font-size:13px;text-align:center}
+.lab-friends .friend-body{padding:14px;display:flex;flex-direction:column;flex:1;gap:7px}
+.lab-friends .friend h3{font-size:20px;line-height:1.3;margin:0;overflow-wrap:anywhere}
+.lab-friends .latin{font-size:12px;color:#756f68}
+.lab-friends .friend p{font-size:14px;line-height:1.75;margin:0 0 5px}
+.lab-friends .friend-links{margin-top:auto;display:grid;gap:8px}
+.lab-friends .friend-game{font-size:12px;line-height:1.5;color:#625d56;overflow-wrap:anywhere}
+.lab-friends a{display:flex;align-items:center;justify-content:center;min-height:44px;min-width:44px;border:1px solid #dfd5c3;border-radius:11px;background:#fffaf0;color:#51401d;font-size:13px;font-weight:800;text-decoration:none;padding:8px;text-align:center;overflow-wrap:anywhere}
+.lab-friends a:focus-visible{outline:3px solid #35719d;outline-offset:2px}
+.lab-friends .friends-footer{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+@media(max-width:760px){.lab-friends .friends-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.lab-friends .friend-body{padding:10px}.lab-friends .friend h3{font-size:18px}.lab-friends .portrait{padding:8px}}
+@media(max-width:320px){.lab-friends .friend-body{padding:8px}.lab-friends .friend h3{font-size:16px}}
 </style>
 </head>
 <body><nav class="compare-switch" aria-label="比較案を切り替え"><span>比較</span><a href="./index.html" aria-current="page">現行</a><a href="./index4.html">4</a></nav>
@@ -385,7 +404,7 @@ footer{text-align:center;color:#948a80;font-size:11px;margin-top:34px;line-heigh
   </div>
 </section>
 
-<nav class="filters" aria-label="作品を分類">
+<nav id="game-list" class="filters" aria-label="作品を分類">
   <button class="filter" data-filter="all" aria-pressed="true">🌈 すべて</button>
   <button class="filter" data-filter="published" aria-pressed="false">✨ 公開中</button>
   <button class="filter" data-filter="dev" aria-pressed="false">🛠️ 開発中</button>
@@ -425,6 +444,13 @@ footer{text-align:center;color:#948a80;font-size:11px;margin-top:34px;line-heigh
  </article>
 </div>
 </section>
+
+<section aria-labelledby="friends-title" class="lab-friends" id="friends"><h2 id="friends-title">🦙 ぼうけんの なかまたち</h2><p>きみは、だれと冒険したい？ 詳しいキャラクター設定は「アルパカすく〜る キャラクター図鑑」で確認できます。エピソードへの導線は、移行先の内容整理後に接続します。</p><div class="friends-grid">
+<article class="friend" style="--tint:#fae8d7"><div class="portrait"><img alt="ハーリーのイラスト" height="180" loading="lazy" referrerpolicy="no-referrer" src="https://lh7-us.googleusercontent.com/sitesv-images-rt/APXyLQcgpW9oZLCoVORUsIup3Gg1U8u2aWiHZs2xqF6sCZXISNUu2kgS2YJhDFHUJotG2_lT0Twa2Ip_OpVXUHyZeaYAxpN5S6kHgBxr2eigv3FZ5uBCqNI8nlVtv1NSg3FOPjqAYP4CbceLkf_FcwxfDo3hWdHzQqan69nWVQZQdwmDPM7hTJp34s6Mkhs2RhZcEqkWik7oVqcw6QAElTbrAxgkUVqzXeVQI0n0POV_mTU=w1280" width="240"/></div><div class="friend-body"><h3>ハーリー</h3><span class="latin" lang="en">Harly</span><p>オラオラ系。こわいもの知らずで、目立つことが大好き。</p><div class="friend-links"><span class="friend-game">関連ゲーム：ハーリーのちいさな暮らし</span><a class="story" href="https://alpaca-school.okinawa/characters.html">キャラクター図鑑で設定を見る</a></div></div></article>
+<article class="friend" style="--tint:#ede7f7"><div class="portrait"><img alt="サラバンジのイラスト" height="180" loading="lazy" referrerpolicy="no-referrer" src="https://lh7-us.googleusercontent.com/sitesv-images-rt/APXyLQewWR_TvgHVpD3KCHTlOYScRrWPazLJoQTK0VMzR-JS61-ecFrrRrGoCeFF6v86-kdqcR9i7nkFa28w0Zsn-_q76JFdPpmJMKfKEWVqlVgUcx6UJUdtnzLcftS12OTAoRQdP3VnQkQm6B2VlAtGwvLM4fsXNhSF6Y1jo3o6E9S8jAgHsCQtNSznusL8WPgYfA3EAoXKNSG2BpNy5bIk3EWAd4aJtpc-wQGJTz-J=w1280" width="240"/></div><div class="friend-body"><h3>サラバンジ</h3><span class="latin" lang="en">Sarabanji</span><p>無謀に見えることも運と勢いで乗り越える。体力がないので短期決戦を好む。</p><div class="friend-links"><span class="friend-game">関連ゲーム：沖縄で星集め</span><a class="story" href="https://alpaca-school.okinawa/characters.html">キャラクター図鑑で設定を見る</a></div></div></article>
+<article class="friend" style="--tint:#dcefeb"><div class="portrait"><img alt="カーギーのイラスト" height="180" loading="lazy" referrerpolicy="no-referrer" src="https://lh7-us.googleusercontent.com/sitesv-images-rt/APXyLQfFOCcU_dWIOJnjXZUWI8ehTJVl9Sjkv0cjvnrGPt4hbJSjgyVZDrgoDOtOiGf3njz-IXEhd9OkM29AAvZhDhVMDRpaEmtqa4V3i4_tdBS8Y3wOqqzURrjQZDfXl38jO5wyM8skxWWC0mRLzcoBs7_elhhR_3WystI9OmguZ3eHxT1nmmGlBH4_XDV3DEKn3NOWnCkY0XT5PlqTSVaGDumijFwS9dqra9hPlUU-Q2M=w1280" width="240"/></div><div class="friend-body"><h3>カーギー</h3><span class="latin" lang="en">Carggy</span><p>4人の中で唯一の女性性。美意識が高く、いつも安全策を選ぶ。</p><div class="friend-links"><span class="friend-game">関連ゲーム：カーギーと未来のビーチ</span><a class="story" href="https://alpaca-school.okinawa/characters.html">キャラクター図鑑で設定を見る</a></div></div></article>
+<article class="friend" style="--tint:#e8efdc"><div class="portrait"><img alt="ガンジューのイラスト" height="180" loading="lazy" referrerpolicy="no-referrer" src="https://lh7-us.googleusercontent.com/sitesv-images-rt/APXyLQeKGX7cJhdIkZ_x_0MpFCXPqRPRrwcsTrFONMcBh8Voa6n9ReIAQeMZ4DkGwZgxh9nTJlnHYqMVRa6RbF0G2LEQ7MGhxh_QD_DHMJvlRBHQEOF9z23-pQqJgZ53RhB1tNKHf59m-4Vqtn8z2xu3i18haWA6hUPHkwtgw8NfZg0UUBTOq78q6SSnOuRmtKl8P_uruxB_5DUk1K-kN94Pdac_NllO9nY426xzlr7q_1s=w1280" width="240"/></div><div class="friend-body"><h3>ガンジュー</h3><span class="latin" lang="en">Gunjuu</span><p>のんびり屋で何でも食べるけれど、人見知り。よく寝る。</p><div class="friend-links"><a class="story" href="https://alpaca-school.okinawa/characters.html">キャラクター図鑑で設定を見る</a></div></div></article>
+</div><p class="friends-footer"><a href="https://online.alpaca-school.okinawa/">公式キャラクター紹介</a>　<a href="#game-list">ゲーム一覧へ</a></p></section>
 
 <section class="section" data-section="dev">
   <div class="section-head"><div><h2>🛠️ ただいま開発中</h2><p>完成前も公開しています。遊んで、「もっとこうして！」を聞かせてください。</p></div><span class="count">14作品</span></div>
