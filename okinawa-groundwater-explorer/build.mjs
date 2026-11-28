@@ -19,8 +19,9 @@ const html = `<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="game-id" content="gunjuu-groundwater-3d / okinawa-groundwater-explorer (prototype)">
-<title>ガンジューの地下水たんけん(試作版)</title>
+<meta name="game-id" content="okinawa-groundwater-explorer">
+<meta name="robots" content="noindex,nofollow">
+<title>【実機検証版】ガンジューの地下水たんけん</title>
 <style>${css}</style>
 </head>
 <body>
